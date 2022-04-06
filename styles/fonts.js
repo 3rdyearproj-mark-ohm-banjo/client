@@ -1,6 +1,7 @@
 export const FONT_FAMILY = {
-  PRIMARY: '',
-  SECONDARY: '',
+  PRIMARY: 'Noto Sans Thai',
+  SECONDARY: 'Questrial',
+  SARABUN: 'Sarabun',
 }
 
 export const FONT_SIZE = {
