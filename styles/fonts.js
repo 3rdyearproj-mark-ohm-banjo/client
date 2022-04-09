@@ -1,13 +1,13 @@
-export const FONT_FAMILY = {
-  PRIMARY: 'Noto Sans Thai',
+export const FONTS = {
+  PRIMARY: 'Noto Sans Thai, Questrial',
   SECONDARY: 'Questrial',
   SARABUN: 'Sarabun',
 }
 
 export const FONT_SIZE = {
-  xs: '12px',
-  sm: '14px',
-  md: '16px',
-  lg: '18px',
-  xl: '20px',
+  XS: '12px',
+  SM: '14px',
+  MD: '16px',
+  LG: '18px',
+  XL: '20px',
 }
