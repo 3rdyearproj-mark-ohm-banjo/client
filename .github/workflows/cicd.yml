@@ -19,7 +19,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/punthanat/int365-client:dev
+          tags: ghcr.io/3rdyearproj-mark-ohm-banjo/int365-client:dev
 
   deploy:
     needs:
