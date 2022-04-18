@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           # port: ${{ secrets.SERVERPORT }}
           script: |
-            cd ./project/client
+            cd ~/project/client
             docker-compose down
             docker-compose pull
             docker-compose up -d
