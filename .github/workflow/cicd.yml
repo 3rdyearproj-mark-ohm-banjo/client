@@ -19,7 +19,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/punthanat/int365-front-test2:master
+          tags: ghcr.io/punthanat/int365-client:dev
 
   deploy:
     needs:
@@ -28,15 +28,12 @@ jobs:
     steps:
       - uses: appleboy/ssh-action@master
         with:
-          # host: ${{ secrets.HOSTNAME }}
-          host: "52.175.72.113"
-          # username: ${{ secrets.USERNAME }}
-          username: "banjo"
-          password: "Test123456789"
-          # password: ${{ secrets.PASSWORD }}
+          host: ${{ secrets.HOSTNAME }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           # port: ${{ secrets.SERVERPORT }}
           script: |
-            cd ./int365-front-test
+            cd ./project/client
             docker-compose down
             docker-compose pull
             docker-compose up -d
