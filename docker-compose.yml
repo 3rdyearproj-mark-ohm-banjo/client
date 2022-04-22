@@ -1,7 +1,7 @@
 version: "3"
 services:
   frontend:
-    image: ghcr.io/punthanat/int365-front-test2:master
+    image: ghcr.io/3rdyearproj-mark-ohm-banjo/int365-client:dev
     container_name: frontend
     ports:
       - "8080:80"
