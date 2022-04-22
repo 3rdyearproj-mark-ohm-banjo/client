@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { SPACING } from '../styles/spacing'
+import {SPACING} from '../styles/spacing'
 
 const LayoutStyled = styled.section`
   ${(props) => props.display && `display: ${props.display};`}
@@ -15,6 +15,7 @@ const LayoutStyled = styled.section`
   ${(props) => props.textColor && `color: ${props.textColor};`}
   ${(props) => props.textAlign && `text-align: ${props.textAlign};`}
   ${(props) => props.boxShadow && `box-shadow: ${props.boxShadow};`}
+   max-width: ${(props) => props.maxWidth ?? '1050px'};
 `
 
 const Layout = ({
@@ -29,6 +30,7 @@ const Layout = ({
   textAlign,
   boxShadow,
   children,
+  maxWidth,
 }) => {
   return (
     <LayoutStyled
@@ -42,6 +44,7 @@ const Layout = ({
       textColor={textColor}
       textAlign={textAlign}
       boxShadow={boxShadow}
+      maxWidth={maxWidth}
     >
       {children}
     </LayoutStyled>
