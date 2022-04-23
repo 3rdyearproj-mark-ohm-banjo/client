@@ -1,6 +1,6 @@
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import {faCheck, faDownload} from '@fortawesome/free-solid-svg-icons'
 
-export const ICONS = { faCheck }
+export const ICONS = {faCheck, faDownload}
 export const ICON_SIZE = {
   xs: 'xs',
   sm: 'sm',

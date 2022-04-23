@@ -98,6 +98,7 @@ const orangeGradientStyled = css`
 const smSize = css`
   border-radius: 24px;
   min-height: 32px;
+  min-width: 120px;
   padding: 4px 10px;
   font-size: ${FONT_SIZE.MD};
   ${(props) => props.withIcon && `padding:4px ${size.sm} 4px 10px;`}
