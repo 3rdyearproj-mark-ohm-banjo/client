@@ -12,6 +12,9 @@ const Body = styled.section`
     no-repeat;
   background-size: cover;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const Image = styled.img`
@@ -23,12 +26,9 @@ const Container = styled.section`
   width: 100%;
   border-radius: 8px;
   padding: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background-color: ${COLORS.WHITE};
   box-shadow: 0px 5px 20px ${COLORS.GRAY_DARK_1};
+  margin: 20px 0;
 `
 
 const TitleList = styled.h2`
