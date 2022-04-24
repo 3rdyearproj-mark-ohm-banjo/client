@@ -218,7 +218,7 @@ const AddBookForm = ({onStepChange}) => {
 
   useEffect(() => {
     if (imageFile.length === 1) {
-      setErrors(errors.filter((err) => err !== 'image'))
+      setErrors(errors?.filter((err) => err !== 'image'))
     }
     return () => {
       setErrors([])
@@ -347,7 +347,7 @@ const AddBookForm = ({onStepChange}) => {
           </UploadButton>
         </>
       )}
-      {errors.indexOf('image') !== -1 && (
+      {errors?.indexOf('image') !== -1 && (
         <ErrorText>กรุณาใส่รูปภาพของหนังสือ</ErrorText>
       )}
 
@@ -361,7 +361,7 @@ const AddBookForm = ({onStepChange}) => {
               value={bookData?.isbn}
               maxLength="17"
               placeholder="ISBN"
-              isError={errors.indexOf('isbn') !== -1}
+              isError={errors?.indexOf('isbn') !== -1}
             ></Input>
             {bookData?.isbn.length > 0 && bookData?.isbn.length < 17 && (
               <SuggestContainer>
@@ -381,7 +381,7 @@ const AddBookForm = ({onStepChange}) => {
             )}
           </SuggestInputContainer>
 
-          {errors.indexOf('isbn') !== -1 && (
+          {errors?.indexOf('isbn') !== -1 && (
             <ErrorText>
               กรุณากรอก isbn เป็นตัวเลขจำนวน 13 หลัก (XXX-XX-XXXXX-XX-X)
             </ErrorText>
@@ -394,9 +394,9 @@ const AddBookForm = ({onStepChange}) => {
             onChange={(e) => onChange('name', e.target.value)}
             value={bookData?.name}
             placeholder="กรอกชื่อหนังสือ"
-            isError={errors.indexOf('name') !== -1}
+            isError={errors?.indexOf('name') !== -1}
           ></Input>
-          {errors.indexOf('name') !== -1 && (
+          {errors?.indexOf('name') !== -1 && (
             <ErrorText>กรุณากรอกชื่อหนังสือ</ErrorText>
           )}
         </InputControl>
@@ -408,9 +408,9 @@ const AddBookForm = ({onStepChange}) => {
             onChange={(e) => onChange('author', e.target.value)}
             value={bookData?.author}
             placeholder="กรอกชื่อผู้แต่ง"
-            isError={errors.indexOf('author') !== -1}
+            isError={errors?.indexOf('author') !== -1}
           ></Input>
-          {errors.indexOf('author') !== -1 && (
+          {errors?.indexOf('author') !== -1 && (
             <ErrorText>กรุณากรอกชื่อผู้แต่ง</ErrorText>
           )}
         </InputControl>
@@ -419,11 +419,11 @@ const AddBookForm = ({onStepChange}) => {
           <SearchDropdown
             dataList={PUBLISHERS}
             onClickDropdown={onClickPublisher}
-            isError={errors.indexOf('publisher') !== -1}
+            isError={errors?.indexOf('publisher') !== -1}
             showCurrentData={true}
             placeHolder="ค้นหาสำนักพิมพ์..."
           />
-          {errors.indexOf('publisher') !== -1 && (
+          {errors?.indexOf('publisher') !== -1 && (
             <ErrorText>กรุณาเลือกสำนักพิมพ์</ErrorText>
           )}
         </InputControl>
@@ -436,9 +436,9 @@ const AddBookForm = ({onStepChange}) => {
             value={bookData?.firstYearOfPublication}
             placeholder="ปีที่พิมพ์ครั้งแรก"
             maxLength="4"
-            isError={errors.indexOf('firstYearOfPublication') !== -1}
+            isError={errors?.indexOf('firstYearOfPublication') !== -1}
           ></Input>
-          {errors.indexOf('firstYearOfPublication') !== -1 && (
+          {errors?.indexOf('firstYearOfPublication') !== -1 && (
             <ErrorText>
               กรุณากรอกปีที่พิมพ์ครั้งแรก และไม่เกินปี {YEAR}
             </ErrorText>
@@ -467,9 +467,9 @@ const AddBookForm = ({onStepChange}) => {
               (type) => bookData.types.indexOf(type.id) === -1 && type
             )}
             onClickDropdown={onClickType}
-            isError={errors.indexOf('types') !== -1}
+            isError={errors?.indexOf('types') !== -1}
           />
-          {errors.indexOf('types') !== -1 && (
+          {errors?.indexOf('types') !== -1 && (
             <ErrorText>กรุณาเลือกประเภทหนังสืออย่างน้อย 1 ประเภท</ErrorText>
           )}
         </InputControl>

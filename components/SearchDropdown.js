@@ -62,6 +62,7 @@ const Dropdown = styled.div`
   background-color: ${COLORS.WHITE};
   z-index: 100;
   border-radius: 0 8px 8px;
+  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
 `
 
 const IconContainer = styled.div`
