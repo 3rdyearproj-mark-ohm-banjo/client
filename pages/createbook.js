@@ -6,15 +6,16 @@ import Button from '../components/Button'
 import AddBookForm from '../components/forms/AddBookForm'
 import Agreement from '../public/static/images/agreement.png'
 import {SPACING} from '../styles/spacing'
+import Background from '../public/static/images/background-default.png'
 
 const Body = styled.section`
-  background: url('https://img.freepik.com/free-vector/purple-fluid-background-frame_53876-99020.jpg?t=st=1650688192~exp=1650688792~hmac=f7b991d1bb1a15d56e076a4b1c5c4afaa8653d0985dc0b7a4c5043eab4f2a263&w=1380')
-    no-repeat;
+  background: transparent url(${Background.src}) no-repeat;
   background-size: cover;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  image-rendering: -webkit-optimize-contrast;
 `
 
 const Image = styled.img`
@@ -28,7 +29,7 @@ const Container = styled.section`
   padding: 20px;
   background-color: ${COLORS.WHITE};
   box-shadow: 0px 5px 20px ${COLORS.GRAY_DARK_1};
-  margin: 20px 0;
+  margin: 20px 0 80px;
 `
 
 const TitleList = styled.h2`

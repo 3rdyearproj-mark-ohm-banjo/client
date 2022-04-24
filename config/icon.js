@@ -1,6 +1,22 @@
-import {faCheck, faDownload, faXmark} from '@fortawesome/free-solid-svg-icons'
+import {
+  faCheck,
+  faDownload,
+  faXmark,
+  faChevronDown,
+  faChevronLeft,
+  faChevronRight,
+  faChevronUp,
+} from '@fortawesome/free-solid-svg-icons'
 
-export const ICONS = {faCheck, faDownload, faXmark}
+export const ICONS = {
+  faCheck,
+  faDownload,
+  faXmark,
+  faChevronDown,
+  faChevronLeft,
+  faChevronRight,
+  faChevronUp,
+}
 export const ICON_SIZE = {
   xs: 'xs',
   sm: 'sm',

@@ -9,6 +9,21 @@ import {YEAR} from '../../config/currentTime'
 import Icon from '../Icon'
 import {ICONS, ICON_SIZE} from '../../config/icon'
 import {useDropzone} from 'react-dropzone'
+import {TYPES} from '../../config/types-mockup'
+import SearchDropdown from '../SearchDropdown'
+import {PUBLISHERS} from '../../config/publisher-mockup'
+import {ISBN_LIST} from '../../config/isbn-mockup'
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+`
 
 const Title = styled.h2`
   font-size: 20px;
@@ -74,10 +89,45 @@ const ImagePreview = styled.img`
   border-radius: ${SPACING.SM};
 `
 
+const SuggestInputContainer = styled.div`
+  position: relative;
+`
+
+const SuggestContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  z-index: 100;
+  overflow-y: auto;
+  max-height: 200px;
+  background: ${COLORS.GRAY_LIGHT_1};
+  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+  border-radius: 8px;
+`
+
+const SuggestItem = styled.div`
+  padding: 12px 8px;
+  transition: 0.3s;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid ${COLORS.GRAY_LIGHT_2};
+  outline: none;
+
+  &:hover {
+    color: ${COLORS.WHITE};
+    background-color: ${COLORS.PRIMARY};
+  }
+`
+
 const InputControl = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: ${SPACING.SM};
+  width: 100%;
+  position: relative;
+
+  @media (min-width: 768px) {
+    ${(props) => props.width && `width: ${props.width}`}
+  }
 `
 
 const Label = styled.label`
@@ -94,6 +144,7 @@ const Input = styled.input`
   padding: ${SPACING.SM};
   outline: none;
   font-size: 16px;
+  width: 100%;
 
   &:focus {
     border-color: ${COLORS.PRIMARY};
@@ -117,12 +168,38 @@ const ErrorText = styled.span`
   color: red;
 `
 
+const TypeContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+`
+
+const TypeItem = styled.div`
+  display: flex;
+  align-items: center;
+  width: max-content;
+  padding: 4px 12px;
+  background-color: ${COLORS.PRIMARY};
+  border-radius: 6px;
+  color: ${COLORS.WHITE};
+  gap: 8px;
+  cursor: pointer;
+  transition: 200ms;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`
+
 const AddBookForm = ({onStepChange}) => {
   const [bookData, setBookData] = useState({
     isbn: '',
     name: '',
     author: '',
     firstYearOfPublication: '',
+    types: [],
+    publisher: '',
   })
   const [imageFile, setImageFile] = useState([])
   const [errors, setErrors] = useState([])
@@ -181,33 +258,26 @@ const AddBookForm = ({onStepChange}) => {
     setErrors(errors.filter((err) => err !== key))
   }
 
-  const onChangeIsbn = (e) => {
+  const onChangeIsbn = (isbn) => {
     if (
-      (e.target.value.match(/^([^-.0-9]*)$/) && e.target.value.length > 0) ||
-      (/[a-zA-Z]/.test(e.target.value) && e.target.value.length > 0)
+      (isbn.match(/^([^-.0-9]*)$/) && isbn.length > 0) ||
+      (/[a-zA-Z]/.test(isbn) && isbn.length > 0)
     ) {
       return
     }
     if (
-      (e.target.value.length === 3 &&
-        e.target.value.length > bookData.isbn.length) ||
-      (e.target.value.length === 6 &&
-        e.target.value.length > bookData.isbn.length) ||
-      (e.target.value.length === 12 &&
-        e.target.value.length > bookData.isbn.length) ||
-      (e.target.value.length === 15 &&
-        e.target.value.length > bookData.isbn.length)
+      (isbn.length === 3 && isbn.length > bookData.isbn.length) ||
+      (isbn.length === 6 && isbn.length > bookData.isbn.length) ||
+      (isbn.length === 12 && isbn.length > bookData.isbn.length) ||
+      (isbn.length === 15 && isbn.length > bookData.isbn.length)
     ) {
-      return setBookData({...bookData, isbn: e.target.value + '-'})
+      return setBookData({...bookData, isbn: isbn + '-'})
     }
 
-    if (
-      e.target.value.length === 17 &&
-      e.target.value.replaceAll('-', '').length !== 13
-    ) {
+    if (isbn.length === 17 && isbn.replaceAll('-', '').length !== 13) {
       setErrors([...errors, 'isbn'])
     } else {
-      setBookData({...bookData, isbn: e.target.value})
+      setBookData({...bookData, isbn})
       setErrors(errors.filter((err) => err !== 'isbn'))
     }
   }
@@ -226,15 +296,39 @@ const AddBookForm = ({onStepChange}) => {
     })
   }
 
+  const onClickType = (type) => {
+    if (bookData.types[type]) {
+      return setBookData({
+        ...bookData,
+        types: [...bookData.types.filter((item) => item !== type)],
+      })
+    }
+    setErrors(errors.filter((err) => err !== 'types'))
+    setBookData({...bookData, types: [...bookData.types, type]})
+  }
+
+  const removeType = (type) => {
+    console.log(type)
+    setBookData({
+      ...bookData,
+      types: [...bookData.types.filter((item) => item !== type)],
+    })
+  }
+
+  const onClickPublisher = (pubId) => {
+    setErrors(errors.filter((err) => err !== 'publisher'))
+    setBookData({...bookData, publisher: pubId})
+  }
+
   return (
     <>
       <Title>กรอกข้อมูลหนังสือของคุณ</Title>
       {imageFile.length < 1 ? (
         <>
-          <UploadContainer>
+          <UploadContainer {...getRootProps()}>
             <span>ลากและวางไฟล์รูปภาพหนังสือที่นี่</span>
 
-            <UploadButton {...getRootProps()}>
+            <UploadButton>
               <Icon name={ICONS.faDownload} size={ICON_SIZE['lg']} />
               <span>อัปโหลดไฟล์</span>
             </UploadButton>
@@ -257,17 +351,36 @@ const AddBookForm = ({onStepChange}) => {
         <ErrorText>กรุณาใส่รูปภาพของหนังสือ</ErrorText>
       )}
 
-      <form>
+      <Form>
         <InputControl>
           <Label>ISBN</Label>
-          <Input
-            type="text"
-            onChange={onChangeIsbn}
-            value={bookData?.isbn}
-            maxLength="17"
-            placeholder="isbn"
-            isError={errors.indexOf('isbn') !== -1}
-          ></Input>
+          <SuggestInputContainer>
+            <Input
+              type="text"
+              onChange={(e) => onChangeIsbn(e.target.value)}
+              value={bookData?.isbn}
+              maxLength="17"
+              placeholder="ISBN"
+              isError={errors.indexOf('isbn') !== -1}
+            ></Input>
+            {bookData?.isbn.length > 0 && bookData?.isbn.length < 17 && (
+              <SuggestContainer>
+                {ISBN_LIST.map((isbn, i) => {
+                  if (isbn.startsWith(bookData?.isbn)) {
+                    return (
+                      <SuggestItem
+                        key={`suggest-isbn-${i}`}
+                        onClick={() => onChangeIsbn(isbn)}
+                      >
+                        {isbn}
+                      </SuggestItem>
+                    )
+                  }
+                })}
+              </SuggestContainer>
+            )}
+          </SuggestInputContainer>
+
           {errors.indexOf('isbn') !== -1 && (
             <ErrorText>
               กรุณากรอก isbn เป็นตัวเลขจำนวน 13 หลัก (XXX-XX-XXXXX-XX-X)
@@ -288,7 +401,7 @@ const AddBookForm = ({onStepChange}) => {
           )}
         </InputControl>
 
-        <InputControl>
+        <InputControl width="100%">
           <Label>ชื่อผู้แต่ง</Label>
           <Input
             type="text"
@@ -301,7 +414,21 @@ const AddBookForm = ({onStepChange}) => {
             <ErrorText>กรุณากรอกชื่อผู้แต่ง</ErrorText>
           )}
         </InputControl>
-        <InputControl>
+        <InputControl width="50%">
+          <Label>สำนักพิมพ์</Label>
+          <SearchDropdown
+            dataList={PUBLISHERS}
+            onClickDropdown={onClickPublisher}
+            isError={errors.indexOf('publisher') !== -1}
+            showCurrentData={true}
+            placeHolder="ค้นหาสำนักพิมพ์..."
+          />
+          {errors.indexOf('publisher') !== -1 && (
+            <ErrorText>กรุณาเลือกสำนักพิมพ์</ErrorText>
+          )}
+        </InputControl>
+
+        <InputControl width="calc(50% - 8px)">
           <Label>ปีที่พิมพ์ครั้งแรก</Label>
           <Input
             type="text"
@@ -317,7 +444,36 @@ const AddBookForm = ({onStepChange}) => {
             </ErrorText>
           )}
         </InputControl>
-      </form>
+
+        <InputControl>
+          <Label>ประเภทหนังสือ</Label>
+
+          {bookData?.types.length > 0 && (
+            <TypeContainer>
+              {bookData?.types.map((type) => (
+                <TypeItem
+                  key={`type-select-${type}`}
+                  onClick={() => removeType(type)}
+                >
+                  <span>{TYPES.find((item) => item.id == type).name}</span>
+                  <Icon name={ICONS.faXmark} />
+                </TypeItem>
+              ))}
+            </TypeContainer>
+          )}
+
+          <SearchDropdown
+            dataList={TYPES.filter(
+              (type) => bookData.types.indexOf(type.id) === -1 && type
+            )}
+            onClickDropdown={onClickType}
+            isError={errors.indexOf('types') !== -1}
+          />
+          {errors.indexOf('types') !== -1 && (
+            <ErrorText>กรุณาเลือกประเภทหนังสืออย่างน้อย 1 ประเภท</ErrorText>
+          )}
+        </InputControl>
+      </Form>
 
       <ButtonWrapper>
         <Button
