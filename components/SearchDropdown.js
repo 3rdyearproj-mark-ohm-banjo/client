@@ -7,6 +7,12 @@ import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import {FONTS} from '../styles/fonts'
 
+const DisabledStyled = css`
+  cursor: default;
+  background-color: rgba(239, 239, 239, 0.3);
+  color: rgb(84, 84, 84);
+`
+
 const SearchDropdownContainer = styled.div`
   position: relative;
 `
@@ -89,10 +95,11 @@ const FakeInput = styled.div`
 
   &:focus {
     border-color: ${COLORS.PRIMARY};
-    ${(props) => props.isError && 'border-color: red'}
+    ${(props) => props.isError && 'border-color: red;'}
   }
 
-  ${(props) => props.isError && 'border-color: red'}
+  ${(props) => props.isError && 'border-color: red;'}
+  ${(props) => props.disabled && DisabledStyled}
 `
 
 const Input = styled.input`
@@ -122,10 +129,17 @@ const SearchDropdown = ({
   placeHolder,
   onClickDropdown,
   showCurrentData,
+  value,
 }) => {
-  const [selectedItem, setSelectedItem] = useState('')
+  const [selectedItem, setSelectedItem] = useState()
   const [currentSearch, setCurrentSearch] = useState('')
   const [isToggle, setIsToggle] = useState(false)
+
+  useEffect(() => {
+    if (value) {
+      setSelectedItem(value)
+    }
+  }, [value])
 
   useEffect(() => {
     if (shouldClear) {
@@ -155,28 +169,37 @@ const SearchDropdown = ({
                 setIsToggle(true)
                 setCurrentSearch(e.target.value)
               }}
-              value={selectedItem?.title}
+              value={currentSearch}
               placeholder={placeHolder ?? 'ค้นหา...'}
               isError={isError}
+              disabled={isDisabled}
             />
-            <IconContainer onClick={() => setIsToggle(!isToggle)}>
+            <IconContainer
+              onClick={() => !isDisabled && setIsToggle(!isToggle)}
+            >
               <Icon name={isToggle ? ICONS.faChevronUp : ICONS.faChevronDown} />
             </IconContainer>
           </>
         ) : (
           <>
-            <FakeInput onClick={() => setIsToggle(!isToggle)} isError={isError}>
+            <FakeInput
+              onClick={() => !isDisabled && setIsToggle(!isToggle)}
+              isError={isError}
+              disabled={isDisabled}
+            >
               {dataList.find((item) => item.id === selectedItem)?.name ??
                 placeHolder}
             </FakeInput>
-            <IconContainer onClick={() => setIsToggle(!isToggle)}>
+            <IconContainer
+              onClick={() => !isDisabled && setIsToggle(!isToggle)}
+            >
               <Icon name={isToggle ? ICONS.faChevronUp : ICONS.faChevronDown} />
             </IconContainer>
           </>
         )}
       </SearchInputContainer>
 
-      {isToggle && (
+      {!isDisabled && isToggle && (
         <Dropdown>
           {showCurrentData && (
             <OptionInput

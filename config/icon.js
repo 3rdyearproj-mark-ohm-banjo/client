@@ -6,6 +6,11 @@ import {
   faChevronLeft,
   faChevronRight,
   faChevronUp,
+  faDragon,
+  faBook,
+  faGhost,
+  faHandHoldingHand,
+  faPenNib,
 } from '@fortawesome/free-solid-svg-icons'
 
 export const ICONS = {
@@ -16,6 +21,11 @@ export const ICONS = {
   faChevronLeft,
   faChevronRight,
   faChevronUp,
+  faDragon,
+  faGhost,
+  faBook,
+  faHandHoldingHand,
+  faPenNib,
 }
 export const ICON_SIZE = {
   xs: 'xs',

@@ -16,6 +16,7 @@ const LayoutStyled = styled.section`
   ${(props) => props.textAlign && `text-align: ${props.textAlign};`}
   ${(props) => props.boxShadow && `box-shadow: ${props.boxShadow};`}
    max-width: ${(props) => props.maxWidth ?? '1050px'};
+  ${(props) => props.borderRadius && `border-radius: ${props.borderRadius};`}
 `
 
 const Layout = ({
@@ -31,6 +32,7 @@ const Layout = ({
   boxShadow,
   children,
   maxWidth,
+  borderRadius,
 }) => {
   return (
     <LayoutStyled
@@ -45,6 +47,7 @@ const Layout = ({
       textAlign={textAlign}
       boxShadow={boxShadow}
       maxWidth={maxWidth}
+      borderRadius={borderRadius}
     >
       {children}
     </LayoutStyled>
@@ -63,6 +66,7 @@ Layout.propTypes = {
   textAlign: PropTypes.string,
   boxShadow: PropTypes.string,
   children: PropTypes.node,
+  borderRadius: PropTypes.string,
 }
 
 export default Layout

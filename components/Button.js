@@ -195,12 +195,13 @@ const Button = ({
   withIcon,
   iconName,
   fullWidth,
+  isDisabled,
 }) => {
   return (
     <ButtonStyled
       btnType={btnType}
       btnSize={btnSize}
-      onClick={onClick}
+      onClick={() => !isDisabled && onClick}
       withIcon={withIcon}
       fullWidth={fullWidth}
     >
@@ -208,7 +209,7 @@ const Button = ({
       {withIcon && (
         <IconContainer btnSize={btnSize}>
           <div>
-            <Icon iconName={iconName} />
+            <Icon name={iconName} />
           </div>
         </IconContainer>
       )}

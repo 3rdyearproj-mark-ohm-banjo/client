@@ -13,6 +13,7 @@ import {TYPES} from '../../config/types-mockup'
 import SearchDropdown from '../SearchDropdown'
 import {PUBLISHERS} from '../../config/publisher-mockup'
 import {ISBN_LIST} from '../../config/isbn-mockup'
+import {BOOK_SHELF} from '../../config/bookshelf-mockup'
 
 const Form = styled.form`
   display: flex;
@@ -190,19 +191,24 @@ const TypeItem = styled.div`
   &:hover {
     opacity: 0.7;
   }
+
+  ${(props) => props.disabled && 'opacity: 0.6;'}
 `
 
 const AddBookForm = ({onStepChange}) => {
-  const [bookData, setBookData] = useState({
+  const defaultBookData = {
     isbn: '',
     name: '',
     author: '',
     firstYearOfPublication: '',
     types: [],
     publisher: '',
-  })
+  }
+
+  const [bookData, setBookData] = useState(defaultBookData)
   const [imageFile, setImageFile] = useState([])
   const [errors, setErrors] = useState([])
+  const [disabledAll, setDisabledAll] = useState(false)
   const {getRootProps} = useDropzone({
     accept: 'image/*',
     onDrop: (acceptedFiles) => {
@@ -297,7 +303,7 @@ const AddBookForm = ({onStepChange}) => {
   }
 
   const onClickType = (type) => {
-    if (bookData.types[type]) {
+    if (bookData.types.indexOf(type) !== -1) {
       return setBookData({
         ...bookData,
         types: [...bookData.types.filter((item) => item !== type)],
@@ -308,7 +314,6 @@ const AddBookForm = ({onStepChange}) => {
   }
 
   const removeType = (type) => {
-    console.log(type)
     setBookData({
       ...bookData,
       types: [...bookData.types.filter((item) => item !== type)],
@@ -320,10 +325,24 @@ const AddBookForm = ({onStepChange}) => {
     setBookData({...bookData, publisher: pubId})
   }
 
+  useEffect(() => {
+    if (
+      (bookData?.isbn.length === 17 && bookData?.isbn !== BOOK_SHELF.isbn) ||
+      bookData?.isbn.length < 17
+    ) {
+      setDisabledAll(false)
+    } else if (
+      bookData?.isbn.length === 17 &&
+      bookData?.isbn === BOOK_SHELF.isbn
+    ) {
+      setDisabledAll(true)
+    }
+  }, [bookData])
+
   return (
     <>
       <Title>กรอกข้อมูลหนังสือของคุณ</Title>
-      {imageFile.length < 1 ? (
+      {!bookData?.image && imageFile.length < 1 ? (
         <>
           <UploadContainer {...getRootProps()}>
             <span>ลากและวางไฟล์รูปภาพหนังสือที่นี่</span>
@@ -338,13 +357,21 @@ const AddBookForm = ({onStepChange}) => {
         <>
           <label {...getRootProps()}>
             <ImageContainer>
-              <ImagePreview src={imageFile[0]?.preview} />
+              <ImagePreview
+                src={
+                  bookData?.image && disabledAll
+                    ? bookData?.image
+                    : imageFile[0]?.preview
+                }
+              />
             </ImageContainer>
           </label>
-          <UploadButton {...getRootProps()} size="sm">
-            <Icon name={ICONS.faDownload} size={ICON_SIZE['lg']} />
-            <span>เปลี่ยนภาพ</span>
-          </UploadButton>
+          {!disabledAll && (
+            <UploadButton {...getRootProps()} size="sm">
+              <Icon name={ICONS.faDownload} size={ICON_SIZE['lg']} />
+              <span>เปลี่ยนภาพ</span>
+            </UploadButton>
+          )}
         </>
       )}
       {errors?.indexOf('image') !== -1 && (
@@ -370,7 +397,11 @@ const AddBookForm = ({onStepChange}) => {
                     return (
                       <SuggestItem
                         key={`suggest-isbn-${i}`}
-                        onClick={() => onChangeIsbn(isbn)}
+                        onClick={() => {
+                          onChangeIsbn(isbn)
+                          setBookData(BOOK_SHELF)
+                          setDisabledAll(true)
+                        }}
                       >
                         {isbn}
                       </SuggestItem>
@@ -395,6 +426,7 @@ const AddBookForm = ({onStepChange}) => {
             value={bookData?.name}
             placeholder="กรอกชื่อหนังสือ"
             isError={errors?.indexOf('name') !== -1}
+            disabled={disabledAll}
           ></Input>
           {errors?.indexOf('name') !== -1 && (
             <ErrorText>กรุณากรอกชื่อหนังสือ</ErrorText>
@@ -409,6 +441,7 @@ const AddBookForm = ({onStepChange}) => {
             value={bookData?.author}
             placeholder="กรอกชื่อผู้แต่ง"
             isError={errors?.indexOf('author') !== -1}
+            disabled={disabledAll}
           ></Input>
           {errors?.indexOf('author') !== -1 && (
             <ErrorText>กรุณากรอกชื่อผู้แต่ง</ErrorText>
@@ -421,7 +454,9 @@ const AddBookForm = ({onStepChange}) => {
             onClickDropdown={onClickPublisher}
             isError={errors?.indexOf('publisher') !== -1}
             showCurrentData={true}
+            value={bookData?.publisher}
             placeHolder="ค้นหาสำนักพิมพ์..."
+            isDisabled={disabledAll}
           />
           {errors?.indexOf('publisher') !== -1 && (
             <ErrorText>กรุณาเลือกสำนักพิมพ์</ErrorText>
@@ -437,6 +472,7 @@ const AddBookForm = ({onStepChange}) => {
             placeholder="ปีที่พิมพ์ครั้งแรก"
             maxLength="4"
             isError={errors?.indexOf('firstYearOfPublication') !== -1}
+            disabled={disabledAll}
           ></Input>
           {errors?.indexOf('firstYearOfPublication') !== -1 && (
             <ErrorText>
@@ -453,7 +489,10 @@ const AddBookForm = ({onStepChange}) => {
               {bookData?.types.map((type) => (
                 <TypeItem
                   key={`type-select-${type}`}
-                  onClick={() => removeType(type)}
+                  onClick={() => {
+                    if (!disabledAll) removeType(type)
+                  }}
+                  disabled={disabledAll}
                 >
                   <span>{TYPES.find((item) => item.id == type).name}</span>
                   <Icon name={ICONS.faXmark} />
@@ -468,6 +507,7 @@ const AddBookForm = ({onStepChange}) => {
             )}
             onClickDropdown={onClickType}
             isError={errors?.indexOf('types') !== -1}
+            isDisabled={disabledAll}
           />
           {errors?.indexOf('types') !== -1 && (
             <ErrorText>กรุณาเลือกประเภทหนังสืออย่างน้อย 1 ประเภท</ErrorText>
