@@ -1,0 +1,278 @@
+import React from 'react'
+import {Button, Icon, BackgroundContainer} from './'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import {ICONS} from '../config/icon'
+import {SPACING} from '../styles/spacing'
+import {COLORS} from '../styles/colors'
+import {TYPES} from '../config/types-mockup'
+import {PUBLISHERS} from '../config/publisher-mockup'
+import {TYPES_STYLE} from '../config/types-styles'
+import Background from '../public/static/images/background-default.png'
+
+const BookContainer = styled.section`
+  width: 100%;
+  background-color: ${COLORS.WHITE};
+  border-radius: ${SPACING.MD};
+  max-width: 1050px;
+  box-shadow: 0 5px 20px ${COLORS.GRAY_DARK};
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+  padding: ${SPACING.MD};
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: ${SPACING.LG};
+
+    > section {
+      flex-grow: 1;
+    }
+  }
+`
+
+const BookInfoContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+`
+
+const BookImage = styled.img`
+  border-radius: 16px;
+  max-height: 500px;
+  flex-shrink: 0;
+  align-self: center;
+`
+
+const BookName = styled.h1`
+  font-size: 40px;
+  font-weight: 650;
+  margin-top: ${SPACING.LG};
+  color: ${COLORS.PRIMARYc};
+`
+
+const ISBN = styled.h4`
+  color: ${COLORS.GRAY_DARK_1};
+`
+
+const TypeContainer = styled.section`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${SPACING.SM};
+`
+
+const HeadText = styled.h4`
+  margin-bottom: ${SPACING.XS};
+  font-weight: 600;
+  color: ${COLORS.PRIMARY};
+  word-break: break-all;
+
+  ${(props) => props.size === 'sm' && smHead}
+`
+
+const SubHead = styled.h5`
+  margin-bottom: ${SPACING.XS};
+  color: ${COLORS.GRAY_DARK_4};
+  word-break: break-all;
+  font-size: 15px;
+  width: 50%;
+  font-weight: 400;
+`
+
+const TypeBox = styled.div`
+  background-color: ${(props) => props.bgColor ?? COLORS.PRIMARY};
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.SM};
+  width: max-content;
+  border-radius: ${SPACING.SM};
+  user-select: none;
+
+  > svg {
+    margin-right: ${SPACING.SM};
+  }
+`
+
+const NumberGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: ${SPACING.MD} 0;
+`
+
+const ContentBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: calc(33% - 8px);
+  align-self: stretch;
+  justify-content: space-between;
+`
+
+const NumberBox = styled.div`
+  width: 100%;
+  height: 90px;
+  background: ${COLORS.PRIMARY};
+  color: ${COLORS.WHITE};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${SPACING.SM};
+  font-size: 32px;
+  flex-direction: column;
+  padding: ${SPACING.MD} 0;
+  font-weight: 600;
+`
+
+const Unit = styled.span`
+  color: ${COLORS.GRAY_LIGHT_1};
+  font-size: 12px;
+  margin-top: -${SPACING.SM};
+`
+
+const SectionContent = styled.section`
+  ${(props) => props.margin && `margin: ${props.margin};`}
+  ${(props) => props.display && `display: ${props.display};`}
+  ${(props) => props.flexDirection && `flex-direction: ${props.flexDirection};`}
+  ${(props) => props.gap && `gap: ${props.gap};`}
+  ${(props) =>
+    props.justifyContent && `justify-content: ${props.justifyContent};`}
+  border: ${(props) => props.border ?? 'none'};
+  padding: ${(props) => props.padding ?? SPACING.MD};
+  border-radius: ${SPACING.MD};
+`
+
+const ButtonWrapper = styled.section`
+  display: flex;
+  margin-top: ${SPACING.MD};
+  flex-grow: 1;
+
+  > button {
+    align-self: end;
+  }
+`
+
+const RoundBoxContainer = styled.div`
+  display: flex;
+  gap: ${SPACING.MD};
+  flex-wrap: wrap;
+  margin: ${SPACING.SM} 0;
+`
+
+const RoundContent = styled.div`
+  padding: ${SPACING.SM} 0;
+  border: 1px solid ${COLORS.GRAY_DARK_4};
+  border-radius: ${SPACING.XS};
+
+  > span {
+    border-right: 1px solid ${COLORS.GRAY_DARK_4};
+    padding: ${SPACING.SM};
+
+    &:not(:first-of-type) {
+      border-right: none;
+    }
+  }
+`
+
+const BookInfo = ({bookInfo}) => {
+  return (
+    <BackgroundContainer link={Background.src}>
+      <BookContainer>
+        <BookImage src={bookInfo.image} />
+        <BookInfoContainer>
+          <BookName>{bookInfo.name}</BookName>
+          <ISBN>{bookInfo.isbn}</ISBN>
+          <SectionContent padding={`${SPACING.SM} 0`}>
+            <HeadText>
+              <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
+            </HeadText>
+          </SectionContent>
+
+          <NumberGroup>
+            <ContentBox>
+              ยอดการยืม
+              <NumberBox>
+                {bookInfo.totalBorrow.toLocaleString('en-US')}
+                <Unit>เล่ม</Unit>
+              </NumberBox>
+            </ContentBox>
+
+            <ContentBox>
+              จำนวนที่ยืมได้
+              <NumberBox>
+                {bookInfo.totalAvailable.toLocaleString('en-US')}
+                <Unit>เล่ม</Unit>
+              </NumberBox>
+            </ContentBox>
+
+            <ContentBox>
+              จำนวนในระบบ
+              <NumberBox>
+                {bookInfo.totalQuantity.toLocaleString('en-US')}
+
+                <Unit>เล่ม</Unit>
+              </NumberBox>
+            </ContentBox>
+          </NumberGroup>
+          <RoundBoxContainer>
+            <RoundContent>
+              <span>ปีแรกที่พิมพ์</span>
+              <span>{bookInfo.firstYearOfPublication}</span>
+            </RoundContent>
+            <RoundContent>
+              <span>สำนักพิมพ์</span>
+              <span>
+                {PUBLISHERS?.find((pub) => pub.id === bookInfo.publisher)?.name}
+              </span>
+            </RoundContent>
+          </RoundBoxContainer>
+
+          <HeadText> ประเภทของหนังสือ</HeadText>
+          <TypeContainer>
+            {bookInfo?.types?.map((type) => (
+              <TypeBox
+                key={`bookType-${type}`}
+                bgColor={
+                  TYPES_STYLE[
+                    TYPES.find((typeName) => typeName.id === type)?.name
+                  ]?.color
+                }
+              >
+                <Icon
+                  name={
+                    TYPES_STYLE[
+                      TYPES.find((typeName) => typeName.id === type)?.name
+                    ]?.icon
+                  }
+                />
+
+                {TYPES.find((typeName) => typeName.id === type)?.name}
+              </TypeBox>
+            ))}
+          </TypeContainer>
+
+          <ButtonWrapper>
+            <Button
+              btnType="whiteBorder"
+              isDisabled
+              withIcon
+              fullWidth
+              iconName={ICONS.faBook}
+            >
+              คุณมีหนังสือนี้แล้ว
+            </Button>
+
+            {/* <Button withIcon fullWidth iconName={ICONS.faBook}>
+        ยืมหนังสือ
+      </Button> */}
+          </ButtonWrapper>
+        </BookInfoContainer>
+      </BookContainer>
+    </BackgroundContainer>
+  )
+}
+
+BookInfo.propTypes = {
+  bookInfo: PropTypes.object,
+}
+
+export default BookInfo

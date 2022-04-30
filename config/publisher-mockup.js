@@ -1,13 +1,13 @@
 export const PUBLISHERS = [
   {
     id: 1,
-    name: 'luckpim',
+    name: 'Luckpim',
   },
-  {id: 2, name: 'siaminter'},
-  {id: 3, name: 'phoenix'},
+  {id: 2, name: 'Siaminter'},
+  {id: 3, name: 'Phoenix'},
   {
     id: 4,
-    name: 'vibulkij',
+    name: 'Vibulkij',
   },
-  {id: 5, name: 'dex'},
+  {id: 5, name: 'Dex Express'},
 ]

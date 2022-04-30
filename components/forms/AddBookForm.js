@@ -14,6 +14,8 @@ import SearchDropdown from '../SearchDropdown'
 import {PUBLISHERS} from '../../config/publisher-mockup'
 import {ISBN_LIST} from '../../config/isbn-mockup'
 import {BOOK_SHELF} from '../../config/bookshelf-mockup'
+import typeService from '../../api/typeService'
+import shelfService from '../../api/shelfService'
 
 const Form = styled.form`
   display: flex;
@@ -210,6 +212,7 @@ const AddBookForm = ({onStepChange}) => {
   const [errors, setErrors] = useState([])
   const [disabledAll, setDisabledAll] = useState(false)
   const {getRootProps} = useDropzone({
+    disabled: disabledAll,
     accept: 'image/*',
     onDrop: (acceptedFiles) => {
       setImageFile(
@@ -221,6 +224,12 @@ const AddBookForm = ({onStepChange}) => {
       )
     },
   })
+
+  useEffect(() => {
+    if (bookData?.image) {
+      setImageFile([{preview: bookData?.image}])
+    }
+  }, [bookData])
 
   useEffect(() => {
     if (imageFile.length === 1) {
@@ -255,7 +264,7 @@ const AddBookForm = ({onStepChange}) => {
 
   const submitForm = () => {
     if (validate()) {
-      // post function here
+      shelfService.addShelf(bookData)
     }
   }
 
@@ -286,6 +295,13 @@ const AddBookForm = ({onStepChange}) => {
       setBookData({...bookData, isbn})
       setErrors(errors.filter((err) => err !== 'isbn'))
     }
+  }
+
+  const onSuggestClick = (isbn) => {
+    shelfService.getShelfByIsbn(isbn)
+
+    setBookData(BOOK_SHELF)
+    setDisabledAll(true)
   }
 
   const handleYear = (value) => {
@@ -357,13 +373,7 @@ const AddBookForm = ({onStepChange}) => {
         <>
           <label {...getRootProps()}>
             <ImageContainer>
-              <ImagePreview
-                src={
-                  bookData?.image && disabledAll
-                    ? bookData?.image
-                    : imageFile[0]?.preview
-                }
-              />
+              <ImagePreview src={imageFile[0]?.preview} />
             </ImageContainer>
           </label>
           {!disabledAll && (
@@ -399,8 +409,7 @@ const AddBookForm = ({onStepChange}) => {
                         key={`suggest-isbn-${i}`}
                         onClick={() => {
                           onChangeIsbn(isbn)
-                          setBookData(BOOK_SHELF)
-                          setDisabledAll(true)
+                          onSuggestClick(isbn)
                         }}
                       >
                         {isbn}

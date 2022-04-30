@@ -201,7 +201,7 @@ const Button = ({
     <ButtonStyled
       btnType={btnType}
       btnSize={btnSize}
-      onClick={() => !isDisabled && onClick}
+      onClick={() => !isDisabled && onClick()}
       withIcon={withIcon}
       fullWidth={fullWidth}
     >

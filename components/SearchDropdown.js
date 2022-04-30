@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
 import styled, {css} from 'styled-components'
 import Icon from './Icon'
@@ -42,6 +42,7 @@ const OptionInput = styled.input`
 const OptionActiveStyle = css`
   background-color: ${COLORS.PRIMARY};
   color: ${COLORS.WHITE};
+  font-weight: 600;
 `
 
 const OptionItem = styled.div`
@@ -154,8 +155,25 @@ const SearchDropdown = ({
     setCurrentSearch('')
   }
 
+  const useOutsideAlerter = (ref) => {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setIsToggle(false)
+        }
+      }
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }, [ref])
+  }
+
+  const SearchDropdownRef = useRef(null)
+  useOutsideAlerter(SearchDropdownRef)
+
   return (
-    <SearchDropdownContainer>
+    <SearchDropdownContainer ref={SearchDropdownRef}>
       <SearchInputContainer
         type={selectType}
         isDisabled={isDisabled}
