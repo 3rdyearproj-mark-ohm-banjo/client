@@ -182,7 +182,7 @@ const SearchDropdown = ({
         {!showCurrentData ? (
           <>
             <Input
-              type="text"
+              type="search"
               onChange={(e) => {
                 setIsToggle(true)
                 setCurrentSearch(e.target.value)
@@ -221,6 +221,7 @@ const SearchDropdown = ({
         <Dropdown>
           {showCurrentData && (
             <OptionInput
+              type="search"
               onChange={(e) => {
                 setCurrentSearch(e.target.value)
               }}

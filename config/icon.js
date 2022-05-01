@@ -11,6 +11,8 @@ import {
   faGhost,
   faHandHoldingHand,
   faPenNib,
+  faFilter,
+  faBars,
 } from '@fortawesome/free-solid-svg-icons'
 
 export const ICONS = {
@@ -26,6 +28,8 @@ export const ICONS = {
   faBook,
   faHandHoldingHand,
   faPenNib,
+  faFilter,
+  faBars,
 }
 export const ICON_SIZE = {
   xs: 'xs',

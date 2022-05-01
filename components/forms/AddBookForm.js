@@ -232,7 +232,7 @@ const AddBookForm = ({onStepChange}) => {
   }, [bookData])
 
   useEffect(() => {
-    if (imageFile.length === 1) {
+    if (imageFile.length > 0) {
       setErrors(errors?.filter((err) => err !== 'image'))
     }
     return () => {
@@ -243,7 +243,10 @@ const AddBookForm = ({onStepChange}) => {
   const validate = () => {
     let errArr = [...errors]
     Object.keys(bookData).map((key) => {
-      if (bookData[key].length < 1 || !bookData[key]) {
+      if (
+        (typeof bookData[key] !== 'number' && !bookData[key]) ||
+        (Array.isArray(bookData[key]) && bookData[key].length < 1)
+      ) {
         errArr.push(key)
       } else {
         errArr = errArr.filter((err) => err !== key)
@@ -264,7 +267,7 @@ const AddBookForm = ({onStepChange}) => {
 
   const submitForm = () => {
     if (validate()) {
-      shelfService.addShelf(bookData)
+      shelfService.addShelf(bookData, imageFile)
     }
   }
 
@@ -299,7 +302,6 @@ const AddBookForm = ({onStepChange}) => {
 
   const onSuggestClick = (isbn) => {
     shelfService.getShelfByIsbn(isbn)
-
     setBookData(BOOK_SHELF)
     setDisabledAll(true)
   }

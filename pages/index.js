@@ -10,15 +10,20 @@ import {COLORS} from '../styles/colors'
 import {SearchDropdown} from '../components'
 import {FONTS} from '../styles/fonts'
 import BackgroundContainer from '../components/BackgroundContainer'
+import IconButton from '../components/IconButton'
+import {ICONS} from '../config/icon'
 
 const ContentWrapper = styled.section`
   max-width: 1050px;
-  margin: 30px auto 0;
+  margin: 30px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 ${SPACING.MD};
+  padding: ${SPACING.MD};
+  background-color: ${COLORS.GRAY_LIGHT_3};
+  border-radius: ${SPACING.MD};
+  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
 `
 
 const BookListContainer = styled.section`
@@ -30,24 +35,35 @@ const BookListContainer = styled.section`
 `
 
 const PaginationWrapper = styled.div`
-  background-color: ${COLORS.WHITE};
   border-radius: 28px;
   margin: ${SPACING.MD} 0;
   padding: ${SPACING.MD};
 `
 
 const ToolContainer = styled.section`
-  max-width: 1050px;
+  max-width: 550px;
   margin: 0 ${SPACING.MD};
   width: 100%;
-  background-color: ${COLORS.WHITE};
   padding: ${SPACING.MD};
-  border-radius: ${SPACING.MD};
 `
 
 const SearchContainer = styled.div``
 
+const ToolItemContainer = styled.div`
+  display: flex;
+  gap: ${SPACING.LG};
+
+  > button {
+    flex-shrink: 0;
+  }
+`
+
 const FilterContainer = styled.div`
+  transition: 0.3s;
+  border-radius: ${SPACING.MD};
+  background-color: ${COLORS.GRAY_LIGHT_3};
+  padding: ${SPACING.MD};
+  margin: ${SPACING.MD} 0;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
@@ -74,6 +90,7 @@ const Input = styled.input`
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState(1)
+  const [isTriggerFilter, setIsTriggerFilter] = useState(false)
 
   return (
     <>
@@ -89,11 +106,21 @@ const Home = () => {
         <ContentWrapper>
           <ToolContainer>
             <SearchContainer>
-              <Input type="search"></Input>
-              <FilterContainer>
-                <SearchDropdown />
-                <SearchDropdown />
-              </FilterContainer>
+              <ToolItemContainer>
+                <Input type="search" placeholder="ค้นหาหนังสือ..."></Input>
+                <IconButton
+                  name={ICONS.faFilter}
+                  borderRadius="8px"
+                  onClick={() => setIsTriggerFilter(!isTriggerFilter)}
+                  isActive={isTriggerFilter}
+                />
+              </ToolItemContainer>
+              {isTriggerFilter && (
+                <FilterContainer>
+                  <SearchDropdown />
+                  <SearchDropdown />
+                </FilterContainer>
+              )}
             </SearchContainer>
           </ToolContainer>
 
@@ -114,7 +141,7 @@ const Home = () => {
 
           <PaginationWrapper>
             <Pagination
-              totalPage={20}
+              totalPage={10}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />

@@ -8,7 +8,9 @@ import {COLORS} from '../styles/colors'
 import {TYPES} from '../config/types-mockup'
 import {PUBLISHERS} from '../config/publisher-mockup'
 import {TYPES_STYLE} from '../config/types-styles'
-import Background from '../public/static/images/background-default.png'
+import {Swiper, SwiperSlide} from 'swiper/react'
+import {EffectFlip} from 'swiper'
+import 'swiper/css/effect-flip'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -19,7 +21,7 @@ const BookContainer = styled.section`
   display: flex;
   flex-direction: column;
   margin: 20px 0;
-  padding: ${SPACING.MD};
+  padding: ${SPACING.LG};
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -36,18 +38,27 @@ const BookInfoContainer = styled.section`
   flex-direction: column;
 `
 
+const BookImageContainer = styled.div`
+  max-height: 500px;
+  width: 300px;
+  flex-shrink: 0;
+  align-self: center;
+  transition: 0.1s;
+  @media (min-width: 800px) {
+    width: 320px;
+  }
+`
+
 const BookImage = styled.img`
   border-radius: 16px;
   max-height: 500px;
-  flex-shrink: 0;
-  align-self: center;
 `
 
 const BookName = styled.h1`
   font-size: 40px;
   font-weight: 650;
   margin-top: ${SPACING.LG};
-  color: ${COLORS.PRIMARYc};
+  color: ${COLORS.PRIMARY};
 `
 
 const ISBN = styled.h4`
@@ -69,15 +80,6 @@ const HeadText = styled.h4`
   ${(props) => props.size === 'sm' && smHead}
 `
 
-const SubHead = styled.h5`
-  margin-bottom: ${SPACING.XS};
-  color: ${COLORS.GRAY_DARK_4};
-  word-break: break-all;
-  font-size: 15px;
-  width: 50%;
-  font-weight: 400;
-`
-
 const TypeBox = styled.div`
   background-color: ${(props) => props.bgColor ?? COLORS.PRIMARY};
   color: ${COLORS.WHITE};
@@ -85,9 +87,15 @@ const TypeBox = styled.div`
   width: max-content;
   border-radius: ${SPACING.SM};
   user-select: none;
+  transition: 0.1s;
+  align-self: start;
 
   > svg {
     margin-right: ${SPACING.SM};
+  }
+
+  &:hover {
+    padding: ${SPACING.MD};
   }
 `
 
@@ -175,9 +183,24 @@ const RoundContent = styled.div`
 
 const BookInfo = ({bookInfo}) => {
   return (
-    <BackgroundContainer link={Background.src}>
+    <>
       <BookContainer>
-        <BookImage src={bookInfo.image} />
+        <BookImageContainer>
+          <Swiper
+            effect={'flip'}
+            grabCursor={true}
+            modules={[EffectFlip]}
+            className="mySwiper"
+            loop={true}
+          >
+            <SwiperSlide>
+              <BookImage src={bookInfo.image} />
+            </SwiperSlide>
+            <SwiperSlide>
+              <BookImage src={bookInfo.image} />
+            </SwiperSlide>
+          </Swiper>
+        </BookImageContainer>
         <BookInfoContainer>
           <BookName>{bookInfo.name}</BookName>
           <ISBN>{bookInfo.isbn}</ISBN>
@@ -267,7 +290,7 @@ const BookInfo = ({bookInfo}) => {
           </ButtonWrapper>
         </BookInfoContainer>
       </BookContainer>
-    </BackgroundContainer>
+    </>
   )
 }
 

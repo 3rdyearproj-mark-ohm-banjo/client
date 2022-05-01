@@ -10,6 +10,8 @@ const Body = styled.section`
   justify-content: center;
   align-items: center;
   image-rendering: -webkit-optimize-contrast;
+  margin-top: 40px;
+  flex-direction: column;
 `
 
 const BackgroundContainer = ({link, children}) => {

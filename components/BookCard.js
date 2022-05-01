@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import {TYPES} from '../config/types-mockup'
 import {TYPES_STYLE} from '../config/types-styles'
 import {COLORS} from '../styles/colors'
+import {FONTS} from '../styles/fonts'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
 
@@ -16,6 +17,7 @@ const Card = styled.div`
   border-radius: ${SPACING.SM};
   background-color: ${COLORS.WHITE};
   transition: 0.3s;
+  user-select: none;
 
   &:hover {
     cursor: pointer;
@@ -57,7 +59,7 @@ const BookName = styled.div`
 
 const Types = styled.div`\
 margin:${SPACING.XS} 0 ;
-  font-size: 14px;
+  font-size: 11px;
   display: flex;
   flex-wrap: wrap;
   gap: ${SPACING.XS};
@@ -72,14 +74,18 @@ const Type = styled.div`
 `
 
 const Author = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   color: ${COLORS.BLACK_2};
+  font-family: ${FONTS.SARABUN};
+  font-weight: 600;
+  margin: 0 0 2px;
 `
 
 const BorrowCount = styled.div`
-  font-size: 13px;
+  font-size: 12px;
   color: ${COLORS.GRAY_DARK_1};
   font-weight: 400;
+  font-family: ${FONTS.SARABUN};
 `
 
 const ButtonWrapper = styled.div`
@@ -95,7 +101,7 @@ const BookCard = ({bookInfo}) => {
   const router = useRouter()
 
   return (
-    <Card onClick={() => router.push(`shelf/${bookInfo?.id}`)}>
+    <Card onClick={() => router.push(`/shelf/${bookInfo?.id}`)}>
       <BookImage src={bookInfo?.image} alt={bookInfo?.name} />
       <BookInfoContainer>
         <BookName>{bookInfo?.name}</BookName>

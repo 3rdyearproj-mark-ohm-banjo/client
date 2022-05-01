@@ -5,10 +5,22 @@ import {FONTS, FONT_SIZE} from '../styles/fonts'
 import Icon from './Icon'
 import {ICONS} from '../config/icon'
 
-const NavigationBarStyled = styled.nav``
+const NavigationBarStyled = styled.nav`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: ${COLORS.WHITE};
+  height: 50px;
+  box-shadow: 0 5px 30px ${COLORS.GRAY_LIGHT};
+  z-index: 1000;
+`
 
 const NavigationBar = () => {
-  return <NavigationBarStyled>NavigationBar</NavigationBarStyled>
+  return (
+    <NavigationBarStyled>
+      <Icon name={ICONS.faBars} />
+    </NavigationBarStyled>
+  )
 }
 
 export default NavigationBar
