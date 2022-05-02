@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import Head from 'next/head'
 import BookCard from '../components/BookCard'
 import {BOOK_SHELF} from '../config/bookshelf-mockup'
@@ -7,14 +7,23 @@ import {SPACING} from '../styles/spacing'
 import Pagination from '../components/Pagination'
 import Background from '../public/static/images/background-default.png'
 import {COLORS} from '../styles/colors'
-import {SearchDropdown} from '../components'
+import {Icon, SearchDropdown} from '../components'
 import {FONTS} from '../styles/fonts'
 import BackgroundContainer from '../components/BackgroundContainer'
 import IconButton from '../components/IconButton'
 import {ICONS} from '../config/icon'
+import {Swiper, SwiperSlide} from 'swiper/react'
+import {Scrollbar} from 'swiper'
+import 'swiper/css'
+import 'swiper/css/scrollbar'
+import {css} from 'styled-components'
+import {useRouter} from 'next/router'
+import {TYPES} from '../config/types-mockup'
+import shelfService from '../api/shelfService'
 
 const ContentWrapper = styled.section`
   max-width: 1050px;
+  width: 100%;
   margin: 30px auto;
   display: flex;
   flex-direction: column;
@@ -32,6 +41,9 @@ const BookListContainer = styled.section`
   gap: ${SPACING.LG};
   margin: 30px 0 16px;
   justify-content: center;
+  max-width: 100%;
+  max-height: 1000px;
+  height: 100%;
 `
 
 const PaginationWrapper = styled.div`
@@ -73,12 +85,25 @@ const FilterContainer = styled.div`
   }
 `
 
-const Input = styled.input`
-  border-radius: 4px;
-  border: 1px solid ${COLORS.GRAY_DARK};
+const SearchInputContainer = styled.div`
   height: 40px;
+  width: 100%;
+  position: relative;
+
+  > button {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 36px;
+    height: 36px;
+  }
+`
+
+const Input = styled.input`
+  border-radius: 20px;
+  border: 1px solid ${COLORS.GRAY_DARK};
   font-family: ${FONTS.PRIMARY};
-  padding: ${SPACING.SM};
+  padding: ${SPACING.SM} ${SPACING.LG};
   outline: none;
   font-size: 16px;
   width: 100%;
@@ -88,9 +113,56 @@ const Input = styled.input`
   }
 `
 
+const SecondaryRecommendStyled = css`
+  background-color: ${COLORS.PRIMARY};
+  color: ${COLORS.GRAY_LIGHT_2};
+`
+
+const RecommendWrapper = styled.section`
+  width: 100%;
+  padding: ${SPACING.MD};
+  background-color: ${COLORS.GRAY_LIGHT_2};
+  border-radius: ${SPACING.MD};
+  color: ${COLORS.PRIMARY};
+
+  ${(props) => props.type === 'secondary' && SecondaryRecommendStyled}
+`
+
+const Title = styled.h3`
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: ${SPACING.SM};
+
+  > svg {
+    margin-left: ${SPACING.SM};
+  }
+`
+
 const Home = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
+  const [queryParam, setQueryParam] = useState({
+    searchText: '',
+    type: '',
+    publisher: '',
+    sortBy: '',
+  })
+  const [bookData, setBookData] = useState([])
+  const router = useRouter()
+
+  const handleClickSearch = () => {
+    if (Object.keys(queryParam).some((item) => queryParam[item] !== '')) {
+      router.push({pathname: '/', query: queryParam})
+    } else {
+      router.push('/')
+    }
+  }
+
+  useEffect(() => {
+    if (Object.keys(router.query).some((item) => router.query[item] !== '')) {
+      shelfService.getAllShelf().then((res) => setBookData(res.data))
+    }
+  }, [router.query])
 
   return (
     <>
@@ -107,7 +179,21 @@ const Home = () => {
           <ToolContainer>
             <SearchContainer>
               <ToolItemContainer>
-                <Input type="search" placeholder="ค้นหาหนังสือ..."></Input>
+                <SearchInputContainer>
+                  <Input
+                    type="search"
+                    placeholder="ค้นหาหนังสือ..."
+                    onChange={(e) =>
+                      setQueryParam({...queryParam, searchText: e.target.value})
+                    }
+                    value={queryParam.searchText}
+                  />
+                  <IconButton
+                    onClick={handleClickSearch}
+                    name={ICONS.faSearch}
+                    borderRadius="50%"
+                  />
+                </SearchInputContainer>
                 <IconButton
                   name={ICONS.faFilter}
                   borderRadius="8px"
@@ -117,7 +203,13 @@ const Home = () => {
               </ToolItemContainer>
               {isTriggerFilter && (
                 <FilterContainer>
-                  <SearchDropdown />
+                  <SearchDropdown
+                    dataList={TYPES}
+                    onClickDropdown={(val) =>
+                      setQueryParam({...queryParam, type: val})
+                    }
+                    showCurrentData
+                  />
                   <SearchDropdown />
                 </FilterContainer>
               )}
@@ -125,27 +217,103 @@ const Home = () => {
           </ToolContainer>
 
           <BookListContainer>
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
-            <BookCard bookInfo={BOOK_SHELF} />
+            {!router.query.searchText && (
+              <>
+                <RecommendWrapper>
+                  <Title>
+                    หนังสือยอดนิยมที่สุด <Icon name={ICONS.faFire} />
+                  </Title>
+                  <Swiper
+                    slidesPerView={1}
+                    spaceBetween={10}
+                    breakpoints={{
+                      600: {
+                        slidesPerView: 2,
+                        spaceBetween: 40,
+                      },
+                      1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 50,
+                      },
+                    }}
+                    scrollbar={{
+                      hide: true,
+                    }}
+                    modules={[Scrollbar]}
+                    className="mySwiper"
+                  >
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                  </Swiper>
+                </RecommendWrapper>
+
+                <RecommendWrapper type="secondary">
+                  <Title>
+                    หนังสือมาใหม่ <Icon name={ICONS.faCalendarDays} />
+                  </Title>
+                  <Swiper
+                    slidesPerView={1}
+                    spaceBetween={10}
+                    breakpoints={{
+                      600: {
+                        slidesPerView: 2,
+                        spaceBetween: 40,
+                      },
+                      1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 50,
+                      },
+                    }}
+                    scrollbar={{
+                      hide: true,
+                    }}
+                    modules={[Scrollbar]}
+                    className="mySwiper"
+                  >
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <BookCard bookInfo={BOOK_SHELF}></BookCard>
+                    </SwiperSlide>
+                  </Swiper>
+                </RecommendWrapper>
+              </>
+            )}
+            {bookData?.length > 0 && (
+              <>
+                {bookData.map((book) => (
+                  <BookCard key={`book-${book?._id}`} bookInfo={book} />
+                ))}
+              </>
+            )}
           </BookListContainer>
 
-          <PaginationWrapper>
-            <Pagination
-              totalPage={10}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            />
-          </PaginationWrapper>
+          {bookData?.length > 0 && (
+            <PaginationWrapper>
+              <Pagination
+                totalPage={10}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+              />
+            </PaginationWrapper>
+          )}
         </ContentWrapper>
       </BackgroundContainer>
     </>

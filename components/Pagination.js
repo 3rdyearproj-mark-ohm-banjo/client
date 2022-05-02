@@ -48,12 +48,17 @@ const Pagination = ({currentPage, onPageChange, totalPage, siblingCount}) => {
       >
         <Icon name={ICONS.faChevronLeft} />
       </PageItem>
-      {paginationRange.map((page) => {
+      {paginationRange.map((page, i) => {
         if (page === DOTS) {
-          return <PageItem disabled={true}>{DOTS}</PageItem>
+          return (
+            <PageItem key={`dot-${i}`} disabled={true}>
+              {DOTS}
+            </PageItem>
+          )
         } else {
           return (
             <PageItem
+              key={`pageNo-${page}`}
               onClick={() => onPageChange(page)}
               className={currentPage === page && '-active'}
             >

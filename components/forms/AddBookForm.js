@@ -9,13 +9,13 @@ import {YEAR} from '../../config/currentTime'
 import Icon from '../Icon'
 import {ICONS, ICON_SIZE} from '../../config/icon'
 import {useDropzone} from 'react-dropzone'
-import {TYPES} from '../../config/types-mockup'
 import SearchDropdown from '../SearchDropdown'
-import {PUBLISHERS} from '../../config/publisher-mockup'
-import {ISBN_LIST} from '../../config/isbn-mockup'
+import {ISBN_LIST} from '../../config/ISBN-mockup'
 import {BOOK_SHELF} from '../../config/bookshelf-mockup'
 import typeService from '../../api/typeService'
 import shelfService from '../../api/shelfService'
+import publisherService from '../../api/publisherService'
+import {useRouter} from 'next/router'
 
 const Form = styled.form`
   display: flex;
@@ -199,18 +199,20 @@ const TypeItem = styled.div`
 
 const AddBookForm = ({onStepChange}) => {
   const defaultBookData = {
-    isbn: '',
-    name: '',
+    ISBN: '',
+    bookName: '',
     author: '',
     firstYearOfPublication: '',
     types: [],
-    publisher: '',
+    publisherId: '',
   }
-
+  const router = useRouter()
   const [bookData, setBookData] = useState(defaultBookData)
   const [imageFile, setImageFile] = useState([])
   const [errors, setErrors] = useState([])
   const [disabledAll, setDisabledAll] = useState(false)
+  const [types, setTypes] = useState([])
+  const [publishers, setPublishers] = useState([])
   const {getRootProps} = useDropzone({
     disabled: disabledAll,
     accept: 'image/*',
@@ -267,7 +269,9 @@ const AddBookForm = ({onStepChange}) => {
 
   const submitForm = () => {
     if (validate()) {
-      shelfService.addShelf(bookData, imageFile)
+      shelfService.addShelf(bookData, imageFile).then((res) => {
+        router.push(`/shelf/${res.data.ISBN}`)
+      })
     }
   }
 
@@ -276,32 +280,23 @@ const AddBookForm = ({onStepChange}) => {
     setErrors(errors.filter((err) => err !== key))
   }
 
-  const onChangeIsbn = (isbn) => {
+  const onChangeIsbn = (ISBN) => {
     if (
-      (isbn.match(/^([^-.0-9]*)$/) && isbn.length > 0) ||
-      (/[a-zA-Z]/.test(isbn) && isbn.length > 0)
+      (ISBN.match(/^([^-.0-9]*)$/) && ISBN.length > 0) ||
+      (/[a-zA-Z]/.test(ISBN) && ISBN.length > 0) ||
+      ISBN.length > 13
     ) {
       return
     }
-    if (
-      (isbn.length === 3 && isbn.length > bookData.isbn.length) ||
-      (isbn.length === 6 && isbn.length > bookData.isbn.length) ||
-      (isbn.length === 12 && isbn.length > bookData.isbn.length) ||
-      (isbn.length === 15 && isbn.length > bookData.isbn.length)
-    ) {
-      return setBookData({...bookData, isbn: isbn + '-'})
-    }
+    setBookData({...bookData, ISBN})
 
-    if (isbn.length === 17 && isbn.replaceAll('-', '').length !== 13) {
-      setErrors([...errors, 'isbn'])
-    } else {
-      setBookData({...bookData, isbn})
-      setErrors(errors.filter((err) => err !== 'isbn'))
+    if (ISBN.length === 13) {
+      setErrors(errors.filter((err) => err !== 'ISBN'))
     }
   }
 
-  const onSuggestClick = (isbn) => {
-    shelfService.getShelfByIsbn(isbn)
+  const onSuggestClick = (ISBN) => {
+    shelfService.getShelfByIsbn(ISBN)
     setBookData(BOOK_SHELF)
     setDisabledAll(true)
   }
@@ -340,22 +335,45 @@ const AddBookForm = ({onStepChange}) => {
 
   const onClickPublisher = (pubId) => {
     setErrors(errors.filter((err) => err !== 'publisher'))
-    setBookData({...bookData, publisher: pubId})
+    setBookData({...bookData, publisherId: pubId})
   }
 
   useEffect(() => {
     if (
-      (bookData?.isbn.length === 17 && bookData?.isbn !== BOOK_SHELF.isbn) ||
-      bookData?.isbn.length < 17
+      (bookData?.ISBN.length === 17 && bookData?.ISBN !== BOOK_SHELF.ISBN) ||
+      bookData?.ISBN.length < 17
     ) {
       setDisabledAll(false)
     } else if (
-      bookData?.isbn.length === 17 &&
-      bookData?.isbn === BOOK_SHELF.isbn
+      bookData?.ISBN.length === 17 &&
+      bookData?.ISBN === BOOK_SHELF.ISBN
     ) {
       setDisabledAll(true)
     }
   }, [bookData])
+
+  useEffect(() => {
+    publisherService.getAllPublisher().then((res) =>
+      setPublishers(
+        res.data.data.map((item) => {
+          return {
+            id: item._id,
+            name: item.publisherName,
+          }
+        })
+      )
+    )
+    typeService.getAllTypes().then((res) => {
+      setTypes(
+        res.data.data.map((item) => {
+          return {
+            id: item._id,
+            name: item.typeName,
+          }
+        })
+      )
+    })
+  }, [])
 
   return (
     <>
@@ -397,24 +415,24 @@ const AddBookForm = ({onStepChange}) => {
             <Input
               type="text"
               onChange={(e) => onChangeIsbn(e.target.value)}
-              value={bookData?.isbn}
+              value={bookData?.ISBN}
               maxLength="17"
               placeholder="ISBN"
-              isError={errors?.indexOf('isbn') !== -1}
+              isError={errors?.indexOf('ISBN') !== -1}
             ></Input>
-            {bookData?.isbn.length > 0 && bookData?.isbn.length < 17 && (
+            {bookData?.ISBN.length > 0 && bookData?.ISBN.length < 17 && (
               <SuggestContainer>
-                {ISBN_LIST.map((isbn, i) => {
-                  if (isbn.startsWith(bookData?.isbn)) {
+                {ISBN_LIST.map((ISBN, i) => {
+                  if (ISBN.startsWith(bookData?.ISBN)) {
                     return (
                       <SuggestItem
-                        key={`suggest-isbn-${i}`}
+                        key={`suggest-ISBN-${i}`}
                         onClick={() => {
-                          onChangeIsbn(isbn)
-                          onSuggestClick(isbn)
+                          onChangeIsbn(ISBN)
+                          onSuggestClick(ISBN)
                         }}
                       >
-                        {isbn}
+                        {ISBN}
                       </SuggestItem>
                     )
                   }
@@ -423,9 +441,9 @@ const AddBookForm = ({onStepChange}) => {
             )}
           </SuggestInputContainer>
 
-          {errors?.indexOf('isbn') !== -1 && (
+          {errors?.indexOf('ISBN') !== -1 && (
             <ErrorText>
-              กรุณากรอก isbn เป็นตัวเลขจำนวน 13 หลัก (XXX-XX-XXXXX-XX-X)
+              กรุณากรอก ISBN เป็นตัวเลขจำนวน 13 หลัก (XXX-XX-XXXXX-XX-X)
             </ErrorText>
           )}
         </InputControl>
@@ -433,13 +451,13 @@ const AddBookForm = ({onStepChange}) => {
           <Label>ชื่อหนังสือ</Label>
           <Input
             type="text"
-            onChange={(e) => onChange('name', e.target.value)}
-            value={bookData?.name}
+            onChange={(e) => onChange('bookName', e.target.value)}
+            value={bookData?.bookName}
             placeholder="กรอกชื่อหนังสือ"
-            isError={errors?.indexOf('name') !== -1}
+            isError={errors?.indexOf('bookName') !== -1}
             disabled={disabledAll}
           ></Input>
-          {errors?.indexOf('name') !== -1 && (
+          {errors?.indexOf('bookName') !== -1 && (
             <ErrorText>กรุณากรอกชื่อหนังสือ</ErrorText>
           )}
         </InputControl>
@@ -461,15 +479,15 @@ const AddBookForm = ({onStepChange}) => {
         <InputControl width="50%">
           <Label>สำนักพิมพ์</Label>
           <SearchDropdown
-            dataList={PUBLISHERS}
+            dataList={publishers}
             onClickDropdown={onClickPublisher}
-            isError={errors?.indexOf('publisher') !== -1}
+            isError={errors?.indexOf('publisherId') !== -1}
             showCurrentData={true}
             value={bookData?.publisher}
             placeHolder="ค้นหาสำนักพิมพ์..."
             isDisabled={disabledAll}
           />
-          {errors?.indexOf('publisher') !== -1 && (
+          {errors?.indexOf('publisherId') !== -1 && (
             <ErrorText>กรุณาเลือกสำนักพิมพ์</ErrorText>
           )}
         </InputControl>
@@ -505,21 +523,24 @@ const AddBookForm = ({onStepChange}) => {
                   }}
                   disabled={disabledAll}
                 >
-                  <span>{TYPES.find((item) => item.id == type).name}</span>
+                  <span>{types.find((item) => item.id == type).name}</span>
                   <Icon name={ICONS.faXmark} />
                 </TypeItem>
               ))}
             </TypeContainer>
           )}
 
-          <SearchDropdown
-            dataList={TYPES.filter(
-              (type) => bookData.types.indexOf(type.id) === -1 && type
-            )}
-            onClickDropdown={onClickType}
-            isError={errors?.indexOf('types') !== -1}
-            isDisabled={disabledAll}
-          />
+          {types.length > 0 && (
+            <SearchDropdown
+              dataList={types?.filter(
+                (type) => bookData.types.indexOf(type.id) === -1 && type
+              )}
+              onClickDropdown={onClickType}
+              isError={errors?.indexOf('types') !== -1}
+              isDisabled={disabledAll}
+            />
+          )}
+
           {errors?.indexOf('types') !== -1 && (
             <ErrorText>กรุณาเลือกประเภทหนังสืออย่างน้อย 1 ประเภท</ErrorText>
           )}

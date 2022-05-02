@@ -11,6 +11,7 @@ import {TYPES_STYLE} from '../config/types-styles'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import {EffectFlip} from 'swiper'
 import 'swiper/css/effect-flip'
+import {LOCAL_BASE_URL} from '../config/env'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -194,16 +195,20 @@ const BookInfo = ({bookInfo}) => {
             loop={true}
           >
             <SwiperSlide>
-              <BookImage src={bookInfo.image} />
+              <BookImage
+                src={`${LOCAL_BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+              />
             </SwiperSlide>
             <SwiperSlide>
-              <BookImage src={bookInfo.image} />
+              <BookImage
+                src={`${LOCAL_BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+              />
             </SwiperSlide>
           </Swiper>
         </BookImageContainer>
         <BookInfoContainer>
-          <BookName>{bookInfo.name}</BookName>
-          <ISBN>{bookInfo.isbn}</ISBN>
+          <BookName>{bookInfo?.bookName}</BookName>
+          <ISBN>{bookInfo?.ISBN}</ISBN>
           <SectionContent padding={`${SPACING.SM} 0`}>
             <HeadText>
               <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
@@ -214,7 +219,7 @@ const BookInfo = ({bookInfo}) => {
             <ContentBox>
               ยอดการยืม
               <NumberBox>
-                {bookInfo.totalBorrow.toLocaleString('en-US')}
+                {bookInfo?.totalBorrow?.toLocaleString('en-US')}
                 <Unit>เล่ม</Unit>
               </NumberBox>
             </ContentBox>
@@ -222,7 +227,7 @@ const BookInfo = ({bookInfo}) => {
             <ContentBox>
               จำนวนที่ยืมได้
               <NumberBox>
-                {bookInfo.totalAvailable.toLocaleString('en-US')}
+                {bookInfo?.totalAvailable?.toLocaleString('en-US')}
                 <Unit>เล่ม</Unit>
               </NumberBox>
             </ContentBox>
@@ -230,7 +235,7 @@ const BookInfo = ({bookInfo}) => {
             <ContentBox>
               จำนวนในระบบ
               <NumberBox>
-                {bookInfo.totalQuantity.toLocaleString('en-US')}
+                {bookInfo?.totalQuantity?.toLocaleString('en-US')}
 
                 <Unit>เล่ม</Unit>
               </NumberBox>
@@ -239,13 +244,11 @@ const BookInfo = ({bookInfo}) => {
           <RoundBoxContainer>
             <RoundContent>
               <span>ปีแรกที่พิมพ์</span>
-              <span>{bookInfo.firstYearOfPublication}</span>
+              <span>{bookInfo?.firstYearOfPublication}</span>
             </RoundContent>
             <RoundContent>
               <span>สำนักพิมพ์</span>
-              <span>
-                {PUBLISHERS?.find((pub) => pub.id === bookInfo.publisher)?.name}
-              </span>
+              <span>{bookInfo?.publisherId?.publisherName}</span>
             </RoundContent>
           </RoundBoxContainer>
 
@@ -254,21 +257,11 @@ const BookInfo = ({bookInfo}) => {
             {bookInfo?.types?.map((type) => (
               <TypeBox
                 key={`bookType-${type}`}
-                bgColor={
-                  TYPES_STYLE[
-                    TYPES.find((typeName) => typeName.id === type)?.name
-                  ]?.color
-                }
+                bgColor={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}
               >
-                <Icon
-                  name={
-                    TYPES_STYLE[
-                      TYPES.find((typeName) => typeName.id === type)?.name
-                    ]?.icon
-                  }
-                />
+                <Icon name={TYPES_STYLE[type?.typeName?.toLowerCase()]?.icon} />
 
-                {TYPES.find((typeName) => typeName.id === type)?.name}
+                {type?.typeName}
               </TypeBox>
             ))}
           </TypeContainer>

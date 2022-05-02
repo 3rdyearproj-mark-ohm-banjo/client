@@ -13,6 +13,12 @@ import {
   faPenNib,
   faFilter,
   faBars,
+  faHome,
+  faUser,
+  faBell,
+  faFire,
+  faCalendarDays,
+  faSearch,
 } from '@fortawesome/free-solid-svg-icons'
 
 export const ICONS = {
@@ -30,6 +36,12 @@ export const ICONS = {
   faPenNib,
   faFilter,
   faBars,
+  faHome,
+  faUser,
+  faBell,
+  faFire,
+  faCalendarDays,
+  faSearch,
 }
 export const ICON_SIZE = {
   xs: 'xs',

@@ -24,7 +24,7 @@ const mdSize = css`
 
 const IconButtonStyled = styled.button`
   color: ${COLORS.PRIMARY};
-  background-color: ${COLORS.GRAY_LIGHT_3};
+  background-color: ${COLORS.GRAY_LIGHT_1};
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
   border: none;
   padding: ${SPACING.SM};

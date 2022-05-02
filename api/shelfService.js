@@ -1,11 +1,17 @@
 import axios from 'axios'
 import {LOCAL_BASE_URL} from '../config/env'
 
-const getShelfById = (id) => {}
+const getShelfById = async (id) => {
+  const res = await axios
+    .get(`${LOCAL_BASE_URL}bookShelf/bs/${id}`)
+    .then((res) => res.data)
+    .catch((err) => err.response.data)
+  return res
+}
 
 const getShelfByIsbn = async (isbn) => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf/${isbn}`)
+    .get(`${LOCAL_BASE_URL}bookShelf/bs/${isbn}`)
     .then((res) => res.data)
     .catch((err) => err.response.data)
   return res
@@ -13,17 +19,16 @@ const getShelfByIsbn = async (isbn) => {
 
 const getAllShelf = async () => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf`)
+    .get(`${LOCAL_BASE_URL}bookShelf/bs`)
     .then((res) => res.data)
     .catch((err) => err.response.data)
   return res
 }
 
 const addShelf = async (data, file) => {
-  console.log(data, typeof data?.image)
   const formData = new FormData()
   if (file) {
-    formData.append('image', file)
+    formData.append('imgfile', file[0])
   }
   formData.append('book', JSON.stringify(data))
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {BackgroundContainer, BookInfo} from '../../components'
 import {BOOK_SHELF} from '../../config/bookshelf-mockup'
 import {useRouter} from 'next/router'
@@ -41,7 +41,7 @@ const ViewMoreCard = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 28px;
-  height: 192px;
+  height: 182px;
 
   &:hover {
     cursor: pointer;
@@ -51,7 +51,7 @@ const ViewMoreCard = styled.div`
     opacity: 0.9;
   }
 
-  @media (min-width: 680px) {
+  @media (min-width: 600px) {
     max-width: 320px;
   }
 `
@@ -71,31 +71,40 @@ const RelateContentHead = styled.h4`
 
 const BookShelfPage = () => {
   const router = useRouter()
-  const shelfId = router.query.shelfId
-  if (!shelfId) {
+  const ISBN = router.query.isbn
+  const [bookShelf, setBookShelf] = useState()
+
+  useEffect(() => {
+    if (ISBN) {
+      shelfService.getShelfByIsbn(ISBN).then((res) => {
+        setBookShelf(res.data[0])
+      })
+    }
+  }, [ISBN])
+
+  if (!ISBN) {
     return <div>Loading...</div>
   }
 
-  //const data = shelfService.getShelfById(shelfId)
-  // if (!data) {
-  //   return <div>Loading...</div>
-  // }
+  if (!bookShelf) {
+    return <div>Loading...</div>
+  }
   return (
     <BackgroundContainer link={Background.src}>
-      <BookInfo bookInfo={BOOK_SHELF} />
+      <BookInfo bookInfo={bookShelf} />
       <OtherContentContainer>
-        {BOOK_SHELF.types.map((type) => (
-          <>
+        {bookShelf.types.map((type) => (
+          <React.Fragment key={`bookShelf-${type}`}>
             <RelateContentHead>
-              หนังสือ {TYPES.find((tp) => tp.id === type)?.name} เพิ่มเติม
+              หนังสือ {type?.typeName} เพิ่มเติม
             </RelateContentHead>
             <SwiperContainer>
               <Swiper
                 modules={[A11y]}
                 slidesPerView={1}
-                spaceBetween={20}
+                spaceBetween={10}
                 breakpoints={{
-                  800: {
+                  600: {
                     slidesPerView: 2,
                     spaceBetween: 40,
                   },
@@ -125,19 +134,13 @@ const BookShelfPage = () => {
                 </SwiperSlide>
 
                 <SwiperSlide>
-                  <ViewMoreCard
-                    bgColor={
-                      TYPES_STYLE[
-                        TYPES.find((typeName) => typeName.id === type)?.name
-                      ]?.color
-                    }
-                  >
+                  <ViewMoreCard bgColor={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}>
                     ดูเพิ่มเติม
                   </ViewMoreCard>
                 </SwiperSlide>
               </Swiper>
             </SwiperContainer>
-          </>
+          </React.Fragment>
         ))}
       </OtherContentContainer>
     </BackgroundContainer>

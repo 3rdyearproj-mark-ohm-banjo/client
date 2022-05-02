@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router'
 import React from 'react'
 import styled from 'styled-components'
-import {TYPES} from '../config/types-mockup'
+import {LOCAL_BASE_URL} from '../config/env'
 import {TYPES_STYLE} from '../config/types-styles'
 import {COLORS} from '../styles/colors'
 import {FONTS} from '../styles/fonts'
@@ -25,13 +25,13 @@ const Card = styled.div`
   }
 
   @media (min-width: 680px) {
-    max-width: 320px;
+    max-width: 330px;
   }
 `
 
 const BookImage = styled.img`
-  width: 120px;
-  height: 160px;
+  width: 110px;
+  height: 150px;
   object-fit: cover;
   border-radius: ${SPACING.MD};
   flex-shrink: 0;
@@ -81,19 +81,24 @@ const Author = styled.span`
   margin: 0 0 2px;
 `
 
-const BorrowCount = styled.div`
+const BorrowCount = styled.span`
   font-size: 12px;
-  color: ${COLORS.GRAY_DARK_1};
+  color: ${(props) => props.color ?? COLORS.GRAY_DARK_1};
   font-weight: 400;
   font-family: ${FONTS.SARABUN};
+
+  b {
+    font-weight: 600;
+  }
 `
 
-const ButtonWrapper = styled.div`
+const BottomZone = styled.div`
   flex-grow: 1;
   display: flex;
+  align-items: end;
 
-  > button {
-    align-self: end;
+  > * {
+    width: 100%;
   }
 `
 
@@ -101,36 +106,44 @@ const BookCard = ({bookInfo}) => {
   const router = useRouter()
 
   return (
-    <Card onClick={() => router.push(`/shelf/${bookInfo?.id}`)}>
-      <BookImage src={bookInfo?.image} alt={bookInfo?.name} />
+    <Card onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
+      <BookImage
+        src={`${LOCAL_BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+        alt={bookInfo?.bookName}
+      />
       <BookInfoContainer>
-        <BookName>{bookInfo?.name}</BookName>
+        <BookName>{bookInfo?.bookName}</BookName>
         <Types>
           {bookInfo?.types?.map((type) => (
             <Type
-              key={`bookType-${type}`}
-              color={
-                TYPES_STYLE[
-                  TYPES.find((typeName) => typeName.id === type)?.name
-                ]?.color
-              }
+              key={`bookType-${type?.id}`}
+              color={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}
             >
-              {TYPES.find((typeName) => typeName.id === type)?.name}
+              {type?.typeName}
             </Type>
           ))}
         </Types>
-        <Author>โดย {bookInfo?.author}</Author>
 
         <BorrowCount>
           <span>การยืม</span> {bookInfo?.totalBorrow.toLocaleString('en-US')}{' '}
           ครั้ง
         </BorrowCount>
 
-        <ButtonWrapper>
-          <Button btnSize="sm" fullWidth>
-            ยืมหนังสือ
-          </Button>
-        </ButtonWrapper>
+        <BorrowCount color={COLORS.PRIMARY}>
+          <span>
+            เหลือ <b>{bookInfo?.totalAvailable.toLocaleString('en-US')}</b> เล่ม
+          </span>
+        </BorrowCount>
+
+        <BottomZone>
+          {bookInfo?.totalAvailable > 0 && (
+            <Button btnSize="sm">ยืมหนังสือ</Button>
+          )}
+
+          {bookInfo?.totalAvailable === 0 && (
+            <Button btnSize="sm">ต่อคิว</Button>
+          )}
+        </BottomZone>
       </BookInfoContainer>
     </Card>
   )

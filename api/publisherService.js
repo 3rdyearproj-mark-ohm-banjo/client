@@ -1,4 +1,14 @@
-const getAllPublisher = () => {}
+import axios from 'axios'
+import {LOCAL_BASE_URL} from '../config/env'
+
+const getAllPublisher = async () => {
+  const data = await axios
+    .get(`${LOCAL_BASE_URL}publisher`)
+    .then((res) => res)
+    .catch((err) => err.response.data)
+
+  return data
+}
 
 const getPublisherById = () => {}
 

@@ -7,10 +7,9 @@ const Body = styled.section`
   background-size: cover;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
   image-rendering: -webkit-optimize-contrast;
-  margin-top: 40px;
+  margin-top: 60px;
   flex-direction: column;
 `
 

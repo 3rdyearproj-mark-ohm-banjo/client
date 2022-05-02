@@ -7,6 +7,7 @@ import AddBookForm from '../components/forms/AddBookForm'
 import Agreement from '../public/static/images/agreement.png'
 import {SPACING} from '../styles/spacing'
 import Background from '../public/static/images/background-default.png'
+import {BackgroundContainer} from '../components'
 
 const Body = styled.section`
   background: transparent url(${Background.src}) no-repeat;
@@ -60,11 +61,11 @@ const ButtonWrapper = styled.div`
   margin-top: ${SPACING['4X']};
 `
 
-const CreateBookPage = () => {
+const DonateBookPage = () => {
   const [currentStep, setCurrentStep] = useState(0)
 
   return (
-    <Body>
+    <BackgroundContainer link={Background.src}>
       <Container>
         {currentStep === 0 && (
           <>
@@ -91,8 +92,8 @@ const CreateBookPage = () => {
 
         {currentStep === 1 && <AddBookForm onStepChange={setCurrentStep} />}
       </Container>
-    </Body>
+    </BackgroundContainer>
   )
 }
 
-export default CreateBookPage
+export default DonateBookPage
