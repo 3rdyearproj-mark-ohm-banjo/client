@@ -16,6 +16,7 @@ import typeService from '../../api/typeService'
 import shelfService from '../../api/shelfService'
 import publisherService from '../../api/publisherService'
 import {useRouter} from 'next/router'
+import {LOCAL_BASE_URL} from '../../config/env'
 
 const Form = styled.form`
   display: flex;
@@ -228,8 +229,8 @@ const AddBookForm = ({onStepChange}) => {
   })
 
   useEffect(() => {
-    if (bookData?.image) {
-      setImageFile([{preview: bookData?.image}])
+    if (bookData?.imageCover) {
+      setImageFile([{preview: bookData?.imageCover}])
     }
   }, [bookData])
 
@@ -291,15 +292,21 @@ const AddBookForm = ({onStepChange}) => {
     setBookData({...bookData, ISBN})
 
     if (ISBN.length === 13) {
+      shelfService.getShelfByIsbn(ISBN).then((res) => {
+        if (res.data.length > 0) {
+          res.data[0].types = res.data[0].types.map((type) => type._id)
+          res.data[0].publisher = res.data[0].publisherId._id
+          res.data[0].imageCover = `${LOCAL_BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
+          setBookData(res.data[0])
+          setDisabledAll(true)
+        }
+      })
+
       setErrors(errors.filter((err) => err !== 'ISBN'))
     }
   }
 
-  const onSuggestClick = (ISBN) => {
-    shelfService.getShelfByIsbn(ISBN)
-    setBookData(BOOK_SHELF)
-    setDisabledAll(true)
-  }
+  const onSuggestClick = (ISBN) => {}
 
   const handleYear = (value) => {
     if (!value.match(/\d/g) && value.length > 0) {
@@ -339,23 +346,15 @@ const AddBookForm = ({onStepChange}) => {
   }
 
   useEffect(() => {
-    if (
-      (bookData?.ISBN.length === 17 && bookData?.ISBN !== BOOK_SHELF.ISBN) ||
-      bookData?.ISBN.length < 17
-    ) {
+    if (bookData?.ISBN.length < 13) {
       setDisabledAll(false)
-    } else if (
-      bookData?.ISBN.length === 17 &&
-      bookData?.ISBN === BOOK_SHELF.ISBN
-    ) {
-      setDisabledAll(true)
     }
   }, [bookData])
 
   useEffect(() => {
     publisherService.getAllPublisher().then((res) =>
       setPublishers(
-        res.data.data.map((item) => {
+        res.data.map((item) => {
           return {
             id: item._id,
             name: item.publisherName,
@@ -365,7 +364,7 @@ const AddBookForm = ({onStepChange}) => {
     )
     typeService.getAllTypes().then((res) => {
       setTypes(
-        res.data.data.map((item) => {
+        res.data.map((item) => {
           return {
             id: item._id,
             name: item.typeName,

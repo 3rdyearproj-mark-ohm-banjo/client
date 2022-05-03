@@ -2,8 +2,11 @@ import axios from 'axios'
 import {LOCAL_BASE_URL} from '../config/env'
 
 const getAllTypes = async () => {
-  const data = await axios.get(`${LOCAL_BASE_URL}type`).catch((err) => err)
-  return data
+  const res = await axios
+    .get(`${LOCAL_BASE_URL}type`)
+    .then((res) => res)
+    .catch((err) => err.response)
+  return res.data
 }
 
 const getTypeById = () => {}

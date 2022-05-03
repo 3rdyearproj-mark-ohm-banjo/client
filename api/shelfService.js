@@ -5,15 +5,15 @@ const getShelfById = async (id) => {
   const res = await axios
     .get(`${LOCAL_BASE_URL}bookShelf/bs/${id}`)
     .then((res) => res.data)
-    .catch((err) => err.response.data)
-  return res
+    .catch((err) => err.response)
+  return res.data
 }
 
 const getShelfByIsbn = async (isbn) => {
   const res = await axios
     .get(`${LOCAL_BASE_URL}bookShelf/bs/${isbn}`)
     .then((res) => res.data)
-    .catch((err) => err.response.data)
+    .catch((err) => err.response)
   return res
 }
 
@@ -21,7 +21,15 @@ const getAllShelf = async () => {
   const res = await axios
     .get(`${LOCAL_BASE_URL}bookShelf/bs`)
     .then((res) => res.data)
-    .catch((err) => err.response.data)
+    .catch((err) => err.response)
+  return res
+}
+
+const getShelfByPage = async (page, size) => {
+  const res = await axios
+    .get(`${LOCAL_BASE_URL}bookShelf/bsP?page=${page}&size=${size}`)
+    .then((res) => res.data)
+    .catch((err) => err.response)
   return res
 }
 
@@ -50,6 +58,7 @@ const deleteShelf = (id) => {}
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   getAllShelf,
+  getShelfByPage,
   getShelfById,
   getShelfByIsbn,
   addShelf,

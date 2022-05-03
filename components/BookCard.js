@@ -25,7 +25,7 @@ const Card = styled.div`
   }
 
   @media (min-width: 680px) {
-    max-width: 330px;
+    max-width: 320px;
   }
 `
 
@@ -55,6 +55,8 @@ const BookName = styled.div`
   max-height: 40px;
   line-height: 20px;
   color: ${COLORS.PRIMARY};
+
+  ${(props) => props.isLong && 'font-size: 16px;'}
 `
 
 const Types = styled.div`\
@@ -71,14 +73,6 @@ const Type = styled.div`
   border-radius: ${SPACING.MD};
   padding: 1px 6px;
   width: max-content;
-`
-
-const Author = styled.span`
-  font-size: 13px;
-  color: ${COLORS.BLACK_2};
-  font-family: ${FONTS.SARABUN};
-  font-weight: 600;
-  margin: 0 0 2px;
 `
 
 const BorrowCount = styled.span`
@@ -112,11 +106,13 @@ const BookCard = ({bookInfo}) => {
         alt={bookInfo?.bookName}
       />
       <BookInfoContainer>
-        <BookName>{bookInfo?.bookName}</BookName>
+        <BookName isLong={bookInfo?.bookName.length > 30}>
+          {bookInfo?.bookName}
+        </BookName>
         <Types>
           {bookInfo?.types?.map((type) => (
             <Type
-              key={`bookType-${type?.id}`}
+              key={`bookType-${type?._id}`}
               color={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}
             >
               {type?.typeName}
