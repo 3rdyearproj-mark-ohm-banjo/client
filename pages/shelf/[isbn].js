@@ -8,11 +8,11 @@ import {A11y} from 'swiper'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import BookCard from '../../components/BookCard'
 import Background from '../../public/static/images/background-default.png'
-import {TYPES} from '../../config/types-mockup'
 import {SPACING} from '../../styles/spacing'
 import {COLORS} from '../../styles/colors'
 import {TYPES_STYLE} from '../../config/types-styles'
 import 'swiper/css'
+import Head from 'next/head'
 
 const SwiperContainer = styled.div`
   max-width: 100%;
@@ -33,7 +33,7 @@ const ViewMoreCard = styled.div`
   width: 100%;
   overflow: hidden;
   border-radius: ${SPACING.SM};
-  background-color: ${(props) => props.bgColor ?? COLORS.WHITE};
+  background-color: ${(props) => props.bgColor ?? COLORS.PRIMARY};
   color: ${COLORS.WHITE};
   transition: 0.1s;
   user-select: none;
@@ -73,6 +73,7 @@ const BookShelfPage = () => {
   const router = useRouter()
   const ISBN = router.query.isbn
   const [bookShelf, setBookShelf] = useState()
+  const [relatedBook, setRelatedBook] = useState({})
 
   useEffect(() => {
     if (ISBN) {
@@ -82,6 +83,18 @@ const BookShelfPage = () => {
     }
   }, [ISBN])
 
+  useEffect(() => {
+    if (bookShelf) {
+      bookShelf.types.map((type) => {
+        shelfService
+          .getShelfByPage({type: type.typeName, page: 1}, 5)
+          .then((res) => {
+            setRelatedBook({...relatedBook, [type.typeName]: res.data})
+          })
+      })
+    }
+  }, [bookShelf])
+
   if (!ISBN) {
     return <div>Loading...</div>
   }
@@ -89,61 +102,62 @@ const BookShelfPage = () => {
   if (!bookShelf) {
     return <div>Loading...</div>
   }
-  return (
-    <BackgroundContainer link={Background.src}>
-      <BookInfo bookInfo={bookShelf} />
-      <OtherContentContainer>
-        {bookShelf.types.map((type) => (
-          <React.Fragment key={`bookShelf-${type}`}>
-            <RelateContentHead>
-              หนังสือ {type?.typeName} เพิ่มเติม
-            </RelateContentHead>
-            <SwiperContainer>
-              <Swiper
-                modules={[A11y]}
-                slidesPerView={1}
-                spaceBetween={10}
-                breakpoints={{
-                  600: {
-                    slidesPerView: 2,
-                    spaceBetween: 40,
-                  },
-                  1024: {
-                    slidesPerView: 3,
-                    spaceBetween: 50,
-                  },
-                }}
-                loopFillGroupWithBlank={true}
-                scrollbar={{draggable: true}}
-                className="mySwiper"
-              >
-                <SwiperSlide>
-                  <BookCard bookInfo={BOOK_SHELF} />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <BookCard bookInfo={BOOK_SHELF} />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <BookCard bookInfo={BOOK_SHELF} />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <BookCard bookInfo={BOOK_SHELF} />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <BookCard bookInfo={BOOK_SHELF} />
-                </SwiperSlide>
 
-                <SwiperSlide>
-                  <ViewMoreCard bgColor={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}>
-                    ดูเพิ่มเติม
-                  </ViewMoreCard>
-                </SwiperSlide>
-              </Swiper>
-            </SwiperContainer>
-          </React.Fragment>
-        ))}
-      </OtherContentContainer>
-    </BackgroundContainer>
+  return (
+    <>
+      <Head>
+        <title>{bookShelf?.bookName}</title>
+      </Head>
+      <BackgroundContainer link={Background.src}>
+        <BookInfo bookInfo={bookShelf} />
+        <OtherContentContainer>
+          {Object.keys(relatedBook).map((type) => (
+            <React.Fragment key={`bookShelf-${type}`}>
+              <RelateContentHead>หนังสือ {type} เพิ่มเติม</RelateContentHead>
+              <SwiperContainer>
+                <Swiper
+                  modules={[A11y]}
+                  slidesPerView={1}
+                  spaceBetween={10}
+                  breakpoints={{
+                    600: {
+                      slidesPerView: 2,
+                      spaceBetween: 40,
+                    },
+                    1024: {
+                      slidesPerView: 3,
+                      spaceBetween: 50,
+                    },
+                  }}
+                  loopFillGroupWithBlank={true}
+                  scrollbar={{draggable: true}}
+                  className="mySwiper"
+                >
+                  {relatedBook[type].map((book) => (
+                    <SwiperSlide
+                      key={`relatedBook-type${type._id}-id${book._id}`}
+                    >
+                      <BookCard bookInfo={book} />
+                    </SwiperSlide>
+                  ))}
+
+                  <SwiperSlide>
+                    <ViewMoreCard
+                      bgColor={
+                        TYPES_STYLE[type?.replace(' ', '')?.toLowerCase()]
+                          ?.color
+                      }
+                    >
+                      ดูเพิ่มเติม
+                    </ViewMoreCard>
+                  </SwiperSlide>
+                </Swiper>
+              </SwiperContainer>
+            </React.Fragment>
+          ))}
+        </OtherContentContainer>
+      </BackgroundContainer>
+    </>
   )
 }
 

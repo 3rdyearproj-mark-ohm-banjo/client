@@ -60,6 +60,7 @@ const BookName = styled.h1`
   font-weight: 650;
   margin-top: ${SPACING.LG};
   color: ${COLORS.PRIMARY};
+  line-height: 1.1em;
 `
 
 const ISBN = styled.h4`
@@ -103,7 +104,7 @@ const TypeBox = styled.div`
 const NumberGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  gap: ${SPACING.MD};
   margin: ${SPACING.MD} 0;
 `
 
@@ -220,23 +221,14 @@ const BookInfo = ({bookInfo}) => {
               ยอดการยืม
               <NumberBox>
                 {bookInfo?.totalBorrow?.toLocaleString('en-US')}
-                <Unit>เล่ม</Unit>
+                <Unit>ครั้ง</Unit>
               </NumberBox>
             </ContentBox>
 
             <ContentBox>
-              จำนวนที่ยืมได้
+              จำนวนที่ว่างให้ยืม
               <NumberBox>
                 {bookInfo?.totalAvailable?.toLocaleString('en-US')}
-                <Unit>เล่ม</Unit>
-              </NumberBox>
-            </ContentBox>
-
-            <ContentBox>
-              จำนวนในระบบ
-              <NumberBox>
-                {bookInfo?.totalQuantity?.toLocaleString('en-US')}
-
                 <Unit>เล่ม</Unit>
               </NumberBox>
             </ContentBox>
@@ -256,10 +248,18 @@ const BookInfo = ({bookInfo}) => {
           <TypeContainer>
             {bookInfo?.types?.map((type) => (
               <TypeBox
-                key={`bookType-${type}`}
-                bgColor={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}
+                key={`bookType-${type._id}`}
+                bgColor={
+                  TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
+                    ?.color
+                }
               >
-                <Icon name={TYPES_STYLE[type?.typeName?.toLowerCase()]?.icon} />
+                <Icon
+                  name={
+                    TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
+                      ?.icon ?? TYPES_STYLE['default'].icon
+                  }
+                />
 
                 {type?.typeName}
               </TypeBox>

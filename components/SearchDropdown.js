@@ -231,7 +231,10 @@ const SearchDropdown = ({
           {dataList
             ?.filter(
               (item) =>
-                item.name.includes(currentSearch) && item.id !== selectedItem
+                item?.name
+                  ?.toLowerCase()
+                  ?.includes(currentSearch?.toLowerCase()) &&
+                item.id !== selectedItem
             )
             ?.map((item, i) => (
               <OptionItem

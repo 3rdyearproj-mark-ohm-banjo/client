@@ -138,6 +138,12 @@ const Label = styled.label`
   color: ${COLORS.PRIMARY};
   margin-top: ${SPACING.SM};
   font-weight: 600;
+
+  > span {
+    font-size: 12px;
+    color: ${COLORS.RED_1};
+    font-weight: 600;
+  }
 `
 
 const Input = styled.input`
@@ -299,6 +305,7 @@ const AddBookForm = ({onStepChange}) => {
           res.data[0].imageCover = `${LOCAL_BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
           setBookData(res.data[0])
           setDisabledAll(true)
+          setErrors([])
         }
       })
 
@@ -510,7 +517,9 @@ const AddBookForm = ({onStepChange}) => {
         </InputControl>
 
         <InputControl>
-          <Label>ประเภทหนังสือ</Label>
+          <Label>
+            ประเภทหนังสือ <span>( สามารถเลือกประเภทได้สูงสุด 4 ประเภท )</span>
+          </Label>
 
           {bookData?.types.length > 0 && (
             <TypeContainer>
@@ -536,7 +545,7 @@ const AddBookForm = ({onStepChange}) => {
               )}
               onClickDropdown={onClickType}
               isError={errors?.indexOf('types') !== -1}
-              isDisabled={disabledAll}
+              isDisabled={disabledAll || bookData.types?.length > 3}
             />
           )}
 

@@ -8,6 +8,7 @@ import Agreement from '../public/static/images/agreement.png'
 import {SPACING} from '../styles/spacing'
 import Background from '../public/static/images/background-default.png'
 import {BackgroundContainer} from '../components'
+import Head from 'next/head'
 
 const Body = styled.section`
   background: transparent url(${Background.src}) no-repeat;
@@ -65,34 +66,40 @@ const DonateBookPage = () => {
   const [currentStep, setCurrentStep] = useState(0)
 
   return (
-    <BackgroundContainer link={Background.src}>
-      <Container>
-        {currentStep === 0 && (
-          <>
-            <Image src={Agreement.src} alt="agreement" />
-            {AGREEMENT_CONFIG.map((agreement, i) => (
-              <React.Fragment key={`agreement${i}`}>
-                <TitleList>{agreement.title}</TitleList>
-                <ListBox>
-                  {agreement.list.map((item, j) => (
-                    <List key={`item${j}`}>
-                      <span> {j + 1 + '.'}</span>
-                      <span>{item}</span>
-                    </List>
-                  ))}
-                </ListBox>
-              </React.Fragment>
-            ))}
+    <>
+      <Head>
+        <title>Share my Book - บริจาคหนังสือ</title>
+      </Head>
 
-            <ButtonWrapper>
-              <Button onClick={() => setCurrentStep(1)}>ยืนยันข้อตกลง</Button>
-            </ButtonWrapper>
-          </>
-        )}
+      <BackgroundContainer link={Background.src}>
+        <Container>
+          {currentStep === 0 && (
+            <>
+              <Image src={Agreement.src} alt="agreement" />
+              {AGREEMENT_CONFIG.map((agreement, i) => (
+                <React.Fragment key={`agreement${i}`}>
+                  <TitleList>{agreement.title}</TitleList>
+                  <ListBox>
+                    {agreement.list.map((item, j) => (
+                      <List key={`item${j}`}>
+                        <span> {j + 1 + '.'}</span>
+                        <span>{item}</span>
+                      </List>
+                    ))}
+                  </ListBox>
+                </React.Fragment>
+              ))}
 
-        {currentStep === 1 && <AddBookForm onStepChange={setCurrentStep} />}
-      </Container>
-    </BackgroundContainer>
+              <ButtonWrapper>
+                <Button onClick={() => setCurrentStep(1)}>ยืนยันข้อตกลง</Button>
+              </ButtonWrapper>
+            </>
+          )}
+
+          {currentStep === 1 && <AddBookForm onStepChange={setCurrentStep} />}
+        </Container>
+      </BackgroundContainer>
+    </>
   )
 }
 

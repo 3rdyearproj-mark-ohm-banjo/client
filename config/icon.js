@@ -19,6 +19,18 @@ import {
   faFire,
   faCalendarDays,
   faSearch,
+  faSquareRootVariable,
+  faGraduationCap,
+  faBuildingColumns,
+  faFlask,
+  faHeart,
+  faHatWizard,
+  faFaceLaugh,
+  faPuzzlePiece,
+  faGem,
+  faBrain,
+  faDog,
+  faLanguage,
 } from '@fortawesome/free-solid-svg-icons'
 
 export const ICONS = {
@@ -42,6 +54,18 @@ export const ICONS = {
   faFire,
   faCalendarDays,
   faSearch,
+  faSquareRootVariable,
+  faGraduationCap,
+  faBuildingColumns,
+  faFlask,
+  faHeart,
+  faHatWizard,
+  faFaceLaugh,
+  faPuzzlePiece,
+  faGem,
+  faBrain,
+  faDog,
+  faLanguage,
 }
 export const ICON_SIZE = {
   xs: 'xs',

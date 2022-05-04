@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router'
 import React from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {LOCAL_BASE_URL} from '../config/env'
 import {TYPES_STYLE} from '../config/types-styles'
 import {COLORS} from '../styles/colors'
@@ -25,7 +25,7 @@ const Card = styled.div`
   }
 
   @media (min-width: 680px) {
-    max-width: 320px;
+    max-width: 330px;
   }
 `
 
@@ -61,18 +61,25 @@ const BookName = styled.div`
 
 const Types = styled.div`\
 margin:${SPACING.XS} 0 ;
-  font-size: 11px;
+ 
   display: flex;
   flex-wrap: wrap;
   gap: ${SPACING.XS};
 `
 
+const TypeSmStyle = css`
+  font-size: 10px;
+  padding: 0 ${SPACING.SM};
+`
+
 const Type = styled.div`
+  font-size: 11px;
   background-color: ${(props) => props.color ?? COLORS.PRIMARY};
   color: ${COLORS.WHITE};
   border-radius: ${SPACING.MD};
   padding: 1px 6px;
   width: max-content;
+  ${(props) => props.size === 'sm' && TypeSmStyle}
 `
 
 const BorrowCount = styled.span`
@@ -113,7 +120,11 @@ const BookCard = ({bookInfo}) => {
           {bookInfo?.types?.map((type) => (
             <Type
               key={`bookType-${type?._id}`}
-              color={TYPES_STYLE[type?.typeName?.toLowerCase()]?.color}
+              color={
+                TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
+                  ?.color
+              }
+              size={bookInfo?.types.length > 3 ? 'sm' : ''}
             >
               {type?.typeName}
             </Type>

@@ -25,9 +25,9 @@ const getAllShelf = async () => {
   return res
 }
 
-const getShelfByPage = async (page, size) => {
+const getShelfByPage = async (params, size) => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf/bsP?page=${page}&size=${size}`)
+    .get(`${LOCAL_BASE_URL}bookShelf/bsP`, {params: {...params, size}})
     .then((res) => res.data)
     .catch((err) => err.response)
   return res

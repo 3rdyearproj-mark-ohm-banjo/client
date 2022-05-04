@@ -1,8 +1,6 @@
 import {useState, useEffect} from 'react'
-import Head from 'next/head'
 import BookCard from '../components/BookCard'
-import {BOOK_SHELF} from '../config/bookshelf-mockup'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {SPACING} from '../styles/spacing'
 import Pagination from '../components/Pagination'
 import Background from '../public/static/images/background-default.png'
@@ -12,14 +10,10 @@ import {FONTS} from '../styles/fonts'
 import BackgroundContainer from '../components/BackgroundContainer'
 import IconButton from '../components/IconButton'
 import {ICONS, ICON_SIZE} from '../config/icon'
-import {Swiper, SwiperSlide} from 'swiper/react'
-import {Scrollbar} from 'swiper'
-import 'swiper/css'
-import 'swiper/css/scrollbar'
-import {css} from 'styled-components'
 import {useRouter} from 'next/router'
 import {TYPES} from '../config/types-mockup'
 import shelfService from '../api/shelfService'
+import Head from 'next/head'
 
 const ContentWrapper = styled.section`
   max-width: 1050px;
@@ -147,28 +141,40 @@ const BreadCrumb = styled.ul`
   gap: ${SPACING.MD};
 `
 
-const Home = () => {
-  const router = useRouter()
-  const defaultParam = {
-    searchText: '',
-    type: '',
-    publisher: '',
-    sortBy: '',
-    page: 1,
+const BreadCrumbLink = styled.li`
+  &:hover {
+    transition: 0.1s;
+    cursor: pointer;
+    text-decoration: underline;
   }
+`
+
+const NoResult = styled.div`
+  height: 200px;
+  width: 100%;
+  line-height: 200px;
+  text-align: center;
+  font-size: 24px;
+  background-color: ${COLORS.GRAY_LIGHT_2};
+  border-radius: ${SPACING.MD};
+`
+
+const SearchPage = () => {
+  const router = useRouter()
+
   const pageSize = 3
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
-  const [queryParam, setQueryParam] = useState(defaultParam)
-  const [recommendBook, setRecommendBook] = useState([])
-  const [newBook, setNewBook] = useState([])
+  const [queryParam, setQueryParam] = useState(router.query)
+  const [bookData, setBookData] = useState([])
   const [totalPage, setTotalPage] = useState(0)
-  const isSearch = Object.keys(router.query).some(
-    (item) => router.query[item] !== '' && item !== 'page'
-  )
 
   const onPageChange = (pageNo) => {
     queryParam.page = pageNo
     router.push({pathname: '/search', query: queryParam})
+  }
+
+  const resetParam = () => {
+    router.push('/')
   }
 
   const handleClickSearch = () => {
@@ -176,26 +182,26 @@ const Home = () => {
   }
 
   useEffect(() => {
-    shelfService.getAllShelf().then((res) => {
-      setNewBook(res.data)
-      setRecommendBook(res.data)
-    })
-  }, [])
+    if (router.query.page) {
+      setQueryParam(router.query)
+      shelfService.getShelfByPage(router.query, pageSize).then((res) => {
+        setTotalPage(res.total)
+        setBookData(res.data)
+      })
+    }
+  }, [router.query])
 
   return (
     <>
       <Head>
-        <title>Share my Book</title>
-        <meta
-          name="description"
-          content="INT365/371 Share my Book Application"
-        />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Share my Book - ค้นหาหนังสือ</title>
       </Head>
       <BackgroundContainer link={Background.src}>
         <ContentWrapper>
           <BreadCrumb>
-            <li>หน้าแรก</li>
+            <BreadCrumbLink onClick={resetParam}>หน้าแรก</BreadCrumbLink>
+            <Icon name={ICONS.faChevronRight} size={ICON_SIZE.sm} />
+            <li>ค้นหา</li>
           </BreadCrumb>
           <ToolContainer>
             <SearchContainer>
@@ -207,7 +213,7 @@ const Home = () => {
                     onChange={(e) => {
                       setQueryParam({...queryParam, searchText: e.target.value})
                     }}
-                    value={queryParam.searchText}
+                    value={queryParam.searchText || ''}
                   />
                   <IconButton
                     onClick={handleClickSearch}
@@ -238,76 +244,20 @@ const Home = () => {
           </ToolContainer>
 
           <BookListContainer>
-            {!isSearch && (
+            {bookData?.length > 0 && (
               <>
-                <RecommendWrapper>
-                  <Title>
-                    หนังสือยอดนิยมที่สุด <Icon name={ICONS.faFire} />
-                  </Title>
-                  <Swiper
-                    slidesPerView={1}
-                    spaceBetween={10}
-                    breakpoints={{
-                      600: {
-                        slidesPerView: 2,
-                        spaceBetween: 40,
-                      },
-                      1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 50,
-                      },
-                    }}
-                    scrollbar={{
-                      hide: true,
-                    }}
-                    modules={[Scrollbar]}
-                    loop={true}
-                    className="mySwiper"
-                  >
-                    {recommendBook.map((book) => (
-                      <SwiperSlide key={`recommendBook-${book._id}`}>
-                        <BookCard bookInfo={book}></BookCard>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </RecommendWrapper>
-
-                <RecommendWrapper type="secondary">
-                  <Title>
-                    หนังสือมาใหม่ <Icon name={ICONS.faCalendarDays} />
-                  </Title>
-                  <Swiper
-                    slidesPerView={1}
-                    spaceBetween={10}
-                    breakpoints={{
-                      600: {
-                        slidesPerView: 2,
-                        spaceBetween: 40,
-                      },
-                      1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 50,
-                      },
-                    }}
-                    scrollbar={{
-                      hide: true,
-                    }}
-                    modules={[Scrollbar]}
-                    loop={true}
-                    className="mySwiper"
-                  >
-                    {newBook.map((book) => (
-                      <SwiperSlide key={`newBook-${book._id}`}>
-                        <BookCard bookInfo={book}></BookCard>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </RecommendWrapper>
+                {bookData.map((book) => (
+                  <BookCard key={`book-${book?._id}`} bookInfo={book} />
+                ))}
               </>
+            )}
+
+            {bookData?.length === 0 && (
+              <NoResult>ขออภัย ไม่พบข้อมูลการค้นหานี้</NoResult>
             )}
           </BookListContainer>
 
-          {Math.ceil(totalPage / pageSize) > 1 && isSearch && (
+          {Math.ceil(totalPage / pageSize) > 1 && (
             <PaginationWrapper>
               <Pagination
                 totalPage={Math.ceil(totalPage / pageSize)}
@@ -322,4 +272,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default SearchPage
