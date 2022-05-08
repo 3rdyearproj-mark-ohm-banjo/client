@@ -1,6 +1,6 @@
 export const default_param = {
   searchText: '',
-  type: '',
+  types: '',
   publisher: '',
   sortBy: '',
   page: 1,

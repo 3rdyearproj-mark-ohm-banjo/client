@@ -7,6 +7,7 @@ import {COLORS} from '../styles/colors'
 import {FONTS} from '../styles/fonts'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
+import Image from 'next/image'
 
 const Card = styled.div`
   display: flex;
@@ -29,12 +30,13 @@ const Card = styled.div`
   }
 `
 
-const BookImage = styled.img`
+const BookImageContainer = styled.div`
   width: 110px;
   height: 150px;
-  object-fit: cover;
   border-radius: ${SPACING.MD};
+  overflow: hidden;
   flex-shrink: 0;
+  position: relative;
 `
 
 const BookInfoContainer = styled.div`
@@ -108,10 +110,14 @@ const BookCard = ({bookInfo}) => {
 
   return (
     <Card onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
-      <BookImage
-        src={`${BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
-        alt={bookInfo?.bookName}
-      />
+      <BookImageContainer>
+        <Image
+          src={`${BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+          alt={bookInfo?.bookName}
+          layout="fill"
+          objectFit="cover"
+        />
+      </BookImageContainer>
       <BookInfoContainer>
         <BookName isLong={bookInfo?.bookName.length > 30}>
           {bookInfo?.bookName}

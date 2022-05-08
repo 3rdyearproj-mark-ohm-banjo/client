@@ -45,14 +45,16 @@ const IconButton = ({
   isActive,
   isDisabled,
   btnSize,
+  type,
 }) => {
   return (
     <IconButtonStyled
-      onClick={() => !isDisabled && onClick()}
+      onClick={() => !isDisabled && type !== 'submit' && onClick()}
       borderRadius={borderRadius}
       isActive={isActive}
       isDisabled={isDisabled}
       btnSize={btnSize}
+      type={type}
     >
       <Icon name={name} />
     </IconButtonStyled>
@@ -66,6 +68,7 @@ IconButton.propTypes = {
   isActive: PropTypes.bool,
   isDisabled: PropTypes.bool,
   btnSize: PropTypes.oneOf(['sm', 'md', 'lg']),
+  type: PropTypes.string,
 }
 
 IconButton.defaultProps = {

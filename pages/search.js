@@ -11,7 +11,6 @@ import BackgroundContainer from '../components/BackgroundContainer'
 import IconButton from '../components/IconButton'
 import {ICONS, ICON_SIZE} from '../config/icon'
 import {useRouter} from 'next/router'
-import {TYPES} from '../config/types-mockup'
 import shelfService from '../api/shelfService'
 import Head from 'next/head'
 import {default_param} from '../config/searchQuery'
@@ -57,8 +56,6 @@ const ToolContainer = styled.section`
   padding: ${SPACING.MD};
 `
 
-const SearchContainer = styled.div``
-
 const ToolItemContainer = styled.div`
   display: flex;
   gap: ${SPACING.LG};
@@ -84,7 +81,7 @@ const FilterContainer = styled.div`
   }
 `
 
-const SearchInputContainer = styled.div`
+const SearchInputContainer = styled.form`
   height: 40px;
   width: 100%;
   position: relative;
@@ -110,11 +107,6 @@ const Input = styled.input`
   &:focus {
     border-color: ${COLORS.PRIMARY};
   }
-`
-
-const SecondaryRecommendStyled = css`
-  background-color: ${COLORS.PRIMARY};
-  color: ${COLORS.GRAY_LIGHT_2};
 `
 
 const BreadCrumb = styled.ul`
@@ -161,6 +153,7 @@ const TypeItem = styled.div`
   gap: 8px;
   cursor: pointer;
   transition: 200ms;
+  user-select: none;
 
   &:hover {
     opacity: 0.7;
@@ -177,11 +170,16 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
   const [totalPage, setTotalPage] = useState(0)
 
   const onPageChange = (page) => {
-    router.push({pathname: '/search', query: {...queryParam, page}})
+    router.push({
+      pathname: '/search',
+      query: {...queryParam, page},
+      shallow: true,
+    })
   }
 
-  const handleClickSearch = () => {
-    router.push({pathname: '/search', query: queryParam})
+  const handleClickSearch = (e) => {
+    e.preventDefault()
+    router.push({pathname: '/search', query: queryParam, shallow: true})
   }
 
   useEffect(() => {
@@ -196,7 +194,7 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
 
   useEffect(() => {
     if (isEmptyQuery) {
-      router.push({pathname: '/search', query: default_param})
+      router.push({pathname: '/search', query: default_param, shallow: true})
     }
   }, [isEmptyQuery])
 
@@ -215,9 +213,9 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
             <li>ค้นหา</li>
           </BreadCrumb>
           <ToolContainer>
-            <SearchContainer>
+            <div>
               <ToolItemContainer>
-                <SearchInputContainer>
+                <SearchInputContainer onSubmit={handleClickSearch}>
                   <Input
                     type="search"
                     placeholder="ค้นหาหนังสือ..."
@@ -227,7 +225,7 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
                     value={queryParam.searchText || ''}
                   />
                   <IconButton
-                    onClick={handleClickSearch}
+                    type="submit"
                     name={ICONS.faSearch}
                     borderRadius="50%"
                   />
@@ -241,28 +239,6 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
               </ToolItemContainer>
               {isTriggerFilter && (
                 <FilterContainer>
-                  {currentTypes?.length > 0 && (
-                    <TypeContainer>
-                      {currentTypes?.map((type) => (
-                        <TypeItem
-                          key={type}
-                          onClick={() => {
-                            router.push({
-                              pathname: 'search',
-                              query: {
-                                ...queryParam,
-                                types: currentTypes
-                                  .filter((currentType) => currentType !== type)
-                                  .toString(),
-                              },
-                            })
-                          }}
-                        >
-                          {types.find((item) => item.id === type)?.name}
-                        </TypeItem>
-                      ))}
-                    </TypeContainer>
-                  )}
                   <SearchDropdown
                     dataList={
                       currentTypes
@@ -280,8 +256,10 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
                             ? queryParam.types + ',' + val
                             : val,
                         },
+                        shallow: true,
                       })
                     }
+                    placeHolder="ค้นหาประเภทหนังสือ..."
                   />
                   <SearchDropdown
                     dataList={publishers}
@@ -289,15 +267,39 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
                       router.push({
                         pathname: '/search',
                         query: {...queryParam, publisher: val},
+                        shallow: true,
                       })
                     }
                     placeHolder="ค้นหาสำนักพิมพ์..."
                     showCurrentData
                     value={router?.query?.publisher}
                   />
+                  {currentTypes?.length > 0 && (
+                    <TypeContainer>
+                      {currentTypes?.map((type) => (
+                        <TypeItem
+                          key={type}
+                          onClick={() => {
+                            router.push({
+                              pathname: 'search',
+                              query: {
+                                ...queryParam,
+                                types: currentTypes
+                                  .filter((currentType) => currentType !== type)
+                                  .toString(),
+                              },
+                              shallow: true,
+                            })
+                          }}
+                        >
+                          {types.find((item) => item.id === type)?.name}
+                        </TypeItem>
+                      ))}
+                    </TypeContainer>
+                  )}
                 </FilterContainer>
               )}
-            </SearchContainer>
+            </div>
           </ToolContainer>
 
           <BookListContainer>
