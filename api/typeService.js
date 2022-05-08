@@ -1,9 +1,9 @@
 import axios from 'axios'
-import {LOCAL_BASE_URL} from '../config/env'
+import {BASE_URL} from '../config/env'
 
 const getAllTypes = async () => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}type`)
+    .get(`${BASE_URL}type`)
     .then((res) => res)
     .catch((err) => err.response)
   return res.data

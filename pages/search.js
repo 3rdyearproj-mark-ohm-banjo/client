@@ -14,6 +14,9 @@ import {useRouter} from 'next/router'
 import {TYPES} from '../config/types-mockup'
 import shelfService from '../api/shelfService'
 import Head from 'next/head'
+import {default_param} from '../config/searchQuery'
+import publisherService from '../api/publisherService'
+import typeService from '../api/typeService'
 
 const ContentWrapper = styled.section`
   max-width: 1050px;
@@ -74,6 +77,7 @@ const FilterContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
+  flex-wrap: wrap;
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -113,26 +117,6 @@ const SecondaryRecommendStyled = css`
   color: ${COLORS.GRAY_LIGHT_2};
 `
 
-const RecommendWrapper = styled.section`
-  width: 100%;
-  padding: ${SPACING.MD};
-  background-color: ${COLORS.GRAY_LIGHT_2};
-  border-radius: ${SPACING.MD};
-  color: ${COLORS.PRIMARY};
-
-  ${(props) => props.type === 'secondary' && SecondaryRecommendStyled}
-`
-
-const Title = styled.h3`
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: ${SPACING.SM};
-
-  > svg {
-    margin-left: ${SPACING.SM};
-  }
-`
-
 const BreadCrumb = styled.ul`
   display: flex;
   align-self: start;
@@ -159,22 +143,41 @@ const NoResult = styled.div`
   border-radius: ${SPACING.MD};
 `
 
-const SearchPage = () => {
-  const router = useRouter()
+const TypeContainer = styled.section`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${SPACING.SM};
+  flex-basis: 100%;
+`
 
+const TypeItem = styled.div`
+  display: flex;
+  align-items: center;
+  width: max-content;
+  padding: 4px 12px;
+  background-color: ${COLORS.PRIMARY};
+  border-radius: 6px;
+  color: ${COLORS.WHITE};
+  gap: 8px;
+  cursor: pointer;
+  transition: 200ms;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`
+
+const SearchPage = ({isEmptyQuery, publishers, types}) => {
+  const router = useRouter()
   const pageSize = 3
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
   const [queryParam, setQueryParam] = useState(router.query)
+  const currentTypes = router?.query?.types && router?.query?.types?.split(',')
   const [bookData, setBookData] = useState([])
   const [totalPage, setTotalPage] = useState(0)
 
-  const onPageChange = (pageNo) => {
-    queryParam.page = pageNo
-    router.push({pathname: '/search', query: queryParam})
-  }
-
-  const resetParam = () => {
-    router.push('/')
+  const onPageChange = (page) => {
+    router.push({pathname: '/search', query: {...queryParam, page}})
   }
 
   const handleClickSearch = () => {
@@ -189,7 +192,13 @@ const SearchPage = () => {
         setBookData(res.data)
       })
     }
-  }, [router.query])
+  }, [router])
+
+  useEffect(() => {
+    if (isEmptyQuery) {
+      router.push({pathname: '/search', query: default_param})
+    }
+  }, [isEmptyQuery])
 
   return (
     <>
@@ -199,7 +208,9 @@ const SearchPage = () => {
       <BackgroundContainer link={Background.src}>
         <ContentWrapper>
           <BreadCrumb>
-            <BreadCrumbLink onClick={resetParam}>หน้าแรก</BreadCrumbLink>
+            <BreadCrumbLink onClick={() => router.push('/')}>
+              หน้าแรก
+            </BreadCrumbLink>
             <Icon name={ICONS.faChevronRight} size={ICON_SIZE.sm} />
             <li>ค้นหา</li>
           </BreadCrumb>
@@ -230,14 +241,60 @@ const SearchPage = () => {
               </ToolItemContainer>
               {isTriggerFilter && (
                 <FilterContainer>
+                  {currentTypes?.length > 0 && (
+                    <TypeContainer>
+                      {currentTypes?.map((type) => (
+                        <TypeItem
+                          key={type}
+                          onClick={() => {
+                            router.push({
+                              pathname: 'search',
+                              query: {
+                                ...queryParam,
+                                types: currentTypes
+                                  .filter((currentType) => currentType !== type)
+                                  .toString(),
+                              },
+                            })
+                          }}
+                        >
+                          {types.find((item) => item.id === type)?.name}
+                        </TypeItem>
+                      ))}
+                    </TypeContainer>
+                  )}
                   <SearchDropdown
-                    dataList={TYPES}
-                    onClickDropdown={(val) =>
-                      setQueryParam({...queryParam, type: val})
+                    dataList={
+                      currentTypes
+                        ? types.filter(
+                            (type) => currentTypes.indexOf(type.id) === -1
+                          )
+                        : types
                     }
-                    showCurrentData
+                    onClickDropdown={(val) =>
+                      router.push({
+                        pathname: '/search',
+                        query: {
+                          ...queryParam,
+                          types: queryParam.types
+                            ? queryParam.types + ',' + val
+                            : val,
+                        },
+                      })
+                    }
                   />
-                  <SearchDropdown />
+                  <SearchDropdown
+                    dataList={publishers}
+                    onClickDropdown={(val) =>
+                      router.push({
+                        pathname: '/search',
+                        query: {...queryParam, publisher: val},
+                      })
+                    }
+                    placeHolder="ค้นหาสำนักพิมพ์..."
+                    showCurrentData
+                    value={router?.query?.publisher}
+                  />
                 </FilterContainer>
               )}
             </SearchContainer>
@@ -273,3 +330,31 @@ const SearchPage = () => {
 }
 
 export default SearchPage
+
+export const getServerSideProps = async (context) => {
+  const publishers = await publisherService.getAllPublisher().then((res) =>
+    res.data.map((item) => {
+      return {
+        id: item._id,
+        name: item.publisherName,
+      }
+    })
+  )
+
+  const types = await typeService.getAllTypes().then((res) =>
+    res.data.map((item) => {
+      return {
+        id: item._id,
+        name: item.typeName,
+      }
+    })
+  )
+
+  return {
+    props: {
+      isEmptyQuery: Object.keys(context.query).length < 1 ? true : false,
+      publishers,
+      types,
+    },
+  }
+}

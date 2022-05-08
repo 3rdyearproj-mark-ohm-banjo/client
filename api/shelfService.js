@@ -1,9 +1,9 @@
 import axios from 'axios'
-import {LOCAL_BASE_URL} from '../config/env'
+import {BASE_URL} from '../config/env'
 
 const getShelfById = async (id) => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf/bs/${id}`)
+    .get(`${BASE_URL}bookShelf/bs/${id}`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res.data
@@ -11,7 +11,7 @@ const getShelfById = async (id) => {
 
 const getShelfByIsbn = async (isbn) => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf/bs/${isbn}`)
+    .get(`${BASE_URL}bookShelf/bs/${isbn}`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -19,7 +19,7 @@ const getShelfByIsbn = async (isbn) => {
 
 const getAllShelf = async () => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf/bs`)
+    .get(`${BASE_URL}bookShelf/bs`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -27,7 +27,7 @@ const getAllShelf = async () => {
 
 const getShelfByPage = async (params, size) => {
   const res = await axios
-    .get(`${LOCAL_BASE_URL}bookShelf/bsP`, {params: {...params, size}})
+    .get(`${BASE_URL}bookShelf/bsP`, {params: {...params, size}})
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -41,7 +41,7 @@ const addShelf = async (data, file) => {
   formData.append('book', JSON.stringify(data))
 
   const res = await axios
-    .post(`${LOCAL_BASE_URL}bookShelf/bs`, formData, {
+    .post(`${BASE_URL}bookShelf/bs`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

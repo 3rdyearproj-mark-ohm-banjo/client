@@ -11,12 +11,11 @@ import {ICONS, ICON_SIZE} from '../../config/icon'
 import {useDropzone} from 'react-dropzone'
 import SearchDropdown from '../SearchDropdown'
 import {ISBN_LIST} from '../../config/ISBN-mockup'
-import {BOOK_SHELF} from '../../config/bookshelf-mockup'
 import typeService from '../../api/typeService'
 import shelfService from '../../api/shelfService'
 import publisherService from '../../api/publisherService'
 import {useRouter} from 'next/router'
-import {LOCAL_BASE_URL} from '../../config/env'
+import {BASE_URL} from '../../config/env'
 
 const Form = styled.form`
   display: flex;
@@ -302,7 +301,7 @@ const AddBookForm = ({onStepChange}) => {
         if (res.data.length > 0) {
           res.data[0].types = res.data[0].types.map((type) => type._id)
           res.data[0].publisher = res.data[0].publisherId._id
-          res.data[0].imageCover = `${LOCAL_BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
+          res.data[0].imageCover = `${BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
           setBookData(res.data[0])
           setDisabledAll(true)
           setErrors([])
@@ -384,18 +383,7 @@ const AddBookForm = ({onStepChange}) => {
   return (
     <>
       <Title>กรอกข้อมูลหนังสือของคุณ</Title>
-      {!bookData?.image && imageFile.length < 1 ? (
-        <>
-          <UploadContainer {...getRootProps()}>
-            <span>ลากและวางไฟล์รูปภาพหนังสือที่นี่</span>
-
-            <UploadButton>
-              <Icon name={ICONS.faDownload} size={ICON_SIZE['lg']} />
-              <span>อัปโหลดไฟล์</span>
-            </UploadButton>
-          </UploadContainer>
-        </>
-      ) : (
+      {(bookData?.imageCover || imageFile.length > 0) && (
         <>
           <label {...getRootProps()}>
             <ImageContainer>
@@ -416,7 +404,13 @@ const AddBookForm = ({onStepChange}) => {
 
       <Form>
         <InputControl>
-          <Label>ISBN</Label>
+          <Label>
+            ISBN{' '}
+            <span>
+              ( หากในระบบมีข้อมูลหนังสือที่ตรงกับ ISBN นี้แล้ว
+              ระบบจะเติมข้อมูลส่วนที่เหลือให้ )
+            </span>
+          </Label>
           <SuggestInputContainer>
             <Input
               type="text"
@@ -488,7 +482,7 @@ const AddBookForm = ({onStepChange}) => {
             dataList={publishers}
             onClickDropdown={onClickPublisher}
             isError={errors?.indexOf('publisherId') !== -1}
-            showCurrentData={true}
+            showCurrentData
             value={bookData?.publisher}
             placeHolder="ค้นหาสำนักพิมพ์..."
             isDisabled={disabledAll}
@@ -553,6 +547,17 @@ const AddBookForm = ({onStepChange}) => {
             <ErrorText>กรุณาเลือกประเภทหนังสืออย่างน้อย 1 ประเภท</ErrorText>
           )}
         </InputControl>
+
+        {!bookData?.image && imageFile.length < 1 && (
+          <UploadContainer {...getRootProps()}>
+            <span>ลากและวางไฟล์รูปภาพหนังสือที่นี่</span>
+
+            <UploadButton>
+              <Icon name={ICONS.faDownload} size={ICON_SIZE['lg']} />
+              <span>อัปโหลดไฟล์</span>
+            </UploadButton>
+          </UploadContainer>
+        )}
       </Form>
 
       <ButtonWrapper>

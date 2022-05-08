@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import {BackgroundContainer, BookInfo} from '../../components'
-import {BOOK_SHELF} from '../../config/bookshelf-mockup'
 import {useRouter} from 'next/router'
 import shelfService from '../../api/shelfService'
 import styled from 'styled-components'
@@ -13,6 +12,7 @@ import {COLORS} from '../../styles/colors'
 import {TYPES_STYLE} from '../../config/types-styles'
 import 'swiper/css'
 import Head from 'next/head'
+import {default_param} from '../../config/searchQuery'
 
 const SwiperContainer = styled.div`
   max-width: 100%;
@@ -69,40 +69,8 @@ const RelateContentHead = styled.h4`
   user-select: none;
 `
 
-const BookShelfPage = () => {
+const BookShelfPage = ({bookShelf, relatedBook}) => {
   const router = useRouter()
-  const ISBN = router.query.isbn
-  const [bookShelf, setBookShelf] = useState()
-  const [relatedBook, setRelatedBook] = useState({})
-
-  useEffect(() => {
-    if (ISBN) {
-      shelfService.getShelfByIsbn(ISBN).then((res) => {
-        setBookShelf(res.data[0])
-      })
-    }
-  }, [ISBN])
-
-  useEffect(() => {
-    if (bookShelf) {
-      bookShelf.types.map((type) => {
-        shelfService
-          .getShelfByPage({type: type.typeName, page: 1}, 5)
-          .then((res) => {
-            setRelatedBook({...relatedBook, [type.typeName]: res.data})
-          })
-      })
-    }
-  }, [bookShelf])
-
-  if (!ISBN) {
-    return <div>Loading...</div>
-  }
-
-  if (!bookShelf) {
-    return <div>Loading...</div>
-  }
-
   return (
     <>
       <Head>
@@ -111,9 +79,11 @@ const BookShelfPage = () => {
       <BackgroundContainer link={Background.src}>
         <BookInfo bookInfo={bookShelf} />
         <OtherContentContainer>
-          {Object.keys(relatedBook).map((type) => (
-            <React.Fragment key={`bookShelf-${type}`}>
-              <RelateContentHead>หนังสือ {type} เพิ่มเติม</RelateContentHead>
+          {relatedBook.map((item) => (
+            <React.Fragment key={`bookShelf-${item.type.typeName}`}>
+              <RelateContentHead>
+                หนังสือ {item.type.typeName} เพิ่มเติม
+              </RelateContentHead>
               <SwiperContainer>
                 <Swiper
                   modules={[A11y]}
@@ -133,9 +103,9 @@ const BookShelfPage = () => {
                   scrollbar={{draggable: true}}
                   className="mySwiper"
                 >
-                  {relatedBook[type].map((book) => (
+                  {item?.data?.map((book) => (
                     <SwiperSlide
-                      key={`relatedBook-type${type._id}-id${book._id}`}
+                      key={`relatedBook-type${item.type.typeName}-id${book._id}`}
                     >
                       <BookCard bookInfo={book} />
                     </SwiperSlide>
@@ -144,8 +114,15 @@ const BookShelfPage = () => {
                   <SwiperSlide>
                     <ViewMoreCard
                       bgColor={
-                        TYPES_STYLE[type?.replace(' ', '')?.toLowerCase()]
-                          ?.color
+                        TYPES_STYLE[
+                          item.type.typeName?.replace(' ', '')?.toLowerCase()
+                        ]?.color
+                      }
+                      onClick={() =>
+                        router.push({
+                          pathname: '/search',
+                          query: {...default_param, type: item.type.id},
+                        })
                       }
                     >
                       ดูเพิ่มเติม
@@ -162,3 +139,35 @@ const BookShelfPage = () => {
 }
 
 export default BookShelfPage
+
+export const getServerSideProps = async (context) => {
+  const {isbn} = context.query
+  const bookShelf = await shelfService
+    .getShelfByIsbn(isbn)
+    .then((res) => res.data[0])
+
+  const relatedBook = await Promise.all(
+    bookShelf.types.map(async (type) => {
+      const data = await shelfService
+        .getShelfByPage({type: type.typeName, page: 1}, 5)
+        .then((res) => {
+          return res.data
+        })
+
+      return {
+        type: {
+          id: type._id,
+          typeName: type.typeName,
+        },
+        data,
+      }
+    })
+  )
+
+  return {
+    props: {
+      bookShelf,
+      relatedBook,
+    },
+  }
+}

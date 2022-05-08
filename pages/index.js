@@ -20,6 +20,7 @@ import {css} from 'styled-components'
 import {useRouter} from 'next/router'
 import {TYPES} from '../config/types-mockup'
 import shelfService from '../api/shelfService'
+import {default_param} from '../config/searchQuery'
 
 const ContentWrapper = styled.section`
   max-width: 1050px;
@@ -149,16 +150,9 @@ const BreadCrumb = styled.ul`
 
 const Home = () => {
   const router = useRouter()
-  const defaultParam = {
-    searchText: '',
-    type: '',
-    publisher: '',
-    sortBy: '',
-    page: 1,
-  }
   const pageSize = 3
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
-  const [queryParam, setQueryParam] = useState(defaultParam)
+  const [queryParam, setQueryParam] = useState(default_param)
   const [recommendBook, setRecommendBook] = useState([])
   const [newBook, setNewBook] = useState([])
   const [totalPage, setTotalPage] = useState(0)
