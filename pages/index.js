@@ -1,7 +1,6 @@
 import {useState, useEffect} from 'react'
 import Head from 'next/head'
 import BookCard from '../components/BookCard'
-import {BOOK_SHELF} from '../config/bookshelf-mockup'
 import styled from 'styled-components'
 import {SPACING} from '../styles/spacing'
 import Pagination from '../components/Pagination'
@@ -11,7 +10,7 @@ import {Icon, SearchDropdown} from '../components'
 import {FONTS} from '../styles/fonts'
 import BackgroundContainer from '../components/BackgroundContainer'
 import IconButton from '../components/IconButton'
-import {ICONS, ICON_SIZE} from '../config/icon'
+import {ICONS} from '../config/icon'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import {Scrollbar} from 'swiper'
 import 'swiper/css'
@@ -19,22 +18,9 @@ import 'swiper/css/scrollbar'
 import {css} from 'styled-components'
 import {useRouter} from 'next/router'
 import {TYPES} from '../config/types-mockup'
-import shelfService from '../api/shelfService'
+import shelfService from '../api/request/shelfService'
 import {default_param} from '../config/searchQuery'
-
-const ContentWrapper = styled.section`
-  max-width: 1050px;
-  width: 100%;
-  margin: 30px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: ${SPACING.MD};
-  background-color: ${COLORS.GRAY_LIGHT_3};
-  border-radius: ${SPACING.MD};
-  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
-`
+import {ContentWrapper} from '../components/Layout'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -150,20 +136,10 @@ const BreadCrumb = styled.ul`
 
 const Home = () => {
   const router = useRouter()
-  const pageSize = 3
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
   const [queryParam, setQueryParam] = useState(default_param)
   const [recommendBook, setRecommendBook] = useState([])
   const [newBook, setNewBook] = useState([])
-  const [totalPage, setTotalPage] = useState(0)
-  const isSearch = Object.keys(router.query).some(
-    (item) => router.query[item] !== '' && item !== 'page'
-  )
-
-  const onPageChange = (pageNo) => {
-    queryParam.page = pageNo
-    router.push({pathname: '/search', query: queryParam})
-  }
 
   const handleClickSearch = () => {
     router.push({pathname: '/search', query: queryParam})
@@ -232,84 +208,70 @@ const Home = () => {
           </ToolContainer>
 
           <BookListContainer>
-            {!isSearch && (
-              <>
-                <RecommendWrapper>
-                  <Title>
-                    หนังสือยอดนิยมที่สุด <Icon name={ICONS.faFire} />
-                  </Title>
-                  <Swiper
-                    slidesPerView={1}
-                    spaceBetween={10}
-                    breakpoints={{
-                      600: {
-                        slidesPerView: 2,
-                        spaceBetween: 40,
-                      },
-                      1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 50,
-                      },
-                    }}
-                    scrollbar={{
-                      hide: true,
-                    }}
-                    modules={[Scrollbar]}
-                    loop={true}
-                    className="mySwiper"
-                  >
-                    {recommendBook.map((book) => (
-                      <SwiperSlide key={`recommendBook-${book._id}`}>
-                        <BookCard bookInfo={book}></BookCard>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </RecommendWrapper>
+            <RecommendWrapper>
+              <Title>
+                หนังสือยอดนิยมที่สุด <Icon name={ICONS.faFire} />
+              </Title>
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                breakpoints={{
+                  600: {
+                    slidesPerView: 2,
+                    spaceBetween: 40,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 50,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                modules={[Scrollbar]}
+                loop={true}
+                className="mySwiper"
+              >
+                {recommendBook.map((book) => (
+                  <SwiperSlide key={`recommendBook-${book._id}`}>
+                    <BookCard bookInfo={book}></BookCard>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </RecommendWrapper>
 
-                <RecommendWrapper type="secondary">
-                  <Title>
-                    หนังสือมาใหม่ <Icon name={ICONS.faCalendarDays} />
-                  </Title>
-                  <Swiper
-                    slidesPerView={1}
-                    spaceBetween={10}
-                    breakpoints={{
-                      600: {
-                        slidesPerView: 2,
-                        spaceBetween: 40,
-                      },
-                      1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 50,
-                      },
-                    }}
-                    scrollbar={{
-                      hide: true,
-                    }}
-                    modules={[Scrollbar]}
-                    loop={true}
-                    className="mySwiper"
-                  >
-                    {newBook.map((book) => (
-                      <SwiperSlide key={`newBook-${book._id}`}>
-                        <BookCard bookInfo={book}></BookCard>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </RecommendWrapper>
-              </>
-            )}
+            <RecommendWrapper type="secondary">
+              <Title>
+                หนังสือมาใหม่ <Icon name={ICONS.faCalendarDays} />
+              </Title>
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                breakpoints={{
+                  600: {
+                    slidesPerView: 2,
+                    spaceBetween: 40,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 50,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                modules={[Scrollbar]}
+                loop={true}
+                className="mySwiper"
+              >
+                {newBook.map((book) => (
+                  <SwiperSlide key={`newBook-${book._id}`}>
+                    <BookCard bookInfo={book}></BookCard>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </RecommendWrapper>
           </BookListContainer>
-
-          {Math.ceil(totalPage / pageSize) > 1 && isSearch && (
-            <PaginationWrapper>
-              <Pagination
-                totalPage={Math.ceil(totalPage / pageSize)}
-                currentPage={parseInt(queryParam.page)}
-                onPageChange={onPageChange}
-              />
-            </PaginationWrapper>
-          )}
         </ContentWrapper>
       </BackgroundContainer>
     </>

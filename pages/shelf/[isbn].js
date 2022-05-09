@@ -1,7 +1,7 @@
 import React from 'react'
 import {BackgroundContainer, BookInfo} from '../../components'
 import {useRouter} from 'next/router'
-import shelfService from '../../api/shelfService'
+import shelfService from '../../api/request/shelfService'
 import styled from 'styled-components'
 import {A11y} from 'swiper'
 import {Swiper, SwiperSlide} from 'swiper/react'

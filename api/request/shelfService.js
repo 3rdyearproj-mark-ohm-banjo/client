@@ -1,11 +1,8 @@
 import axios from 'axios'
-import {BASE_URL} from '../config/env'
+import {BASE_URL} from '../../config/env'
 
 const getShelfById = async (id) => {
-  const res = await axios
-    .get(`${BASE_URL}bookShelf/bs/${id}`)
-    .then((res) => res.data)
-    .catch((err) => err.response)
+  const res = await axios.get(`${BASE_URL}bookShelf/bs/${id}`)
   return res.data
 }
 

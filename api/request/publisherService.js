@@ -1,12 +1,8 @@
 import axios from 'axios'
-import {BASE_URL} from '../config/env'
+import {BASE_URL} from '../../config/env'
 
 const getAllPublisher = async () => {
-  const res = await axios
-    .get(`${BASE_URL}publisher`)
-    .then((res) => res)
-    .catch((err) => err.response.data)
-
+  const res = await axios.get(`${BASE_URL}publisher`)
   return res.data
 }
 

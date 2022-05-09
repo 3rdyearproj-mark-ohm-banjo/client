@@ -31,6 +31,7 @@ import {
   faBrain,
   faDog,
   faLanguage,
+  faBookBookmark,
 } from '@fortawesome/free-solid-svg-icons'
 
 export const ICONS = {
@@ -66,6 +67,7 @@ export const ICONS = {
   faBrain,
   faDog,
   faLanguage,
+  faBookBookmark,
 }
 export const ICON_SIZE = {
   xs: 'xs',

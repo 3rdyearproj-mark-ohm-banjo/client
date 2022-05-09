@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
 import BookCard from '../components/BookCard'
-import styled, {css} from 'styled-components'
+import styled from 'styled-components'
 import {SPACING} from '../styles/spacing'
 import Pagination from '../components/Pagination'
 import Background from '../public/static/images/background-default.png'
@@ -11,25 +11,12 @@ import BackgroundContainer from '../components/BackgroundContainer'
 import IconButton from '../components/IconButton'
 import {ICONS, ICON_SIZE} from '../config/icon'
 import {useRouter} from 'next/router'
-import shelfService from '../api/shelfService'
+import shelfService from '../api/request/shelfService'
 import Head from 'next/head'
 import {default_param} from '../config/searchQuery'
-import publisherService from '../api/publisherService'
-import typeService from '../api/typeService'
-
-const ContentWrapper = styled.section`
-  max-width: 1050px;
-  width: 100%;
-  margin: 30px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: ${SPACING.MD};
-  background-color: ${COLORS.GRAY_LIGHT_3};
-  border-radius: ${SPACING.MD};
-  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
-`
+import {useTypesQuery} from '../api/query/useType'
+import {usePublishersQuery} from '../api/query/usePublisher'
+import {ContentWrapper} from '../components/Layout'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -160,12 +147,14 @@ const TypeItem = styled.div`
   }
 `
 
-const SearchPage = ({isEmptyQuery, publishers, types}) => {
+const SearchPage = ({isEmptyQuery}) => {
   const router = useRouter()
   const pageSize = 3
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
   const [queryParam, setQueryParam] = useState(router.query)
   const currentTypes = router?.query?.types && router?.query?.types?.split(',')
+  const {data: types, isLoading: loadingTypes} = useTypesQuery()
+  const {data: publishers, isLoading: loadingPublishers} = usePublishersQuery()
   const [bookData, setBookData] = useState([])
   const [totalPage, setTotalPage] = useState(0)
 
@@ -334,29 +323,9 @@ const SearchPage = ({isEmptyQuery, publishers, types}) => {
 export default SearchPage
 
 export const getServerSideProps = async (context) => {
-  const publishers = await publisherService.getAllPublisher().then((res) =>
-    res.data.map((item) => {
-      return {
-        id: item._id,
-        name: item.publisherName,
-      }
-    })
-  )
-
-  const types = await typeService.getAllTypes().then((res) =>
-    res.data.map((item) => {
-      return {
-        id: item._id,
-        name: item.typeName,
-      }
-    })
-  )
-
   return {
     props: {
       isEmptyQuery: Object.keys(context.query).length < 1 ? true : false,
-      publishers,
-      types,
     },
   }
 }

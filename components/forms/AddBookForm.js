@@ -11,11 +11,11 @@ import {ICONS, ICON_SIZE} from '../../config/icon'
 import {useDropzone} from 'react-dropzone'
 import SearchDropdown from '../SearchDropdown'
 import {ISBN_LIST} from '../../config/ISBN-mockup'
-import typeService from '../../api/typeService'
-import shelfService from '../../api/shelfService'
-import publisherService from '../../api/publisherService'
+import shelfService from '../../api/request/shelfService'
 import {useRouter} from 'next/router'
 import {BASE_URL} from '../../config/env'
+import {useTypesQuery} from '../../api/query/useType'
+import {usePublishersQuery} from '../../api/query/usePublisher'
 
 const Form = styled.form`
   display: flex;
@@ -217,8 +217,8 @@ const AddBookForm = ({onStepChange}) => {
   const [imageFile, setImageFile] = useState([])
   const [errors, setErrors] = useState([])
   const [disabledAll, setDisabledAll] = useState(false)
-  const [types, setTypes] = useState([])
-  const [publishers, setPublishers] = useState([])
+  const {data: types, isLoading: loadingTypes} = useTypesQuery()
+  const {data: publishers, isLoading: loadingPublishers} = usePublishersQuery()
   const {getRootProps} = useDropzone({
     disabled: disabledAll,
     accept: 'image/*',
@@ -357,29 +357,6 @@ const AddBookForm = ({onStepChange}) => {
     }
   }, [bookData])
 
-  useEffect(() => {
-    publisherService.getAllPublisher().then((res) =>
-      setPublishers(
-        res.data.map((item) => {
-          return {
-            id: item._id,
-            name: item.publisherName,
-          }
-        })
-      )
-    )
-    typeService.getAllTypes().then((res) => {
-      setTypes(
-        res.data.map((item) => {
-          return {
-            id: item._id,
-            name: item.typeName,
-          }
-        })
-      )
-    })
-  }, [])
-
   return (
     <>
       <Title>กรอกข้อมูลหนังสือของคุณ</Title>
@@ -476,21 +453,23 @@ const AddBookForm = ({onStepChange}) => {
             <ErrorText>กรุณากรอกชื่อผู้แต่ง</ErrorText>
           )}
         </InputControl>
-        <InputControl width="50%">
-          <Label>สำนักพิมพ์</Label>
-          <SearchDropdown
-            dataList={publishers}
-            onClickDropdown={onClickPublisher}
-            isError={errors?.indexOf('publisherId') !== -1}
-            showCurrentData
-            value={bookData?.publisher}
-            placeHolder="ค้นหาสำนักพิมพ์..."
-            isDisabled={disabledAll}
-          />
-          {errors?.indexOf('publisherId') !== -1 && (
-            <ErrorText>กรุณาเลือกสำนักพิมพ์</ErrorText>
-          )}
-        </InputControl>
+        {!loadingPublishers && (
+          <InputControl width="50%">
+            <Label>สำนักพิมพ์</Label>
+            <SearchDropdown
+              dataList={publishers}
+              onClickDropdown={onClickPublisher}
+              isError={errors?.indexOf('publisherId') !== -1}
+              showCurrentData
+              value={bookData?.publisher}
+              placeHolder="ค้นหาสำนักพิมพ์..."
+              isDisabled={disabledAll}
+            />
+            {errors?.indexOf('publisherId') !== -1 && (
+              <ErrorText>กรุณาเลือกสำนักพิมพ์</ErrorText>
+            )}
+          </InputControl>
+        )}
 
         <InputControl width="calc(50% - 8px)">
           <Label>ปีที่พิมพ์ครั้งแรก</Label>
@@ -525,14 +504,14 @@ const AddBookForm = ({onStepChange}) => {
                   }}
                   disabled={disabledAll}
                 >
-                  <span>{types.find((item) => item.id == type).name}</span>
+                  <span>{types?.find((item) => item.id == type).name}</span>
                   <Icon name={ICONS.faXmark} />
                 </TypeItem>
               ))}
             </TypeContainer>
           )}
 
-          {types.length > 0 && (
+          {!loadingTypes && (
             <SearchDropdown
               dataList={types?.filter(
                 (type) => bookData.types.indexOf(type.id) === -1 && type
