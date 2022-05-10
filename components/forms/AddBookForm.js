@@ -12,7 +12,6 @@ import {useDropzone} from 'react-dropzone'
 import SearchDropdown from '../SearchDropdown'
 import {ISBN_LIST} from '../../config/ISBN-mockup'
 import shelfService from '../../api/request/shelfService'
-import {useRouter} from 'next/router'
 import {BASE_URL} from '../../config/env'
 import {useTypesQuery} from '../../api/query/useType'
 import {usePublishersQuery} from '../../api/query/usePublisher'
@@ -203,7 +202,7 @@ const TypeItem = styled.div`
   ${(props) => props.disabled && 'opacity: 0.6;'}
 `
 
-const AddBookForm = ({onStepChange}) => {
+const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
   const defaultBookData = {
     ISBN: '',
     bookName: '',
@@ -212,7 +211,6 @@ const AddBookForm = ({onStepChange}) => {
     types: [],
     publisherId: '',
   }
-  const router = useRouter()
   const [bookData, setBookData] = useState(defaultBookData)
   const [imageFile, setImageFile] = useState([])
   const [errors, setErrors] = useState([])
@@ -248,6 +246,28 @@ const AddBookForm = ({onStepChange}) => {
     }
   }, [imageFile])
 
+  const getDataFromISBN = (ISBN) => {
+    shelfService.getShelfByIsbn(ISBN).then((res) => {
+      if (res.data.length > 0) {
+        res.data[0].types = res.data[0].types.map((type) => type._id)
+        res.data[0].publisher = res.data[0].publisherId._id
+        res.data[0].imageCover = `${BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
+        setBookData(res.data[0])
+        if (!isbnBookToEdit) {
+          setDisabledAll(true)
+        }
+        setErrors([])
+      }
+    })
+    setErrors(errors.filter((err) => err !== 'ISBN'))
+  }
+
+  useEffect(() => {
+    if (isbnBookToEdit) {
+      getDataFromISBN(isbnBookToEdit)
+    }
+  }, [isbnBookToEdit])
+
   const validate = () => {
     let errArr = [...errors]
     Object.keys(bookData).map((key) => {
@@ -275,9 +295,9 @@ const AddBookForm = ({onStepChange}) => {
 
   const submitForm = () => {
     if (validate()) {
-      shelfService.addShelf(bookData, imageFile).then((res) => {
-        router.push(`/shelf/${res.data.ISBN}`)
-      })
+      onSubmit(bookData, imageFile)
+      setBookData(defaultBookData)
+      setImageFile([])
     }
   }
 
@@ -297,22 +317,9 @@ const AddBookForm = ({onStepChange}) => {
     setBookData({...bookData, ISBN})
 
     if (ISBN.length === 13) {
-      shelfService.getShelfByIsbn(ISBN).then((res) => {
-        if (res.data.length > 0) {
-          res.data[0].types = res.data[0].types.map((type) => type._id)
-          res.data[0].publisher = res.data[0].publisherId._id
-          res.data[0].imageCover = `${BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
-          setBookData(res.data[0])
-          setDisabledAll(true)
-          setErrors([])
-        }
-      })
-
-      setErrors(errors.filter((err) => err !== 'ISBN'))
+      getDataFromISBN(ISBN)
     }
   }
-
-  const onSuggestClick = (ISBN) => {}
 
   const handleYear = (value) => {
     if (!value.match(/\d/g) && value.length > 0) {
@@ -396,6 +403,7 @@ const AddBookForm = ({onStepChange}) => {
               maxLength="17"
               placeholder="ISBN"
               isError={errors?.indexOf('ISBN') !== -1}
+              disabled={isbnBookToEdit ? true : false}
             ></Input>
             {bookData?.ISBN.length > 0 && bookData?.ISBN.length < 17 && (
               <SuggestContainer>
@@ -461,7 +469,7 @@ const AddBookForm = ({onStepChange}) => {
               onClickDropdown={onClickPublisher}
               isError={errors?.indexOf('publisherId') !== -1}
               showCurrentData
-              value={bookData?.publisher}
+              value={bookData?.publisherId}
               placeHolder="ค้นหาสำนักพิมพ์..."
               isDisabled={disabledAll}
             />
@@ -540,11 +548,7 @@ const AddBookForm = ({onStepChange}) => {
       </Form>
 
       <ButtonWrapper>
-        <Button
-          onClick={() => onStepChange(0)}
-          btnType="whiteBorder"
-          btnSize="sm"
-        >
+        <Button onClick={onPrevious} btnType="whiteBorder" btnSize="sm">
           ย้อนกลับ
         </Button>
         <Button btnSize="sm" onClick={() => submitForm()}>

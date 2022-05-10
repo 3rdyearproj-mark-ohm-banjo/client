@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
 import {BackgroundContainer, Icon} from '../../components'
@@ -14,17 +14,19 @@ import 'swiper/css/scrollbar'
 import {Scrollbar} from 'swiper'
 import BookOwnerCard from '../../components/BookOwnerCard'
 import shelfService from '../../api/request/shelfService'
+import {useRouter} from 'next/router'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
   border-radius: ${SPACING.MD};
   display: flex;
   gap: ${SPACING.MD};
+  width: 100%;
 `
 
 const Circle = styled.div`
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   background-color: ${COLORS.PRIMARY};
   border-radius: 50%;
 `
@@ -37,7 +39,7 @@ const UserNameContainer = styled.div`
 `
 
 const UserName = styled.h2`
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
 `
 
@@ -83,33 +85,22 @@ const StatItem = styled.span`
 `
 
 const TopicHead = styled.section`
-width: 100%;
-display: flex;
-gap: ${SPACING.SM};
-align-items: center;
+  width: 100%;
+  display: flex;
+  gap: ${SPACING.SM};
+  align-items: center;
+  color: ${COLORS.PRIMARY};
+  margin: 16px 0 8px;
 
-> h3 {
-  flex-grow: 1;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-
-> span {
-  text-align-right;
-  flex-shrink:0;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.9;
+  > h3 {
+    flex-grow: 1;
+    font-size: 20px;
+    font-weight: 600;
   }
-}
 `
 
 const SwiperContainer = styled.div`
   width: 100%;
-  margin-bottom: ${SPACING.MD};
 
   > div div.swiper-slide > div {
     margin: 5px;
@@ -117,7 +108,28 @@ const SwiperContainer = styled.div`
   }
 `
 
+const EmptyState = styled.div`
+  height: 200px;
+  line-height: 200px;
+  font-size: 20px;
+  font-weight: 600;
+`
+
+const ViewAll = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`
+
 const ProfilePage = () => {
+  const router = useRouter()
   const [myBooks, setMyBooks] = useState([])
 
   useEffect(() => {
@@ -126,11 +138,9 @@ const ProfilePage = () => {
     })
   }, [])
 
-  console.log(myBooks)
-
   return (
     <BackgroundContainer link={Background.src}>
-      <ContentWrapper alignItems="start">
+      <ContentWrapper alignItems="start" padding="20px">
         <UserProfile>
           <Circle></Circle>
           <UserNameContainer>
@@ -194,43 +204,55 @@ const ProfilePage = () => {
         </SwiperContainer>
 
         <TopicHead>
-          <h3>หนังสือที่บริจาค</h3> <span>ดูทั้งหมด</span>
+          <h3>หนังสือที่บริจาค</h3>{' '}
+          <ViewAll onClick={() => router.push('/profile/mydonation')}>
+            <span> ดูทั้งหมด </span>
+            <Icon name={ICONS.faChevronRight} />
+          </ViewAll>
         </TopicHead>
         <SwiperContainer>
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={10}
-            breakpoints={{
-              520: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              700: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 20,
-              },
-            }}
-            scrollbar={{
-              hide: true,
-            }}
-            loopFillGroupWithBlank={true}
-            modules={[Scrollbar]}
-            className="mySwiper"
-          >
-            {myBooks.map((book) => (
-              <SwiperSlide key={`donation-book-${book._id}`}>
-                <BookOwnerCard bookInfo={book}></BookOwnerCard>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {myBooks.length > 0 ? (
+            <Swiper
+              slidesPerView={2}
+              spaceBetween={10}
+              breakpoints={{
+                520: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                700: {
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 20,
+                },
+              }}
+              scrollbar={{
+                hide: true,
+              }}
+              loopFillGroupWithBlank={true}
+              modules={[Scrollbar]}
+              className="mySwiper"
+            >
+              {myBooks.map((book) => (
+                <SwiperSlide key={`donation-book-${book._id}`}>
+                  <BookOwnerCard bookInfo={book}></BookOwnerCard>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
+          )}
         </SwiperContainer>
 
         <TopicHead>
-          <h3> ประวัติการยืม</h3> <span>ดูทั้งหมด</span>
+          <h3> ประวัติการยืม</h3>{' '}
+          <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
+            <span> ดูทั้งหมด </span>
+            <Icon name={ICONS.faChevronRight} />
+          </ViewAll>
         </TopicHead>
       </ContentWrapper>
     </BackgroundContainer>

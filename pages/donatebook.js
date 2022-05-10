@@ -9,29 +9,13 @@ import {SPACING} from '../styles/spacing'
 import Background from '../public/static/images/background-default.png'
 import {BackgroundContainer} from '../components'
 import Head from 'next/head'
-
-const Body = styled.section`
-  background: transparent url(${Background.src}) no-repeat;
-  background-size: cover;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  image-rendering: -webkit-optimize-contrast;
-`
+import {AddBookLayout} from '../components/Layout'
+import {useRouter} from 'next/router'
+import BookDonateModal from '../components/BookDonateModal'
+import shelfService from '../api/request/shelfService'
 
 const Image = styled.img`
   margin: 0 auto;
-`
-
-const Container = styled.section`
-  max-width: 768px;
-  width: 100%;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: ${COLORS.WHITE};
-  box-shadow: 0px 5px 20px ${COLORS.GRAY_DARK_1};
-  margin: 20px 0 80px;
 `
 
 const TitleList = styled.h2`
@@ -64,6 +48,16 @@ const ButtonWrapper = styled.div`
 
 const DonateBookPage = () => {
   const [currentStep, setCurrentStep] = useState(0)
+  const [isbn, setIsbn] = useState({})
+  const [showResModal, setShowResModal] = useState(false)
+  const router = useRouter()
+
+  const submitBookShelf = (bookData, imageFile) => {
+    shelfService.addShelf(bookData, imageFile).then((res) => {
+      setShowResModal(true)
+      setIsbn(res.data.ISBN)
+    })
+  }
 
   return (
     <>
@@ -71,8 +65,14 @@ const DonateBookPage = () => {
         <title>Share my Book - บริจาคหนังสือ</title>
       </Head>
 
+      {showResModal && (
+        <BookDonateModal
+          onSubmit={() => router.push(`/shelf/${isbn}`)}
+          onClose={setShowResModal}
+        />
+      )}
       <BackgroundContainer link={Background.src}>
-        <Container>
+        <AddBookLayout>
           {currentStep === 0 && (
             <>
               <Image src={Agreement.src} alt="agreement" />
@@ -96,8 +96,14 @@ const DonateBookPage = () => {
             </>
           )}
 
-          {currentStep === 1 && <AddBookForm onStepChange={setCurrentStep} />}
-        </Container>
+          {currentStep === 1 && (
+            <AddBookForm
+              onStepChange={setCurrentStep}
+              onPrevious={() => setCurrentStep(0)}
+              onSubmit={submitBookShelf}
+            />
+          )}
+        </AddBookLayout>
       </BackgroundContainer>
     </>
   )

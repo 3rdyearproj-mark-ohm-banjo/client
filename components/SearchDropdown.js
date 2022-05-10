@@ -6,6 +6,7 @@ import {ICONS} from '../config/icon'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import {FONTS} from '../styles/fonts'
+import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 
 const DisabledStyled = css`
   cursor: default;
@@ -93,6 +94,7 @@ const FakeInput = styled.div`
   outline: none;
   font-size: 16px;
   width: 100%;
+  background-color: ${COLORS.WHITE};
 
   &:focus {
     border-color: ${COLORS.PRIMARY};
@@ -154,23 +156,8 @@ const SearchDropdown = ({
     setIsToggle(false)
     setCurrentSearch('')
   }
-
-  const useOutsideAlerter = (ref) => {
-    useEffect(() => {
-      function handleClickOutside(event) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setIsToggle(false)
-        }
-      }
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside)
-      }
-    }, [ref])
-  }
-
   const SearchDropdownRef = useRef(null)
-  useOutsideAlerter(SearchDropdownRef)
+  useOutsideAlerter(setIsToggle, SearchDropdownRef)
 
   return (
     <SearchDropdownContainer ref={SearchDropdownRef}>

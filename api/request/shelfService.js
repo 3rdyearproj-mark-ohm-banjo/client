@@ -48,7 +48,22 @@ const addShelf = async (data, file) => {
   return res
 }
 
-const editShelf = (data) => {}
+const editShelf = async (data, file) => {
+  // const formData = new FormData()
+  // if (file) {
+  //   formData.append('imgfile', file[0])
+  // }
+  // formData.append('book', JSON.stringify(data))
+  // const res = await axios
+  //   .put(`${BASE_URL}bookShelf/bs/${data.ISBN}`, formData, {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data',
+  //     },
+  //   })
+  //   .then((res) => res.data)
+  //   .catch((err) => err.response.data)
+  // return res
+}
 
 const deleteShelf = (id) => {}
 

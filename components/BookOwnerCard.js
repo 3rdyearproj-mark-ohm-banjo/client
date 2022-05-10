@@ -2,13 +2,14 @@ import Image from 'next/image'
 import React from 'react'
 import styled from 'styled-components'
 import {BASE_URL} from '../config/env'
-import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
+import {useRouter} from 'next/router'
+import PropTypes from 'prop-types'
 
 const CardLayout = styled.div`
   width: 200px;
-  height: 450px;
+  height: 420px;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
@@ -34,6 +35,7 @@ const DonationDate = styled.span`
 `
 
 const BookOwnerCard = ({bookInfo, donationDate}) => {
+  const router = useRouter()
   return (
     <CardLayout>
       <ImageMock>
@@ -48,7 +50,11 @@ const BookOwnerCard = ({bookInfo, donationDate}) => {
       </ImageMock>
       <BookName>{bookInfo?.bookName}</BookName>
       <DonationDate>บริจาควันที่ 12 ส.ค. 65</DonationDate>
-      <Button btnSize="sm" btnType="secondary">
+      <Button
+        btnSize="sm"
+        btnType="secondary"
+        onClick={() => router.push(`/profile/editbook/${bookInfo.ISBN}`)}
+      >
         แก้ไขข้อมูล
       </Button>
       <Button btnSize="sm" btnType="orangeGradient">
@@ -56,6 +62,11 @@ const BookOwnerCard = ({bookInfo, donationDate}) => {
       </Button>
     </CardLayout>
   )
+}
+
+BookOwnerCard.propTypes = {
+  bookInfo: PropTypes.object,
+  donationDate: PropTypes.string,
 }
 
 export default BookOwnerCard
