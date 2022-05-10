@@ -33,12 +33,6 @@ const BookListContainer = styled.section`
   width: 100%;
 `
 
-const PaginationWrapper = styled.div`
-  border-radius: 28px;
-  margin: ${SPACING.MD} 0;
-  padding: ${SPACING.MD};
-`
-
 const ToolContainer = styled.section`
   max-width: 550px;
   margin: 0 ${SPACING.MD};
