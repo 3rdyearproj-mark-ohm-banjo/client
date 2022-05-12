@@ -217,6 +217,7 @@ const SearchPage = ({isEmptyQuery}) => {
                     type="submit"
                     name={ICONS.faSearch}
                     borderRadius="50%"
+                    btnStyle="secondary"
                   />
                 </SearchInputContainer>
                 <IconButton
@@ -224,6 +225,8 @@ const SearchPage = ({isEmptyQuery}) => {
                   borderRadius="8px"
                   onClick={() => setIsTriggerFilter(!isTriggerFilter)}
                   isActive={isTriggerFilter}
+                  btnStyle="secondary"
+                  padding="8px"
                 />
               </ToolItemContainer>
               {isTriggerFilter && (

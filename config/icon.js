@@ -32,7 +32,13 @@ import {
   faDog,
   faLanguage,
   faBookBookmark,
+  faLock,
+  faEnvelope,
+  faPhone,
+  faLocationDot,
 } from '@fortawesome/free-solid-svg-icons'
+
+import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
 
 export const ICONS = {
   faCheck,
@@ -68,6 +74,12 @@ export const ICONS = {
   faDog,
   faLanguage,
   faBookBookmark,
+  faLock,
+  faFacebook,
+  faGoogle,
+  faEnvelope,
+  faPhone,
+  faLocationDot,
 }
 export const ICON_SIZE = {
   xs: 'xs',

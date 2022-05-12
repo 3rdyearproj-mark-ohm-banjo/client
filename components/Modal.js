@@ -13,8 +13,8 @@ export const ModalBackground = styled.div`
 `
 
 export const ModalContainer = styled.div`
-  max-width: 300px;
-  max-height: 400px;
+  max-width: ${(props) => props.maxWidth ?? '300px'};
+  max-height: ${(props) => props.maxHeight ?? '400px'};
   width: 100%;
   height: 100%;
   color: ${COLORS.PRIMARY};
@@ -27,7 +27,7 @@ export const ModalContainer = styled.div`
   transform: translate(-50%, -50%);
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${(props) => props.flexDirection ?? 'column'}; ;
 `
 
 const Modal = ({children}) => {

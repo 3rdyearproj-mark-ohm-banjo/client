@@ -41,7 +41,7 @@ const BookOwnerCard = ({bookInfo, donationDate}) => {
       <ImageMock>
         {bookInfo?.imageCover && (
           <Image
-            src={`${BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+            src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
             alt={bookInfo?.BookName}
             layout="fill"
             objectFit="contain"

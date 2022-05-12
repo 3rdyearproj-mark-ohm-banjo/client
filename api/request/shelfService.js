@@ -1,14 +1,13 @@
 import axios from 'axios'
-import {BASE_URL} from '../../config/env'
 
 const getShelfById = async (id) => {
-  const res = await axios.get(`${BASE_URL}bookShelf/bs/${id}`)
+  const res = await axios.get(`/bookShelf/bs/${id}`)
   return res.data
 }
 
 const getShelfByIsbn = async (isbn) => {
   const res = await axios
-    .get(`${BASE_URL}bookShelf/bs/${isbn}`)
+    .get(`/bookShelf/bs/${isbn}`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -16,7 +15,7 @@ const getShelfByIsbn = async (isbn) => {
 
 const getAllShelf = async () => {
   const res = await axios
-    .get(`${BASE_URL}bookShelf/bs`)
+    .get(`/bookShelf/bs`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -24,7 +23,7 @@ const getAllShelf = async () => {
 
 const getShelfByPage = async (params, size) => {
   const res = await axios
-    .get(`${BASE_URL}bookShelf/bsP`, {params: {...params, size}})
+    .get(`/bookShelf/bsP`, {params: {...params, size}})
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -38,7 +37,7 @@ const addShelf = async (data, file) => {
   formData.append('book', JSON.stringify(data))
 
   const res = await axios
-    .post(`${BASE_URL}bookShelf/bs`, formData, {
+    .post(`/bookShelf/bs`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -55,7 +54,7 @@ const editShelf = async (data, file) => {
   // }
   // formData.append('book', JSON.stringify(data))
   // const res = await axios
-  //   .put(`${BASE_URL}bookShelf/bs/${data.ISBN}`, formData, {
+  //   .put(`${BASE_URL}/bookShelf/bs/${data.ISBN}`, formData, {
   //     headers: {
   //       'Content-Type': 'multipart/form-data',
   //     },

@@ -26,3 +26,14 @@ export const AddBookLayout = styled.section`
   box-shadow: 0px 5px 20px ${COLORS.GRAY_DARK_1};
   margin: 20px 0 80px;
 `
+
+export const AuthFormWrapper = styled.div`
+  background-color: ${COLORS.PURPLE_2};
+  width: 100%;
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.LG};
+
+  @media (min-width: 768px) {
+    padding: 50px;
+  }
+`

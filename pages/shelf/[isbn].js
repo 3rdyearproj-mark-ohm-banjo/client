@@ -121,7 +121,7 @@ const BookShelfPage = ({bookShelf, relatedBook}) => {
                       onClick={() =>
                         router.push({
                           pathname: '/search',
-                          query: {...default_param, type: item.type.id},
+                          query: {...default_param, types: item.type.id},
                         })
                       }
                     >

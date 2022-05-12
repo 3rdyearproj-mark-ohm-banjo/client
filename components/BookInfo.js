@@ -195,12 +195,12 @@ const BookInfo = ({bookInfo}) => {
           >
             <SwiperSlide>
               <BookImage
-                src={`${BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+                src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
             </SwiperSlide>
             <SwiperSlide>
               <BookImage
-                src={`${BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+                src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
             </SwiperSlide>
           </Swiper>
@@ -272,7 +272,7 @@ const BookInfo = ({bookInfo}) => {
               fullWidth
               iconName={ICONS.faBook}
             >
-              คุณมีหนังสือนี้แล้ว
+              ดูข้อมูลการยืมของคุณ
             </Button>
 
             {/* <Button withIcon fullWidth iconName={ICONS.faBook}>

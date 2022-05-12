@@ -112,7 +112,7 @@ const BookCard = ({bookInfo}) => {
     <Card onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
       <BookImageContainer>
         <Image
-          src={`${BASE_URL}bookShelf/bsImage/${bookInfo?.imageCover}`}
+          src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
           alt={bookInfo?.bookName}
           layout="fill"
           objectFit="cover"

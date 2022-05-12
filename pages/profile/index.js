@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useContext} from 'react'
 import styled from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
 import {BackgroundContainer, Icon} from '../../components'
@@ -15,6 +15,7 @@ import {Scrollbar} from 'swiper'
 import BookOwnerCard from '../../components/BookOwnerCard'
 import shelfService from '../../api/request/shelfService'
 import {useRouter} from 'next/router'
+import UserContext from '../../context/userContext'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
@@ -131,6 +132,7 @@ const ViewAll = styled.div`
 const ProfilePage = () => {
   const router = useRouter()
   const [myBooks, setMyBooks] = useState([])
+  const {user} = useContext(UserContext)
 
   useEffect(() => {
     shelfService.getAllShelf().then((res) => {
@@ -145,7 +147,7 @@ const ProfilePage = () => {
           <Circle></Circle>
           <UserNameContainer>
             <span>Hello here,</span>
-            <UserName>test</UserName>
+            <UserName>{user.userName}</UserName>
           </UserNameContainer>
         </UserProfile>
         <StatContainer>

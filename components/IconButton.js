@@ -5,36 +5,41 @@ import PropTypes from 'prop-types'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 
-const ActiveStyled = css`
-  cursor: pointer;
-  transition: 0.3s;
-  color: ${COLORS.WHITE};
-  background-color: ${COLORS.PRIMARY};
-`
-
 const DisabledStyled = css`
   color: ${COLORS.WHITE};
   background-color: ${COLORS.GRAY_LIGHT};
 `
 
-const mdSize = css`
-  width: 40px;
-  height: 40px;
-`
-
-const IconButtonStyled = styled.button`
+const secondaryStyled = css`
   color: ${COLORS.PRIMARY};
   background-color: ${COLORS.GRAY_LIGHT_1};
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+`
+
+const secondaryActiveStyled = css`
+  transition: 0.3s;
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.PRIMARY};
+`
+
+const IconButtonStyled = styled.button`
+  all: unset;
   border: none;
-  padding: ${SPACING.SM};
+  ${(props) => props.padding && `padding: ${props.padding};`}
   ${(props) => props.borderRadius && `border-radius:${props.borderRadius};`}
-  ${(props) => props.isActive && ActiveStyled}  
-  ${(props) => props.isDisabled && DisabledStyled}  
-  ${(props) => props.btnSize === 'md' && mdSize}  
+  ${(props) => props.btnStyle.toLowerCase() === 'secondary' && secondaryStyled}
+  ${(props) => props.isActive && secondaryActiveStyled}
+   ${(props) => props.isDisabled && DisabledStyled}
+  ${(props) => props.btnWidth && `width: ${props.btnWidth};`}
+  ${(props) => props.btnHeight && `height: ${props.btnHeight};`}
+  text-align: center;
 
   &:hover {
-    ${(props) => !props.isDisabled && ActiveStyled}
+    cursor: pointer;
+    ${(props) =>
+      !props.isDisabled &&
+      props.btnStyle.toLowerCase() === 'secondary' &&
+      secondaryActiveStyled}
   }
 `
 
@@ -44,8 +49,12 @@ const IconButton = ({
   borderRadius,
   isActive,
   isDisabled,
-  btnSize,
   type,
+  iconSize,
+  btnStyle,
+  btnWidth,
+  btnHeight,
+  padding,
 }) => {
   return (
     <IconButtonStyled
@@ -53,26 +62,33 @@ const IconButton = ({
       borderRadius={borderRadius}
       isActive={isActive}
       isDisabled={isDisabled}
-      btnSize={btnSize}
+      btnWidth={btnWidth}
+      btnHeight={btnHeight}
       type={type}
+      btnStyle={btnStyle}
+      padding={padding}
     >
-      <Icon name={name} />
+      <Icon name={name} size={iconSize} />
     </IconButtonStyled>
   )
 }
 
 IconButton.propTypes = {
   name: PropTypes.object,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func.isRequired,
   borderRadius: PropTypes.string,
   isActive: PropTypes.bool,
   isDisabled: PropTypes.bool,
-  btnSize: PropTypes.oneOf(['sm', 'md', 'lg']),
+  btnWidth: PropTypes.string,
+  btnHeight: PropTypes.string,
   type: PropTypes.string,
+  iconSize: PropTypes.string,
+  btnStyle: PropTypes.oneOf(['primary', 'secondary']),
+  padding: PropTypes.string,
 }
 
 IconButton.defaultProps = {
-  btnSize: 'md',
+  btnStyle: 'primary',
 }
 
 export default IconButton

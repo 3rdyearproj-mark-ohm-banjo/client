@@ -251,7 +251,7 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
       if (res.data.length > 0) {
         res.data[0].types = res.data[0].types.map((type) => type._id)
         res.data[0].publisher = res.data[0].publisherId._id
-        res.data[0].imageCover = `${BASE_URL}bookShelf/bsImage/${res.data[0].imageCover}`
+        res.data[0].imageCover = `${BASE_URL}/bookShelf/bsImage/${res.data[0].imageCover}`
         setBookData(res.data[0])
         if (!isbnBookToEdit) {
           setDisabledAll(true)
@@ -469,7 +469,7 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
               onClickDropdown={onClickPublisher}
               isError={errors?.indexOf('publisherId') !== -1}
               showCurrentData
-              value={bookData?.publisherId}
+              value={bookData?.publisher}
               placeHolder="ค้นหาสำนักพิมพ์..."
               isDisabled={disabledAll}
             />

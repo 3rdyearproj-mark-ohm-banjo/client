@@ -180,6 +180,9 @@ const ButtonStyled = styled.button`
     ${(props) => props.btnType === 'whiteBorder' && whiteBorderStyled}
     ${(props) => props.btnType === 'orangeGradient' && orangeGradientStyled};
   ${(props) => props.fullWidth && 'width: 100%;'}
+  ${(props) => props.bgColor && `background-color: ${props.bgColor};`}
+  ${(props) => props.txtColor && `color:${props.txtColor};`}
+
 
   &:hover > span:last-child:before,
   &:hover > span:last-child:after {
@@ -196,14 +199,20 @@ const Button = ({
   iconName,
   fullWidth,
   isDisabled,
+  bgColor,
+  txtColor,
+  type,
 }) => {
   return (
     <ButtonStyled
+      type={type}
       btnType={btnType}
       btnSize={btnSize}
-      onClick={() => !isDisabled && onClick()}
+      onClick={() => type !== 'submit' && !isDisabled && onClick()}
       withIcon={withIcon}
       fullWidth={fullWidth}
+      bgColor={bgColor}
+      txtColor={txtColor}
     >
       {children ?? 'click me'}
       {withIcon && (
@@ -230,6 +239,8 @@ Button.propTypes = {
   iconName: PropTypes.object,
   onClick: PropTypes.func,
   children: PropTypes.node,
+  bgColor: PropTypes.string,
+  txtColor: PropTypes.string,
 }
 
 Button.defaultProps = {
