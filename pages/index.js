@@ -143,6 +143,11 @@ const Home = () => {
       setNewBook(res.data)
       setRecommendBook(res.data)
     })
+
+    return () => {
+      setNewBook([])
+      setRecommendBook([])
+    }
   }, [])
 
   return (

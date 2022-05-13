@@ -7,12 +7,26 @@ import {AuthFormWrapper} from '../Layout'
 import InputWithIcon from './InputWithIcon'
 import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
+import Icon from '../Icon'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
 `
 
-const RegisterForm = ({showLoginForm}) => {
+const NavWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${SPACING.MD};
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: ${SPACING.MD};
+    cursor: pointer;
+  }
+`
+
+const RegisterForm = ({onShowRegister, onShow}) => {
   const [userData, setUserData] = useState({
     email: '',
     password: '',
@@ -42,7 +56,7 @@ const RegisterForm = ({showLoginForm}) => {
   const registerHandle = async (e) => {
     e.preventDefault()
     if (validate) {
-      return await register(userData).then(() => showLoginForm(true))
+      return await register(userData).then(() => onShowRegister(false))
     }
   }
 
@@ -53,6 +67,16 @@ const RegisterForm = ({showLoginForm}) => {
 
   return (
     <AuthFormWrapper>
+      <NavWrap>
+        <div onClick={() => onShowRegister(false)}>
+          <Icon name={ICONS.faChevronLeft}></Icon>
+          <span> เข้าสู่ระบบ</span>
+        </div>
+        <div onClick={() => onShow(false)}>
+          <span>ปิด</span>
+          <Icon name={ICONS.faXmark}></Icon>
+        </div>
+      </NavWrap>
       <form onSubmit={registerHandle}>
         <InputWithIcon
           label="อีเมล"

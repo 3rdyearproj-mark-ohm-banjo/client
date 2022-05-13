@@ -37,7 +37,7 @@ const PaginationWrapper = styled.div`
 `
 
 const ToolContainer = styled.section`
-  max-width: 550px;
+  max-width: 95%;
   margin: 0 ${SPACING.MD};
   width: 100%;
   padding: ${SPACING.MD};
@@ -60,8 +60,12 @@ const FilterContainer = styled.div`
   margin: ${SPACING.MD} 0;
   display: flex;
   flex-direction: column;
-  gap: ${SPACING.SM};
+  gap: ${SPACING.MD};
   flex-wrap: wrap;
+
+  > * {
+    flex: 1;
+  }
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -148,8 +152,22 @@ const TypeItem = styled.div`
 `
 
 const SearchPage = ({isEmptyQuery}) => {
+  const sortList = [
+    {
+      id: {sortBy: 'totalBorrow', isdescending: 'yes'},
+      name: 'เรียงจากยอดการยืม มากไปน้อย',
+    },
+    {
+      id: {sortBy: '', isdescending: 'yes'},
+      name: 'เรียงจากวันที่นำเข้าล่าสุด',
+    },
+    {
+      id: {sortBy: 'bookName', isdescending: 'no'},
+      name: 'เรียงจากชื่อหนังสือ',
+    },
+  ]
   const router = useRouter()
-  const pageSize = 3
+  const pageSize = 6
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
   const [queryParam, setQueryParam] = useState(router.query)
   const currentTypes = router?.query?.types && router?.query?.types?.split(',')
@@ -174,7 +192,7 @@ const SearchPage = ({isEmptyQuery}) => {
   useEffect(() => {
     if (router.query.page) {
       setQueryParam(router.query)
-      shelfService.getShelfByPage(router.query, pageSize).then((res) => {
+      shelfService.searchBookShelf(router.query, pageSize).then((res) => {
         setTotalPage(res.total)
         setBookData(res.data)
       })
@@ -218,6 +236,7 @@ const SearchPage = ({isEmptyQuery}) => {
                     name={ICONS.faSearch}
                     borderRadius="50%"
                     btnStyle="secondary"
+                    onClick={handleClickSearch}
                   />
                 </SearchInputContainer>
                 <IconButton
@@ -226,7 +245,8 @@ const SearchPage = ({isEmptyQuery}) => {
                   onClick={() => setIsTriggerFilter(!isTriggerFilter)}
                   isActive={isTriggerFilter}
                   btnStyle="secondary"
-                  padding="8px"
+                  btnWidth="40px"
+                  btnHeight="40px"
                 />
               </ToolItemContainer>
               {isTriggerFilter && (
@@ -248,7 +268,7 @@ const SearchPage = ({isEmptyQuery}) => {
                             ? queryParam.types + ',' + val
                             : val,
                         },
-                        shallow: true,
+                        // shallow: true,
                       })
                     }
                     placeHolder="ค้นหาประเภทหนังสือ..."
@@ -259,13 +279,28 @@ const SearchPage = ({isEmptyQuery}) => {
                       router.push({
                         pathname: '/search',
                         query: {...queryParam, publisher: val},
-                        shallow: true,
+                        // shallow: true,
                       })
                     }
                     placeHolder="ค้นหาสำนักพิมพ์..."
                     showCurrentData
                     value={router?.query?.publisher}
                   />
+                  <SearchDropdown
+                    dataList={sortList}
+                    onClickDropdown={(val) =>
+                      router.push({
+                        pathname: '/search',
+                        query: {
+                          ...queryParam,
+                          ...val,
+                        },
+                        // shallow: true,
+                      })
+                    }
+                    placeHolder="เรียงจาก"
+                  />
+
                   {currentTypes?.length > 0 && (
                     <TypeContainer>
                       {currentTypes?.map((type) => (
@@ -280,7 +315,7 @@ const SearchPage = ({isEmptyQuery}) => {
                                   .filter((currentType) => currentType !== type)
                                   .toString(),
                               },
-                              shallow: true,
+                              // shallow: true,
                             })
                           }}
                         >
@@ -303,7 +338,7 @@ const SearchPage = ({isEmptyQuery}) => {
               </>
             )}
 
-            {bookData?.length === 0 && (
+            {(!bookData || bookData?.length === 0) && (
               <NoResult>ขออภัย ไม่พบข้อมูลการค้นหานี้</NoResult>
             )}
           </BookListContainer>

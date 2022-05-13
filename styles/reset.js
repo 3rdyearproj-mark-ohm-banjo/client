@@ -110,7 +110,7 @@ export const reset = () => {
     }
 
     html {
-      overflow-y: scroll;
+      overflow-y: auto;
     }
 
     ul {
@@ -240,7 +240,6 @@ export const reset = () => {
     }
 
     .clickable,
-    label,
     input[type='button'],
     input[type='submit'],
     input[type='file'],

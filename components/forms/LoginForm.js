@@ -9,6 +9,7 @@ import InputWithIcon from './InputWithIcon'
 import {AuthFormWrapper} from '../Layout'
 import {login} from '../../api/request/userService'
 import UserContext from '../../context/userContext'
+import Icon from '../Icon'
 
 const Header = styled.div`
   text-align: center;
@@ -47,21 +48,42 @@ const ChoiceWrapper = styled.div`
   gap: ${SPACING.MD};
 `
 
-const LoginForm = ({onShowRegister}) => {
+const NavWrap = styled.div`
+  display: flex;
+  justify-content: end;
+  margin-bottom: ${SPACING.MD};
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: ${SPACING.MD};
+    cursor: pointer;
+  }
+`
+
+const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const {updateUser, user} = useContext(UserContext)
+  const {updateUser, updateIsAuth} = useContext(UserContext)
   const forgotPassword = () => {}
 
   const loginHandler = async (e) => {
     e.preventDefault()
     return await login(email, password).then((res) => {
       updateUser(res.data?.user)
+      updateIsAuth(true)
+      onSuccess()
     })
   }
 
   return (
     <AuthFormWrapper>
+      <NavWrap>
+        <div onClick={() => onShow(false)}>
+          <span>ปิด</span>
+          <Icon name={ICONS.faXmark}></Icon>
+        </div>
+      </NavWrap>
       <Header>
         <h4>ยินดีต้อนรับกลับ~</h4>
         <span>กรอกข้อมูลเพื่อเข้าสู่บัญชีของคุณ</span>

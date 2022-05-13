@@ -149,7 +149,7 @@ export const getServerSideProps = async (context) => {
   const relatedBook = await Promise.all(
     bookShelf.types.map(async (type) => {
       const data = await shelfService
-        .getShelfByPage({type: type.typeName, page: 1}, 5)
+        .searchBookShelf({type: type.typeName, page: 1}, 5)
         .then((res) => {
           return res.data
         })

@@ -16,6 +16,7 @@ import BookOwnerCard from '../../components/BookOwnerCard'
 import shelfService from '../../api/request/shelfService'
 import {useRouter} from 'next/router'
 import UserContext from '../../context/userContext'
+import {useCurrentUser} from '../../api/query/useUser'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
@@ -147,7 +148,7 @@ const ProfilePage = () => {
           <Circle></Circle>
           <UserNameContainer>
             <span>Hello here,</span>
-            <UserName>{user.userName}</UserName>
+            <UserName>{user.username}</UserName>
           </UserNameContainer>
         </UserProfile>
         <StatContainer>

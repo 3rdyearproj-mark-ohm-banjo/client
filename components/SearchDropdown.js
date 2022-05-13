@@ -151,8 +151,12 @@ const SearchDropdown = ({
   }, [shouldClear])
 
   const onClick = (e) => {
-    setSelectedItem(e)
-    onClickDropdown(e)
+    let clicked = e
+    if (clicked === selectedItem) {
+      clicked = ''
+    }
+    setSelectedItem(clicked)
+    onClickDropdown(clicked)
     setIsToggle(false)
     setCurrentSearch('')
   }
@@ -216,12 +220,8 @@ const SearchDropdown = ({
             ></OptionInput>
           )}
           {dataList
-            ?.filter(
-              (item) =>
-                item?.name
-                  ?.toLowerCase()
-                  ?.includes(currentSearch?.toLowerCase()) &&
-                item.id !== selectedItem
+            ?.filter((item) =>
+              item?.name?.toLowerCase()?.includes(currentSearch?.toLowerCase())
             )
             ?.map((item, i) => (
               <OptionItem

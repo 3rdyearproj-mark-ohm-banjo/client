@@ -1,13 +1,13 @@
 import axios from 'axios'
 
 const getShelfById = async (id) => {
-  const res = await axios.get(`/bookShelf/bs/${id}`)
+  const res = await axios.get(`/bookShelf/${id}`)
   return res.data
 }
 
 const getShelfByIsbn = async (isbn) => {
   const res = await axios
-    .get(`/bookShelf/bs/${isbn}`)
+    .get(`/bookShelf/isbn/${isbn}`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -15,7 +15,7 @@ const getShelfByIsbn = async (isbn) => {
 
 const getAllShelf = async () => {
   const res = await axios
-    .get(`/bookShelf/bs`)
+    .get(`/bookShelf`)
     .then((res) => res.data)
     .catch((err) => err.response)
   return res
@@ -29,6 +29,14 @@ const getShelfByPage = async (params, size) => {
   return res
 }
 
+const searchBookShelf = async (params, size) => {
+  const res = await axios
+    .get(`/bookShelf/search`, {params: {...params, size}})
+    .then((res) => res.data)
+    .catch((err) => err.response)
+  return res
+}
+
 const addShelf = async (data, file) => {
   const formData = new FormData()
   if (file) {
@@ -37,7 +45,7 @@ const addShelf = async (data, file) => {
   formData.append('book', JSON.stringify(data))
 
   const res = await axios
-    .post(`/bookShelf/bs`, formData, {
+    .post(`/bookShelf`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -70,6 +78,7 @@ const deleteShelf = (id) => {}
 export default {
   getAllShelf,
   getShelfByPage,
+  searchBookShelf,
   getShelfById,
   getShelfByIsbn,
   addShelf,

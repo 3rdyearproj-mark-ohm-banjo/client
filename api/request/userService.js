@@ -1,28 +1,32 @@
 import axios from 'axios'
-import Cookies from 'universal-cookie'
-
-const cookies = new Cookies()
 
 export const login = (email, password) => {
-  const res = axios
-    .post(`/login`, {
-      email,
-      password,
-    })
-    .then((res) => {
-      cookies.set('user-token', res.data.token, {path: '/'})
-      return res
-    })
+  const res = axios.post(`/login`, {
+    email,
+    password,
+  })
 
   return res
 }
 
 export const logout = () => {
-  cookies.remove('user-token')
+  const res = axios.get('/logout')
+  return res
+}
+
+export const getCurrentUser = async () => {
+  const res = await axios.get('user/profile')
+  return res
 }
 
 export const register = (userData) => {
   const res = axios.post(`/register`, userData)
-  console.log(res)
   return res
+}
+
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
+export default {
+  login,
+  register,
+  getCurrentUser,
 }

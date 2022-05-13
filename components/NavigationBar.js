@@ -1,10 +1,12 @@
-import React from 'react'
+import React, {useState, useContext} from 'react'
 import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import Icon from './Icon'
 import {ICONS, ICON_SIZE} from '../config/icon'
 import {SPACING} from '../styles/spacing'
 import {useRouter} from 'next/router'
+import UserContext from '../context/userContext'
+import AuthModal from './AuthModal'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -46,40 +48,58 @@ const MenuIcon = styled.li`
 
 const NavigationBar = () => {
   const router = useRouter()
+  const {isAuth, logoutHandler} = useContext(UserContext)
+  const [showAuthModal, setShowAuthModal] = useState(false)
 
   return (
-    <NavigationBarStyled>
-      <ContentWrapper>
-        <MenuIcon
-          onClick={() => router.push('/')}
-          isActive={router.pathname === '/'}
-        >
-          <Icon name={ICONS.faHome} size={ICON_SIZE.lg} />
-          <span>หน้าหลัก</span>
-        </MenuIcon>
+    <>
+      <AuthModal show={showAuthModal} setShow={setShowAuthModal} />
+      <NavigationBarStyled>
+        <ContentWrapper>
+          <MenuIcon
+            onClick={() => router.push('/')}
+            isActive={router.pathname === '/'}
+          >
+            <Icon name={ICONS.faHome} size={ICON_SIZE.lg} />
+            <span>หน้าหลัก</span>
+          </MenuIcon>
 
-        <MenuIcon
-          onClick={() => router.push('/donatebook')}
-          isActive={router.pathname === '/donatebook'}
-        >
-          <Icon name={ICONS.faHandHoldingHand} size={ICON_SIZE.lg} />
-          <span>บริจาคหนังสือ</span>
-        </MenuIcon>
+          {isAuth ? (
+            <>
+              <MenuIcon
+                onClick={() => router.push('/donatebook')}
+                isActive={router.pathname === '/donatebook'}
+              >
+                <Icon name={ICONS.faHandHoldingHand} size={ICON_SIZE.lg} />
+                <span>บริจาคหนังสือ</span>
+              </MenuIcon>
 
-        <MenuIcon>
-          <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
-          <span>การแจ้งเตือน</span>
-        </MenuIcon>
+              <MenuIcon>
+                <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
+                <span>การแจ้งเตือน</span>
+              </MenuIcon>
 
-        <MenuIcon
-          onClick={() => router.push('/profile')}
-          isActive={router.pathname === '/profile'}
-        >
-          <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
-          <span>ข้อมูลของฉัน</span>
-        </MenuIcon>
-      </ContentWrapper>
-    </NavigationBarStyled>
+              <MenuIcon
+                onClick={() => router.push('/profile')}
+                isActive={router.pathname === '/profile'}
+              >
+                <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
+                <span>ข้อมูลของฉัน</span>
+              </MenuIcon>
+              <MenuIcon onClick={logoutHandler}>
+                <Icon name={ICONS.faSignOut} size={ICON_SIZE.lg} />
+                <span>ออกจากระบบ</span>
+              </MenuIcon>
+            </>
+          ) : (
+            <MenuIcon onClick={() => setShowAuthModal(true)}>
+              <Icon name={ICONS.faSignIn} size={ICON_SIZE.lg} />
+              <span>เข้าสู่ระบบ</span>
+            </MenuIcon>
+          )}
+        </ContentWrapper>
+      </NavigationBarStyled>
+    </>
   )
 }
 
