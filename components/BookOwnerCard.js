@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
 import styled from 'styled-components'
-import {BASE_URL} from '../config/env'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
 import {useRouter} from 'next/router'
@@ -41,7 +40,7 @@ const BookOwnerCard = ({bookInfo, donationDate}) => {
       <ImageMock>
         {bookInfo?.imageCover && (
           <Image
-            src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+            src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
             alt={bookInfo?.BookName}
             layout="fill"
             objectFit="contain"

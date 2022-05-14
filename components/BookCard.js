@@ -1,7 +1,6 @@
 import {useRouter} from 'next/router'
 import React from 'react'
 import styled, {css} from 'styled-components'
-import {BASE_URL} from '../config/env'
 import {TYPES_STYLE} from '../config/types-styles'
 import {COLORS} from '../styles/colors'
 import {FONTS} from '../styles/fonts'
@@ -112,7 +111,7 @@ const BookCard = ({bookInfo}) => {
     <Card onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
       <BookImageContainer>
         <Image
-          src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+          src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
           alt={bookInfo?.bookName}
           layout="fill"
           objectFit="cover"

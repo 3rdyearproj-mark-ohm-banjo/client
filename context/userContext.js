@@ -2,6 +2,7 @@ import {createContext, useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Cookies from 'universal-cookie'
 import userService, {logout} from '../api/request/userService'
+import {useRouter} from 'next/router'
 
 const UserContext = createContext()
 const cookies = new Cookies()
@@ -9,6 +10,7 @@ const cookies = new Cookies()
 export const UserContextProvider = ({children}) => {
   const [user, setUser] = useState({})
   const [isAuth, setIsAuth] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     userService
@@ -25,13 +27,16 @@ export const UserContextProvider = ({children}) => {
   }
 
   const updateIsAuth = (auth) => {
-    setIsAuth(true)
+    setIsAuth(auth)
   }
 
   const logoutHandler = () => {
     logout()
     setUser({})
     setIsAuth(false)
+    if (router.pathname.includes('profile')) {
+      router.push('/')
+    }
   }
 
   const context = {

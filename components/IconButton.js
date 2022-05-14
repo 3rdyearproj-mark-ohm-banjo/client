@@ -3,7 +3,6 @@ import Icon from './Icon'
 import styled, {css} from 'styled-components'
 import PropTypes from 'prop-types'
 import {COLORS} from '../styles/colors'
-import {SPACING} from '../styles/spacing'
 
 const DisabledStyled = css`
   color: ${COLORS.WHITE};
@@ -55,6 +54,7 @@ const IconButton = ({
   btnWidth,
   btnHeight,
   padding,
+  children,
 }) => {
   return (
     <IconButtonStyled
@@ -69,6 +69,7 @@ const IconButton = ({
       padding={padding}
     >
       <Icon name={name} size={iconSize} />
+      {children}
     </IconButtonStyled>
   )
 }
@@ -85,6 +86,7 @@ IconButton.propTypes = {
   iconSize: PropTypes.string,
   btnStyle: PropTypes.oneOf(['primary', 'secondary']),
   padding: PropTypes.string,
+  children: PropTypes.node,
 }
 
 IconButton.defaultProps = {

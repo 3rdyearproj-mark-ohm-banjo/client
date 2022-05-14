@@ -155,7 +155,9 @@ const SearchDropdown = ({
     if (clicked === selectedItem) {
       clicked = ''
     }
-    setSelectedItem(clicked)
+    if (showCurrentData) {
+      setSelectedItem(clicked)
+    }
     onClickDropdown(clicked)
     setIsToggle(false)
     setCurrentSearch('')

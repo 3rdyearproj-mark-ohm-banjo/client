@@ -147,7 +147,7 @@ const ProfilePage = () => {
         <UserProfile>
           <Circle></Circle>
           <UserNameContainer>
-            <span>Hello here,</span>
+            <span>สวัสดี, คุณ</span>
             <UserName>{user.username}</UserName>
           </UserNameContainer>
         </UserProfile>

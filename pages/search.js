@@ -5,7 +5,7 @@ import {SPACING} from '../styles/spacing'
 import Pagination from '../components/Pagination'
 import Background from '../public/static/images/background-default.png'
 import {COLORS} from '../styles/colors'
-import {Icon, SearchDropdown} from '../components'
+import {Button, Icon, SearchDropdown} from '../components'
 import {FONTS} from '../styles/fonts'
 import BackgroundContainer from '../components/BackgroundContainer'
 import IconButton from '../components/IconButton'
@@ -17,6 +17,8 @@ import {default_param} from '../config/searchQuery'
 import {useTypesQuery} from '../api/query/useType'
 import {usePublishersQuery} from '../api/query/usePublisher'
 import {ContentWrapper} from '../components/Layout'
+import SelectDropdown from '../components/SelectDropdown'
+import {bookSortList} from '../config/sortList'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -151,28 +153,20 @@ const TypeItem = styled.div`
   }
 `
 
+const SortWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`
+
 const SearchPage = ({isEmptyQuery}) => {
-  const sortList = [
-    {
-      id: {sortBy: 'totalBorrow', isdescending: 'yes'},
-      name: 'เรียงจากยอดการยืม มากไปน้อย',
-    },
-    {
-      id: {sortBy: '', isdescending: 'yes'},
-      name: 'เรียงจากวันที่นำเข้าล่าสุด',
-    },
-    {
-      id: {sortBy: 'bookName', isdescending: 'no'},
-      name: 'เรียงจากชื่อหนังสือ',
-    },
-  ]
   const router = useRouter()
   const pageSize = 6
   const [isTriggerFilter, setIsTriggerFilter] = useState(false)
   const [queryParam, setQueryParam] = useState(router.query)
   const currentTypes = router?.query?.types && router?.query?.types?.split(',')
-  const {data: types, isLoading: loadingTypes} = useTypesQuery()
-  const {data: publishers, isLoading: loadingPublishers} = usePublishersQuery()
+  const {data: types} = useTypesQuery()
+  const {data: publishers} = usePublishersQuery()
   const [bookData, setBookData] = useState([])
   const [totalPage, setTotalPage] = useState(0)
 
@@ -187,6 +181,27 @@ const SearchPage = ({isEmptyQuery}) => {
   const handleClickSearch = (e) => {
     e.preventDefault()
     router.push({pathname: '/search', query: queryParam, shallow: true})
+  }
+
+  const sortClick = (val) => {
+    let param = queryParam
+    if (
+      JSON.stringify({
+        sortBy: router?.query?.sortBy,
+        isDescending: router?.query?.isDescending,
+      }) === JSON.stringify(val)
+    ) {
+      param = {...param, ...bookSortList[0].id}
+    } else {
+      param = {...param, ...val}
+    }
+
+    router.push({
+      pathname: '/search',
+      query: {
+        ...param,
+      },
+    })
   }
 
   useEffect(() => {
@@ -239,15 +254,14 @@ const SearchPage = ({isEmptyQuery}) => {
                     onClick={handleClickSearch}
                   />
                 </SearchInputContainer>
-                <IconButton
-                  name={ICONS.faFilter}
-                  borderRadius="8px"
+                <Button
+                  btnSize="sm"
                   onClick={() => setIsTriggerFilter(!isTriggerFilter)}
-                  isActive={isTriggerFilter}
                   btnStyle="secondary"
-                  btnWidth="40px"
-                  btnHeight="40px"
-                />
+                  borderRadius="8px"
+                >
+                  <Icon name={ICONS.faFilter}></Icon> ตัวกรอง
+                </Button>
               </ToolItemContainer>
               {isTriggerFilter && (
                 <FilterContainer>
@@ -268,7 +282,6 @@ const SearchPage = ({isEmptyQuery}) => {
                             ? queryParam.types + ',' + val
                             : val,
                         },
-                        // shallow: true,
                       })
                     }
                     placeHolder="ค้นหาประเภทหนังสือ..."
@@ -279,27 +292,25 @@ const SearchPage = ({isEmptyQuery}) => {
                       router.push({
                         pathname: '/search',
                         query: {...queryParam, publisher: val},
-                        // shallow: true,
                       })
                     }
                     placeHolder="ค้นหาสำนักพิมพ์..."
                     showCurrentData
                     value={router?.query?.publisher}
                   />
-                  <SearchDropdown
-                    dataList={sortList}
-                    onClickDropdown={(val) =>
-                      router.push({
-                        pathname: '/search',
-                        query: {
-                          ...queryParam,
-                          ...val,
-                        },
-                        // shallow: true,
-                      })
-                    }
-                    placeHolder="เรียงจาก"
-                  />
+
+                  <SortWrapper>
+                    <SelectDropdown
+                      dropdownList={bookSortList}
+                      text="เรียงจาก"
+                      icon={ICONS.faSort}
+                      onClickDropdown={(val) => sortClick(val)}
+                      value={{
+                        sortBy: router?.query?.sortBy,
+                        isDescending: router?.query?.isDescending,
+                      }}
+                    />
+                  </SortWrapper>
 
                   {currentTypes?.length > 0 && (
                     <TypeContainer>

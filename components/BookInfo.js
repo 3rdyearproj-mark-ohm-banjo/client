@@ -9,7 +9,6 @@ import {TYPES_STYLE} from '../config/types-styles'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import {EffectFlip} from 'swiper'
 import 'swiper/css/effect-flip'
-import {BASE_URL} from '../config/env'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -195,12 +194,12 @@ const BookInfo = ({bookInfo}) => {
           >
             <SwiperSlide>
               <BookImage
-                src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
             </SwiperSlide>
             <SwiperSlide>
               <BookImage
-                src={`${BASE_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
             </SwiperSlide>
           </Swiper>

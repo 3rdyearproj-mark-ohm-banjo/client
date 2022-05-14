@@ -12,7 +12,6 @@ import {useDropzone} from 'react-dropzone'
 import SearchDropdown from '../SearchDropdown'
 import {ISBN_LIST} from '../../config/ISBN-mockup'
 import shelfService from '../../api/request/shelfService'
-import {BASE_URL} from '../../config/env'
 import {useTypesQuery} from '../../api/query/useType'
 import {usePublishersQuery} from '../../api/query/usePublisher'
 
@@ -251,7 +250,7 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
       if (res.data.length > 0) {
         res.data[0].types = res.data[0].types.map((type) => type._id)
         res.data[0].publisher = res.data[0].publisherId._id
-        res.data[0].imageCover = `${BASE_URL}/bookShelf/bsImage/${res.data[0].imageCover}`
+        res.data[0].imageCover = `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`
         setBookData(res.data[0])
         if (!isbnBookToEdit) {
           setDisabledAll(true)

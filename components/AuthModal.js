@@ -5,6 +5,8 @@ import LoginForm from './forms/LoginForm'
 import RegisterForm from './forms/RegisterForm'
 import {ModalBackground, ModalContainer} from './Modal'
 import RegisterBanner from '../public/static/images/register-banner.png'
+import LoginBanner from '../public/static/images/people-group-reading.jpg'
+import Image from 'next/image'
 
 const PageBanner = styled.div`
   height: 100%;
@@ -17,7 +19,7 @@ const PageBanner = styled.div`
   flex-direction: column;
 `
 
-const BannerImage = styled.img`
+const BannerImage = styled.div`
   max-width: 500px;
   max-height: 400px;
   width: 100%;
@@ -87,10 +89,15 @@ const AuthModal = ({show, setShow}) => {
                       <span>เพียงกรอกข้อมูลเพื่อสมัครสมาชิก~</span>
                     </BannerHeader>
 
-                    <BannerImage
-                      alt="register-banner"
-                      src={RegisterBanner.src}
-                    />
+                    <BannerImage>
+                      <Image
+                        alt="login-banner"
+                        src={RegisterBanner}
+                        layout="responsive"
+                        width={500}
+                        height={350}
+                      />
+                    </BannerImage>
 
                     <BannerHeader>
                       <div>บริการยืมหนังสือ</div>
@@ -106,7 +113,23 @@ const AuthModal = ({show, setShow}) => {
                 </>
               ) : (
                 <>
-                  <PageBanner></PageBanner>
+                  <PageBanner>
+                    <BannerHeader>
+                      <div>บริการยืมหนังสือ</div>
+                      <span>
+                        และบริจาคหนังสือเพื่อร่วมกันสร้างสังคมแห่งการแบ่งปัน
+                      </span>
+                    </BannerHeader>
+                    <BannerImage>
+                      <Image
+                        alt="login-banner"
+                        src={LoginBanner}
+                        layout="responsive"
+                        width={500}
+                        height={400}
+                      />
+                    </BannerImage>
+                  </PageBanner>
                   <LoginForm
                     onShowRegister={setShowRegister}
                     onSuccess={() => setShow(false)}

@@ -20,6 +20,7 @@ const SwiperContainer = styled.div`
 
 const OtherContentContainer = styled.section`
   max-width: 100%;
+  width: 100%;
   margin: 0 auto;
 
   @media (min-width: 1050px) {
@@ -146,12 +147,12 @@ export const getServerSideProps = async (context) => {
     .getShelfByIsbn(isbn)
     .then((res) => res.data[0])
 
-  const relatedBook = await Promise.all(
+  let relatedBook = await Promise.all(
     bookShelf.types.map(async (type) => {
       const data = await shelfService
-        .searchBookShelf({type: type.typeName, page: 1}, 5)
+        .searchBookShelf({types: type._id, page: 1}, 5)
         .then((res) => {
-          return res.data
+          return res.data.filter((item) => item.ISBN !== isbn)
         })
 
       return {
@@ -163,6 +164,10 @@ export const getServerSideProps = async (context) => {
       }
     })
   )
+
+  relatedBook = relatedBook.filter((type) => {
+    return type.data.length > 0
+  })
 
   return {
     props: {

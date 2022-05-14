@@ -33,8 +33,10 @@ export const AuthFormWrapper = styled.div`
   color: ${COLORS.WHITE};
   padding: ${SPACING.LG};
   position: relative;
+  border-radius: ${SPACING.SM};
 
   @media (min-width: 768px) {
     padding: 50px;
+    border-radius: 0 ${SPACING.SM} ${SPACING.SM} 0;
   }
 `

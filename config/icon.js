@@ -38,6 +38,7 @@ import {
   faLocationDot,
   faSignOut,
   faSignIn,
+  faSort,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
@@ -84,6 +85,7 @@ export const ICONS = {
   faLocationDot,
   faSignOut,
   faSignIn,
+  faSort,
 }
 export const ICON_SIZE = {
   xs: 'xs',

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
@@ -10,6 +10,7 @@ import {AuthFormWrapper} from '../Layout'
 import {login} from '../../api/request/userService'
 import UserContext from '../../context/userContext'
 import Icon from '../Icon'
+import {validateEmail} from '../../utils/validate'
 
 const Header = styled.div`
   text-align: center;
@@ -61,20 +62,67 @@ const NavWrap = styled.div`
   }
 `
 
+const ErrMessage = styled.div`
+  background-color: ${COLORS.RED_2};
+  color: ${COLORS.WHITE};
+  padding: 2px ${SPACING.MD};
+  border-radius: ${SPACING.MD};
+  width: max-content;
+  margin: ${SPACING.LG} 0;
+  font-size: 14px;
+  font-weight: 600;
+`
+
 const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const {updateUser, updateIsAuth} = useContext(UserContext)
   const forgotPassword = () => {}
+  const [resErrStatus, setResErrStatus] = useState()
+  const [error, setError] = useState([])
+
+  const validate = () => {
+    let errArr = []
+    if (email.length < 1 || !validateEmail(email)) {
+      errArr.push('email')
+    }
+    if (password.length < 1) {
+      errArr.push('password')
+    }
+
+    if (errArr.length > 0) {
+      setError(errArr)
+      return 0
+    }
+    return 1
+  }
 
   const loginHandler = async (e) => {
     e.preventDefault()
-    return await login(email, password).then((res) => {
-      updateUser(res.data?.user)
-      updateIsAuth(true)
-      onSuccess()
-    })
+    if (validate()) {
+      return await login(email, password)
+        .then((res) => {
+          updateUser(res.data?.user)
+          updateIsAuth(true)
+          onSuccess()
+        })
+        .catch((err) => {
+          setResErrStatus(err.response.status)
+        })
+    }
   }
+
+  useEffect(() => {
+    if (email.length > 0) {
+      setError((errs) => errs.filter((err) => err !== 'email'))
+    }
+  }, [email])
+
+  useEffect(() => {
+    if (password.length > 0) {
+      setError((errs) => errs.filter((err) => err !== 'password'))
+    }
+  }, [password])
 
   return (
     <AuthFormWrapper>
@@ -88,6 +136,9 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
         <h4>ยินดีต้อนรับกลับ~</h4>
         <span>กรอกข้อมูลเพื่อเข้าสู่บัญชีของคุณ</span>
       </Header>
+      {resErrStatus === 422 && (
+        <ErrMessage>โปรดลองอีกครั้ง, อีเมลหรือรหัสผ่านไม่ถูกต้อง</ErrMessage>
+      )}
       <form onSubmit={loginHandler}>
         <InputWithIcon
           label="อีเมล"
@@ -97,6 +148,9 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
           placeholder="กรอกอีเมล"
           maxLength={60}
         />
+        {error.indexOf('email') !== -1 && (
+          <ErrMessage>กรุณากรอกอีเมลให้ถูกต้อง</ErrMessage>
+        )}
         <InputWithIcon
           label="รหัสผ่าน"
           iconName={ICONS.faLock}
@@ -105,6 +159,9 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
           placeholder="กรอกรหัสผ่าน"
           maxLength={30}
         />
+        {error.indexOf('password') !== -1 && (
+          <ErrMessage>คุณยังไม่ได้กรอกรหัสผ่าน</ErrMessage>
+        )}
 
         <HelperWrapper>
           <span onClick={() => onShowRegister(true)}>สร้างบัญชี</span>

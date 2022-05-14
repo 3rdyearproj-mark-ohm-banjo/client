@@ -67,8 +67,8 @@ const NavigationBar = () => {
           {isAuth ? (
             <>
               <MenuIcon
-                onClick={() => router.push('/donatebook')}
-                isActive={router.pathname === '/donatebook'}
+                onClick={() => router.push('/profile/donatebook')}
+                isActive={router.pathname === '/profile/donatebook'}
               >
                 <Icon name={ICONS.faHandHoldingHand} size={ICON_SIZE.lg} />
                 <span>บริจาคหนังสือ</span>

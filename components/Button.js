@@ -183,6 +183,10 @@ const ButtonStyled = styled.button`
   ${(props) => props.bgColor && `background-color: ${props.bgColor};`}
   ${(props) => props.txtColor && `color:${props.txtColor};`}
 
+  ${(props) => props.padding && `padding:${props.padding};`}
+  ${(props) => props.borderRadius && `border-radius:${props.borderRadius};`}
+
+
 
   &:hover > span:last-child:before,
   &:hover > span:last-child:after {
@@ -202,6 +206,8 @@ const Button = ({
   bgColor,
   txtColor,
   type,
+  padding,
+  borderRadius,
 }) => {
   return (
     <ButtonStyled
@@ -213,6 +219,8 @@ const Button = ({
       fullWidth={fullWidth}
       bgColor={bgColor}
       txtColor={txtColor}
+      padding={padding}
+      borderRadius={borderRadius}
     >
       {children ?? 'click me'}
       {withIcon && (
@@ -241,6 +249,8 @@ Button.propTypes = {
   children: PropTypes.node,
   bgColor: PropTypes.string,
   txtColor: PropTypes.string,
+  padding: PropTypes.string,
+  borderRadius: PropTypes.string,
 }
 
 Button.defaultProps = {
