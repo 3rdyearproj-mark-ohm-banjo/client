@@ -76,7 +76,7 @@ const ErrMessage = styled.div`
 const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const {updateUser, updateIsAuth} = useContext(UserContext)
+  const {setUser, setIsAuth} = useContext(UserContext)
   const forgotPassword = () => {}
   const [resErrStatus, setResErrStatus] = useState()
   const [error, setError] = useState([])
@@ -102,8 +102,8 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
     if (validate()) {
       return await login(email, password)
         .then((res) => {
-          updateUser(res.data?.user)
-          updateIsAuth(true)
+          setUser(res.data?.user)
+          setIsAuth(true)
           onSuccess()
         })
         .catch((err) => {

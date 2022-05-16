@@ -1,7 +1,7 @@
 import {useState, useEffect, useContext} from 'react'
 import styled, {css} from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
-import {BackgroundContainer, Icon} from '../../components'
+import {BackgroundContainer, Button, Icon} from '../../components'
 import BookBorrowingCard from '../../components/BookBorrowingCard'
 import {ContentWrapper} from '../../components/Layout'
 import {ICONS} from '../../config/icon'
@@ -16,6 +16,9 @@ import BookOwnerCard from '../../components/BookOwnerCard'
 import shelfService from '../../api/request/shelfService'
 import {useRouter} from 'next/router'
 import UserContext from '../../context/userContext'
+import {formatDate} from '../../utils/format'
+import ConfirmModal from '../../components/ConfirmModal'
+import userService from '../../api/request/userService'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
@@ -158,111 +161,125 @@ const NavItem = styled.li`
 
 const ProfilePage = () => {
   const router = useRouter()
-  const [myBooks, setMyBooks] = useState([])
-  const {user} = useContext(UserContext)
+  const {totalBookDonation, user, setUser} = useContext(UserContext)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [deleteItem, setDeleteItem] = useState({})
 
   useEffect(() => {
-    shelfService.getAllShelf().then((res) => {
-      setMyBooks(res.data)
+    if (
+      user.donationHistory &&
+      totalBookDonation !== user.donationHistory?.length
+    ) {
+      userService.getCurrentUser().then((res) => setUser(res.data.data[0]))
+    }
+  }, [totalBookDonation])
+
+  const handleDeleteSubmit = () => {
+    userService.cancelDonation(deleteItem?.bookId).then(() => {
+      setUser({
+        ...user,
+        donationHistory: user.donationHistory.filter(
+          (history) => history.book._id !== deleteItem?.bookId
+        ),
+      })
+      setShowCancelModal(false)
+      setDeleteItem({})
     })
-  }, [])
+  }
+
+  const handleShowModal = () => {
+    setShowCancelModal(false)
+    setDeleteItem({})
+  }
 
   return (
-    <BackgroundContainer link={Background.src}>
-      <ContentWrapper>
-        <UserProfile>
-          <Circle></Circle>
-          <UserNameContainer>
-            <span>สวัสดี, คุณ</span>
-            <UserName>{user.username}</UserName>
-          </UserNameContainer>
-        </UserProfile>
-        <NavMenu>
-          <NavItem isActive={true}>ข้อมูลโดยรวม</NavItem>
-          <NavItem>หนังสือที่กำลังยืมอยู่</NavItem>
-          <NavItem>หนังสือที่บริจาค</NavItem>
-          <NavItem>ประวัติการยืม</NavItem>
-          <NavItem>ตั้งค่าบัญชี</NavItem>
-        </NavMenu>
-
-        <StatContainer>
-          <StatItem>
-            <Icon name={ICONS.faBookBookmark} />
-            <p>ยืมไปแล้ว</p>
-            <span>50 ครั้ง</span>
-          </StatItem>
-          <StatItem>
-            <Icon name={ICONS.faHandHoldingHand} />
-            <p>บริจาคไปแล้ว</p>
-            <span>{user?.donationHistory?.length} เล่ม</span>
-          </StatItem>
-          <StatItem>
-            <Icon name={ICONS.faBook} />
-            <p>ถือหนังสืออยู่</p>
-            <span>0 / 5 เล่ม</span>
-          </StatItem>
-        </StatContainer>
-
-        <TopicHead>
-          <h3>หนังสือที่กำลังยืมอยู่</h3>
-        </TopicHead>
-
-        <SwiperContainer>
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={10}
-            breakpoints={{
-              700: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-            }}
-            scrollbar={{
-              hide: true,
-            }}
-            loopFillGroupWithBlank={true}
-            modules={[Scrollbar]}
-            className="mySwiper"
+    <>
+      <ConfirmModal
+        onSubmit={handleDeleteSubmit}
+        onClose={handleShowModal}
+        onShow={showCancelModal}
+        header={`คุณต้องการยกเลิกการบริจาค ${deleteItem.bookName} จริงๆ หรอ?`}
+        icon={ICONS.faFaceSadTear}
+        iconBg={COLORS.RED_1}
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            width: '70%',
+          }}
+        >
+          <Button
+            btnSize="sm"
+            bgColor={COLORS.RED_1}
+            onClick={handleShowModal}
+            fullWidth
+            borderRadius="4px"
           >
-            <SwiperSlide>
-              <BookBorrowingCard />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BookBorrowingCard />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BookBorrowingCard />
-            </SwiperSlide>
-          </Swiper>
-        </SwiperContainer>
+            ยกเลิก
+          </Button>
+          <Button
+            btnSize="sm"
+            onClick={handleDeleteSubmit}
+            fullWidth
+            borderRadius="4px"
+          >
+            ยืนยัน
+          </Button>
+        </div>
+      </ConfirmModal>
 
-        <TopicHead>
-          <h3>หนังสือที่บริจาค</h3>{' '}
-          <ViewAll onClick={() => router.push('/profile/mydonation')}>
-            <span> ดูทั้งหมด </span>
-            <Icon name={ICONS.faChevronRight} />
-          </ViewAll>
-        </TopicHead>
-        <SwiperContainer>
-          {myBooks.length > 0 ? (
+      <BackgroundContainer link={Background.src}>
+        <ContentWrapper>
+          <UserProfile>
+            <Circle></Circle>
+            <UserNameContainer>
+              <span>สวัสดี, คุณ</span>
+              <UserName>{user.username}</UserName>
+            </UserNameContainer>
+          </UserProfile>
+          <NavMenu>
+            <NavItem isActive={true}>ข้อมูลโดยรวม</NavItem>
+            <NavItem>หนังสือที่กำลังยืมอยู่</NavItem>
+            <NavItem>หนังสือที่บริจาค</NavItem>
+            <NavItem>ประวัติการยืม</NavItem>
+            <NavItem>ตั้งค่าบัญชี</NavItem>
+          </NavMenu>
+
+          <StatContainer>
+            <StatItem>
+              <Icon name={ICONS.faBookBookmark} />
+              <p>ยืมไปแล้ว</p>
+              <span>50 ครั้ง</span>
+            </StatItem>
+            <StatItem>
+              <Icon name={ICONS.faHandHoldingHand} />
+              <p>บริจาคไปแล้ว</p>
+              <span>{totalBookDonation} เล่ม</span>
+            </StatItem>
+            <StatItem>
+              <Icon name={ICONS.faBook} />
+              <p>ถือหนังสืออยู่</p>
+              <span>0 / 5 เล่ม</span>
+            </StatItem>
+          </StatContainer>
+
+          <TopicHead>
+            <h3>หนังสือที่กำลังยืมอยู่</h3>
+          </TopicHead>
+
+          <SwiperContainer>
             <Swiper
-              slidesPerView={2}
+              slidesPerView={1}
               spaceBetween={10}
               breakpoints={{
-                520: {
+                700: {
                   slidesPerView: 2,
                   spaceBetween: 20,
                 },
-                700: {
-                  slidesPerView: 3,
-                  spaceBetween: 20,
-                },
                 1024: {
-                  slidesPerView: 4,
+                  slidesPerView: 3,
                   spaceBetween: 20,
                 },
               }}
@@ -273,26 +290,81 @@ const ProfilePage = () => {
               modules={[Scrollbar]}
               className="mySwiper"
             >
-              {myBooks.map((book) => (
-                <SwiperSlide key={`donation-book-${book._id}`}>
-                  <BookOwnerCard bookInfo={book}></BookOwnerCard>
-                </SwiperSlide>
-              ))}
+              <SwiperSlide>
+                <BookBorrowingCard />
+              </SwiperSlide>
+              <SwiperSlide>
+                <BookBorrowingCard />
+              </SwiperSlide>
+              <SwiperSlide>
+                <BookBorrowingCard />
+              </SwiperSlide>
             </Swiper>
-          ) : (
-            <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
-          )}
-        </SwiperContainer>
+          </SwiperContainer>
 
-        <TopicHead>
-          <h3> ประวัติการยืม</h3>{' '}
-          <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
-            <span> ดูทั้งหมด </span>
-            <Icon name={ICONS.faChevronRight} />
-          </ViewAll>
-        </TopicHead>
-      </ContentWrapper>
-    </BackgroundContainer>
+          <TopicHead>
+            <h3>หนังสือที่บริจาค</h3>{' '}
+            <ViewAll onClick={() => router.push('/profile/mydonation')}>
+              <span> ดูทั้งหมด </span>
+              <Icon name={ICONS.faChevronRight} />
+            </ViewAll>
+          </TopicHead>
+          <SwiperContainer>
+            {user?.donationHistory?.length > 0 ? (
+              <Swiper
+                slidesPerView={2}
+                spaceBetween={10}
+                breakpoints={{
+                  520: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                  700: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                  1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 20,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                loopFillGroupWithBlank={true}
+                modules={[Scrollbar]}
+                className="mySwiper"
+              >
+                {user?.donationHistory?.map((history) => (
+                  <SwiperSlide key={`donation-book-${history._id}`}>
+                    <BookOwnerCard
+                      bookId={history.book._id}
+                      bookInfo={history.book.bookShelf}
+                      donationTime={formatDate(history.donationTime)}
+                      canCancel={history.book.currentHolder === user._id}
+                      onCancel={(showModal, bookId) => {
+                        setShowCancelModal(showModal)
+                        setDeleteItem(bookId)
+                      }}
+                    ></BookOwnerCard>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
+            )}
+          </SwiperContainer>
+
+          <TopicHead>
+            <h3> ประวัติการยืม</h3>{' '}
+            <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
+              <span> ดูทั้งหมด </span>
+              <Icon name={ICONS.faChevronRight} />
+            </ViewAll>
+          </TopicHead>
+        </ContentWrapper>
+      </BackgroundContainer>
+    </>
   )
 }
 

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react'
+import React, {useState, useEffect, useCallback, useContext} from 'react'
 import PropTypes from 'prop-types'
 import styled, {css} from 'styled-components'
 import Button from '../Button'
@@ -238,12 +238,12 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
 
   useEffect(() => {
     if (imageFile.length > 0) {
-      setErrors(errors?.filter((err) => err !== 'image'))
+      setErrors((errs) => errs?.filter((err) => err !== 'image'))
     }
     return () => {
-      setErrors([])
+      setErrors((err) => [])
     }
-  }, [imageFile, errors])
+  }, [imageFile])
 
   const getDataFromISBN = useCallback(
     (ISBN) => {
