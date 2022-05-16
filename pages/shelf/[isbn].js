@@ -1,5 +1,5 @@
 import React from 'react'
-import {BackgroundContainer, BookInfo} from '../../components'
+import {BackgroundContainer, BookInfo, Icon} from '../../components'
 import {useRouter} from 'next/router'
 import shelfService from '../../api/request/shelfService'
 import styled from 'styled-components'
@@ -13,6 +13,26 @@ import {TYPES_STYLE} from '../../config/types-styles'
 import 'swiper/css'
 import Head from 'next/head'
 import {default_param} from '../../config/searchQuery'
+import {BoxLayout, ContentWrapper} from '../../components/Layout'
+import {ICONS} from '../../config/icon'
+
+const BreadCrumb = styled.ul`
+  display: flex;
+  align-self: start;
+  align-items: center;
+  font-size: 14px;
+  gap: ${SPACING.MD};
+  flex-wrap: wrap;
+  word-break: break-word;
+`
+
+const BreadCrumbLink = styled.li`
+  &:hover {
+    transition: 0.1s;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+`
 
 const SwiperContainer = styled.div`
   max-width: 100%;
@@ -78,62 +98,77 @@ const BookShelfPage = ({bookShelf, relatedBook}) => {
         <title>{bookShelf?.bookName}</title>
       </Head>
       <BackgroundContainer link={Background.src}>
-        <BookInfo bookInfo={bookShelf} />
-        <OtherContentContainer>
-          {relatedBook.map((item) => (
-            <React.Fragment key={`bookShelf-${item.type.typeName}`}>
-              <RelateContentHead>
-                หนังสือ {item.type.typeName} เพิ่มเติม
-              </RelateContentHead>
-              <SwiperContainer>
-                <Swiper
-                  modules={[A11y]}
-                  slidesPerView={1}
-                  spaceBetween={10}
-                  breakpoints={{
-                    600: {
-                      slidesPerView: 2,
-                      spaceBetween: 40,
-                    },
-                    1024: {
-                      slidesPerView: 3,
-                      spaceBetween: 50,
-                    },
-                  }}
-                  loopFillGroupWithBlank={true}
-                  scrollbar={{draggable: true}}
-                  className="mySwiper"
-                >
-                  {item?.data?.map((book) => (
-                    <SwiperSlide
-                      key={`relatedBook-type${item.type.typeName}-id${book._id}`}
-                    >
-                      <BookCard bookInfo={book} />
-                    </SwiperSlide>
-                  ))}
+        <BoxLayout>
+          <ContentWrapper margin="16px 0" width="max-content" maxWidth="100%">
+            <BreadCrumb>
+              <BreadCrumbLink onClick={() => router.push('/')}>
+                หน้าแรก
+              </BreadCrumbLink>
+              <Icon name={ICONS.faChevronRight} size={'sm'} />{' '}
+              <BreadCrumbLink onClick={() => router.push('/search')}>
+                ค้นหาหนังสือ
+              </BreadCrumbLink>
+              <Icon name={ICONS.faChevronRight} size={'sm'} />
+              <li>{bookShelf.bookName}</li>
+            </BreadCrumb>
+          </ContentWrapper>
+          <BookInfo bookInfo={bookShelf} />
+          <OtherContentContainer>
+            {relatedBook.map((item) => (
+              <React.Fragment key={`bookShelf-${item.type.typeName}`}>
+                <RelateContentHead>
+                  หนังสือ {item.type.typeName} เพิ่มเติม
+                </RelateContentHead>
+                <SwiperContainer>
+                  <Swiper
+                    modules={[A11y]}
+                    slidesPerView={1}
+                    spaceBetween={10}
+                    breakpoints={{
+                      600: {
+                        slidesPerView: 2,
+                        spaceBetween: 40,
+                      },
+                      1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 50,
+                      },
+                    }}
+                    loopFillGroupWithBlank={true}
+                    scrollbar={{draggable: true}}
+                    className="mySwiper"
+                  >
+                    {item?.data?.map((book) => (
+                      <SwiperSlide
+                        key={`relatedBook-type${item.type.typeName}-id${book._id}`}
+                      >
+                        <BookCard bookInfo={book} />
+                      </SwiperSlide>
+                    ))}
 
-                  <SwiperSlide>
-                    <ViewMoreCard
-                      bgColor={
-                        TYPES_STYLE[
-                          item.type.typeName?.replace(' ', '')?.toLowerCase()
-                        ]?.color
-                      }
-                      onClick={() =>
-                        router.push({
-                          pathname: '/search',
-                          query: {...default_param, types: item.type.id},
-                        })
-                      }
-                    >
-                      ดูเพิ่มเติม
-                    </ViewMoreCard>
-                  </SwiperSlide>
-                </Swiper>
-              </SwiperContainer>
-            </React.Fragment>
-          ))}
-        </OtherContentContainer>
+                    <SwiperSlide>
+                      <ViewMoreCard
+                        bgColor={
+                          TYPES_STYLE[
+                            item.type.typeName?.replace(' ', '')?.toLowerCase()
+                          ]?.color
+                        }
+                        onClick={() =>
+                          router.push({
+                            pathname: '/search',
+                            query: {...default_param, types: item.type.id},
+                          })
+                        }
+                      >
+                        ดูเพิ่มเติม
+                      </ViewMoreCard>
+                    </SwiperSlide>
+                  </Swiper>
+                </SwiperContainer>
+              </React.Fragment>
+            ))}
+          </OtherContentContainer>
+        </BoxLayout>
       </BackgroundContainer>
     </>
   )

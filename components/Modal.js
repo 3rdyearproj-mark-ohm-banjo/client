@@ -24,15 +24,12 @@ export const ModalContainer = styled.div`
   border-radius: ${SPACING.SM};
   box-shadow: 0 5px 10px ${COLORS.GRAY_DARK};
   position: absolute;
-  top: 0;
+  transform: translate(-50%, -50%);
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: ${(props) => props.flexDirection ?? 'column'};
-
-  @media (min-width: 768px) {
-    top: 120px;
-  }
 `
 
 const Modal = ({children}) => {

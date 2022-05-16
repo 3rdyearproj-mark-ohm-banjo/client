@@ -55,7 +55,7 @@ const DonateBookPage = () => {
   const submitBookShelf = (bookData, imageFile) => {
     shelfService.addShelf(bookData, imageFile).then((res) => {
       setShowResModal(true)
-      setIsbn(res.data.ISBN)
+      setIsbn(res?.data?.ISBN)
     })
   }
 

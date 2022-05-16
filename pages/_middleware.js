@@ -1,20 +1,20 @@
 import {NextResponse} from 'next/server'
-import {verify} from 'jsonwebtoken'
+import jwt_decode from 'jwt-decode'
 
 const middleware = (req) => {
   const {cookies} = req
-  const jwt = cookies.jwt
+  const authToken = cookies.jwt
   const url = req.url
   const currentUrl = req.nextUrl.clone()
   const secret = process.env.SECRET_KEY
 
   if (url.includes('/profile')) {
-    if (!jwt) {
+    if (!authToken) {
       currentUrl.pathname = '/'
       return NextResponse.redirect(currentUrl)
     }
     try {
-      verify(jwt, secret)
+      jwt_decode(authToken)
       return NextResponse.next()
     } catch (e) {
       currentUrl.pathname = '/'

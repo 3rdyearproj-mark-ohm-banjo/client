@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router'
-import React from 'react'
+import React, {useContext} from 'react'
 import styled, {css} from 'styled-components'
 import {TYPES_STYLE} from '../config/types-styles'
 import {COLORS} from '../styles/colors'
@@ -7,6 +7,8 @@ import {FONTS} from '../styles/fonts'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
 import Image from 'next/image'
+import UserContext from '../context/userContext'
+import PropTypes from 'prop-types'
 
 const Card = styled.div`
   display: flex;
@@ -20,7 +22,6 @@ const Card = styled.div`
   user-select: none;
 
   &:hover {
-    cursor: pointer;
     box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
   }
 
@@ -36,6 +37,7 @@ const BookImageContainer = styled.div`
   overflow: hidden;
   flex-shrink: 0;
   position: relative;
+  cursor: pointer;
 `
 
 const BookInfoContainer = styled.div`
@@ -56,13 +58,13 @@ const BookName = styled.div`
   max-height: 40px;
   line-height: 20px;
   color: ${COLORS.PRIMARY};
+  cursor: pointer;
 
   ${(props) => props.isLong && 'font-size: 16px;'}
 `
 
-const Types = styled.div`\
-margin:${SPACING.XS} 0 ;
- 
+const Types = styled.div`
+  margin: ${SPACING.XS} 0;
   display: flex;
   flex-wrap: wrap;
   gap: ${SPACING.XS};
@@ -106,10 +108,13 @@ const BottomZone = styled.div`
 
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
+  const {isAuth} = useContext(UserContext)
 
   return (
-    <Card onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
-      <BookImageContainer>
+    <Card>
+      <BookImageContainer
+        onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
+      >
         <Image
           src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
           alt={bookInfo?.bookName}
@@ -118,7 +123,10 @@ const BookCard = ({bookInfo}) => {
         />
       </BookImageContainer>
       <BookInfoContainer>
-        <BookName isLong={bookInfo?.bookName.length > 30}>
+        <BookName
+          isLong={bookInfo?.bookName.length > 30}
+          onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
+        >
           {bookInfo?.bookName}
         </BookName>
         <Types>
@@ -148,12 +156,22 @@ const BookCard = ({bookInfo}) => {
         </BorrowCount>
 
         <BottomZone>
-          {bookInfo?.totalAvailable > 0 && (
-            <Button btnSize="sm">ยืมหนังสือ</Button>
-          )}
-
-          {bookInfo?.totalAvailable === 0 && (
-            <Button btnSize="sm">ต่อคิว</Button>
+          {isAuth ? (
+            <Button
+              btnSize="sm"
+              btnType="whiteBorder"
+              onClick={() => router.push(`/profile`)}
+            >
+              ดูข้อมูลการยืม
+            </Button>
+          ) : (
+            <>
+              {bookInfo?.totalAvailable > 0 ? (
+                <Button btnSize="sm">ยืมหนังสือ</Button>
+              ) : (
+                <Button btnSize="sm">ต่อคิว</Button>
+              )}
+            </>
           )}
         </BottomZone>
       </BookInfoContainer>

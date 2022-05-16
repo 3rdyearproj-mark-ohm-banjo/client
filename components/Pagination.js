@@ -1,6 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
-import {css} from 'styled-components'
+import styled, {css} from 'styled-components'
 import {ICONS} from '../config/icon'
 import {DOTS, usePagination} from '../hooks/usePagination'
 import {COLORS} from '../styles/colors'

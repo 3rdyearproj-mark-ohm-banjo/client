@@ -162,9 +162,6 @@ const Home = () => {
       </Head>
       <BackgroundContainer link={Background.src}>
         <ContentWrapper>
-          <BreadCrumb>
-            <li>หน้าแรก</li>
-          </BreadCrumb>
           <ToolContainer>
             <SearchContainer>
               <ToolItemContainer>
@@ -173,7 +170,10 @@ const Home = () => {
                     type="search"
                     placeholder="ค้นหาหนังสือ..."
                     onChange={(e) => {
-                      setQueryParam({...queryParam, searchText: e.target.value})
+                      setQueryParam({
+                        ...queryParam,
+                        searchText: e.target.value,
+                      })
                     }}
                     value={queryParam.searchText}
                   />
@@ -227,7 +227,6 @@ const Home = () => {
                   hide: true,
                 }}
                 modules={[Scrollbar]}
-                loop={true}
                 className="mySwiper"
               >
                 {recommendBook.map((book) => (
@@ -259,7 +258,6 @@ const Home = () => {
                   hide: true,
                 }}
                 modules={[Scrollbar]}
-                loop={true}
                 className="mySwiper"
               >
                 {newBook.map((book) => (

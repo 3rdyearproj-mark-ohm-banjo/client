@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext} from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
 import {BackgroundContainer, Icon} from '../../components'
 import BookBorrowingCard from '../../components/BookBorrowingCard'
@@ -16,7 +16,6 @@ import BookOwnerCard from '../../components/BookOwnerCard'
 import shelfService from '../../api/request/shelfService'
 import {useRouter} from 'next/router'
 import UserContext from '../../context/userContext'
-import {useCurrentUser} from '../../api/query/useUser'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
@@ -130,6 +129,33 @@ const ViewAll = styled.div`
   }
 `
 
+const NavActive = css`
+  background-color: ${COLORS.PRIMARY};
+  color: ${COLORS.WHITE};
+`
+
+const NavMenu = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  background-color: ${COLORS.GRAY_LIGHT};
+  width: 100%;
+  border-radius: ${SPACING.MD};
+  gap: ${SPACING.LG};
+  padding: ${SPACING.MD};
+`
+
+const NavItem = styled.li`
+  ${(props) => props.isActive && NavActive}
+  padding: ${SPACING.SM} ${SPACING.LG};
+  border-radius: ${SPACING.MD};
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    ${NavActive}
+  }
+`
+
 const ProfilePage = () => {
   const router = useRouter()
   const [myBooks, setMyBooks] = useState([])
@@ -143,7 +169,7 @@ const ProfilePage = () => {
 
   return (
     <BackgroundContainer link={Background.src}>
-      <ContentWrapper alignItems="start" padding="20px">
+      <ContentWrapper>
         <UserProfile>
           <Circle></Circle>
           <UserNameContainer>
@@ -151,6 +177,14 @@ const ProfilePage = () => {
             <UserName>{user.username}</UserName>
           </UserNameContainer>
         </UserProfile>
+        <NavMenu>
+          <NavItem isActive={true}>ข้อมูลโดยรวม</NavItem>
+          <NavItem>หนังสือที่กำลังยืมอยู่</NavItem>
+          <NavItem>หนังสือที่บริจาค</NavItem>
+          <NavItem>ประวัติการยืม</NavItem>
+          <NavItem>ตั้งค่าบัญชี</NavItem>
+        </NavMenu>
+
         <StatContainer>
           <StatItem>
             <Icon name={ICONS.faBookBookmark} />
@@ -160,7 +194,7 @@ const ProfilePage = () => {
           <StatItem>
             <Icon name={ICONS.faHandHoldingHand} />
             <p>บริจาคไปแล้ว</p>
-            <span>50 เล่ม</span>
+            <span>{user?.donationHistory?.length} เล่ม</span>
           </StatItem>
           <StatItem>
             <Icon name={ICONS.faBook} />

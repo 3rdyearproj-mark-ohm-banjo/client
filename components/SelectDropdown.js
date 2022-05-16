@@ -1,12 +1,11 @@
 import React, {useState, useRef} from 'react'
 import Button from './Button'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import Icon from './Icon'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
-import {css} from 'styled-components'
 
 const SelectContainer = styled.div`
   position: relative;

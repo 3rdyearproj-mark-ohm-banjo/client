@@ -27,6 +27,7 @@ export const register = (userData) => {
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
+  logout,
   register,
   getCurrentUser,
 }

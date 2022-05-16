@@ -3,18 +3,23 @@ import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 
 export const ContentWrapper = styled.section`
-  max-width: 1050px;
-  width: 100%;
-  margin: 30px auto;
+  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  width: ${(props) => props.width ?? '100%'};
+  margin: ${(props) => props.margin ?? '30px auto'};
   display: flex;
   flex-direction: column;
   align-items: ${(props) => props.alignItems ?? 'center'};
   justify-content: ${(props) => props.justifyContent ?? 'center'};
   padding: ${(props) => props.padding ?? SPACING.MD};
-  background-color: ${COLORS.GRAY_LIGHT_3};
+  background-color: ${(props) => props.bgColor ?? COLORS.GRAY_LIGHT_3};
   border-radius: ${SPACING.MD};
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
   ${(props) => props.gap && `gap: ${props.gap};`}
+`
+
+export const BoxLayout = styled.div`
+  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  width: ${(props) => props.width ?? '100%'};
 `
 
 export const AddBookLayout = styled.section`

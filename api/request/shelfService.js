@@ -45,7 +45,7 @@ const addShelf = async (data, file) => {
   formData.append('book', JSON.stringify(data))
 
   const res = await axios
-    .post(`/bookShelf`, formData, {
+    .post(`/user/bookShelf`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

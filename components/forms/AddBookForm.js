@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import styled, {css} from 'styled-components'
 import Button from '../Button'
@@ -243,29 +243,32 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
     return () => {
       setErrors([])
     }
-  }, [imageFile])
+  }, [imageFile, errors])
 
-  const getDataFromISBN = (ISBN) => {
-    shelfService.getShelfByIsbn(ISBN).then((res) => {
-      if (res.data.length > 0) {
-        res.data[0].types = res.data[0].types.map((type) => type._id)
-        res.data[0].publisher = res.data[0].publisherId._id
-        res.data[0].imageCover = `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`
-        setBookData(res.data[0])
-        if (!isbnBookToEdit) {
-          setDisabledAll(true)
+  const getDataFromISBN = useCallback(
+    (ISBN) => {
+      shelfService.getShelfByIsbn(ISBN).then((res) => {
+        if (res.data.length > 0) {
+          res.data[0].types = res.data[0].types.map((type) => type._id)
+          res.data[0].publisher = res.data[0].publisherId._id
+          res.data[0].imageCover = `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`
+          setBookData(res.data[0])
+          if (!isbnBookToEdit) {
+            setDisabledAll(true)
+          }
+          setErrors([])
         }
-        setErrors([])
-      }
-    })
-    setErrors(errors.filter((err) => err !== 'ISBN'))
-  }
+      })
+      setErrors(errors.filter((err) => err !== 'ISBN'))
+    },
+    [errors, isbnBookToEdit]
+  )
 
   useEffect(() => {
     if (isbnBookToEdit) {
       getDataFromISBN(isbnBookToEdit)
     }
-  }, [isbnBookToEdit])
+  }, [isbnBookToEdit, getDataFromISBN])
 
   const validate = () => {
     let errArr = [...errors]

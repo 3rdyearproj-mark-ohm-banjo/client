@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import {Button, Icon} from './'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -9,6 +9,7 @@ import {TYPES_STYLE} from '../config/types-styles'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import {EffectFlip} from 'swiper'
 import 'swiper/css/effect-flip'
+import UserContext from '../context/userContext'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -181,6 +182,8 @@ const RoundContent = styled.div`
 `
 
 const BookInfo = ({bookInfo}) => {
+  const {isAuth} = useContext(UserContext)
+
   return (
     <>
       <BookContainer>
@@ -264,19 +267,23 @@ const BookInfo = ({bookInfo}) => {
           </TypeContainer>
 
           <ButtonWrapper>
-            <Button
-              btnType="whiteBorder"
-              isDisabled
-              withIcon
-              fullWidth
-              iconName={ICONS.faBook}
-            >
-              ดูข้อมูลการยืมของคุณ
-            </Button>
+            {isAuth && (
+              <Button
+                btnType="whiteBorder"
+                isDisabled
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
+              >
+                ดูข้อมูลการยืมของคุณ
+              </Button>
+            )}
 
-            {/* <Button withIcon fullWidth iconName={ICONS.faBook}>
-        ยืมหนังสือ
-      </Button> */}
+            {!isAuth && (
+              <Button withIcon fullWidth iconName={ICONS.faBook}>
+                ยืมหนังสือ
+              </Button>
+            )}
           </ButtonWrapper>
         </BookInfoContainer>
       </BookContainer>
