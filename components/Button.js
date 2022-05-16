@@ -98,7 +98,8 @@ const orangeGradientStyled = css`
 const smSize = css`
   border-radius: 24px;
   min-height: 32px;
-  padding: 4px 10px;
+  min-width: 100px;
+  padding: 2px 10px;
   font-size: ${FONT_SIZE.MD};
   ${(props) => props.withIcon && `padding:4px ${size.sm} 4px 10px;`}
 `
@@ -179,6 +180,13 @@ const ButtonStyled = styled.button`
     ${(props) => props.btnType === 'whiteBorder' && whiteBorderStyled}
     ${(props) => props.btnType === 'orangeGradient' && orangeGradientStyled};
   ${(props) => props.fullWidth && 'width: 100%;'}
+  ${(props) => props.bgColor && `background-color: ${props.bgColor};`}
+  ${(props) => props.txtColor && `color:${props.txtColor};`}
+
+  ${(props) => props.padding && `padding:${props.padding};`}
+  ${(props) => props.borderRadius && `border-radius:${props.borderRadius};`}
+
+
 
   &:hover > span:last-child:before,
   &:hover > span:last-child:after {
@@ -194,20 +202,31 @@ const Button = ({
   withIcon,
   iconName,
   fullWidth,
+  isDisabled,
+  bgColor,
+  txtColor,
+  type,
+  padding,
+  borderRadius,
 }) => {
   return (
     <ButtonStyled
+      type={type}
       btnType={btnType}
       btnSize={btnSize}
-      onClick={onClick}
+      onClick={() => type !== 'submit' && !isDisabled && onClick()}
       withIcon={withIcon}
       fullWidth={fullWidth}
+      bgColor={bgColor}
+      txtColor={txtColor}
+      padding={padding}
+      borderRadius={borderRadius}
     >
       {children ?? 'click me'}
       {withIcon && (
         <IconContainer btnSize={btnSize}>
           <div>
-            <Icon iconName={iconName} />
+            <Icon name={iconName} />
           </div>
         </IconContainer>
       )}
@@ -228,6 +247,10 @@ Button.propTypes = {
   iconName: PropTypes.object,
   onClick: PropTypes.func,
   children: PropTypes.node,
+  bgColor: PropTypes.string,
+  txtColor: PropTypes.string,
+  padding: PropTypes.string,
+  borderRadius: PropTypes.string,
 }
 
 Button.defaultProps = {
