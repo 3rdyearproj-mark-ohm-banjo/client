@@ -19,6 +19,8 @@ import shelfService from '../api/request/shelfService'
 import {default_param} from '../config/searchQuery'
 import {ContentWrapper} from '../components/Layout'
 import Reading from '../public/static/images/student-reading.png'
+import Image from 'next/image'
+import Trail from '../components/springs/Trail'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -73,7 +75,9 @@ const AppHeader = styled.h3`
 `
 
 const ImageContainer = styled.div`
-  max-width: 500px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
 `
 
 const Description = styled.p`
@@ -188,16 +192,23 @@ const Home = () => {
         <ContentWrapper>
           <BannerWrapper>
             <ImageContainer>
-              <img src={Reading.src} alt="reading banner" />
+              <Image
+                src={Reading.src}
+                alt="reading banner"
+                width={600}
+                height={600}
+                layout="responsive"
+              />
             </ImageContainer>
+
             <AppDescribe>
-              <div>
+              <Trail open={true}>
                 <AppName>Share My Book</AppName>
                 <Divider lineColor={COLORS.PRIMARY}></Divider>
                 <span>แอปพลิเคชันส่งต่อหนังสือ </span>
-              </div>
+              </Trail>
 
-              <div>
+              <Trail open={true}>
                 <AppHeader>เป็นแอปพลิเคชันไว้ทำอะไรล่ะ?</AppHeader>
                 <Description>
                   &nbsp;&nbsp; &nbsp;&nbsp;
@@ -209,7 +220,7 @@ const Home = () => {
                   เพื่อเป็นการส่งต่อหนังสือต่อไป
                   ทำให้หนังสือที่เราได้รับบริจาคยังวนเวียนอยู่ในระบบและทำให้หนังสือเหล่านั้นได้มอบความรู้และความบันเทิงให้กับผู้อืนต่อไป
                 </Description>
-              </div>
+              </Trail>
 
               <SearchButton onClick={handleClickSearch}>
                 <div>ค้นหาหนังสือที่คุณสนใจ</div>
