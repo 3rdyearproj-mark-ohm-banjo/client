@@ -7,14 +7,14 @@ import PropTypes from 'prop-types'
 
 const CardLayout = styled.div`
   width: 200px;
-  height: 420px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
 `
 
 const ImageMock = styled.div`
-  max-height: 250px;
+  max-height: 200px;
   height: 100%;
   width: 100%;
   position: relative;
@@ -22,14 +22,14 @@ const ImageMock = styled.div`
 `
 
 const BookName = styled.p`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.1em;
   min-height: 2.5em;
 `
 
 const DonationDate = styled.span`
-  font-size: 13px;
+  font-size: 12px;
 `
 
 const BookOwnerCard = ({

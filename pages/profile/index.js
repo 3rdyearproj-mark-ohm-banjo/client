@@ -53,6 +53,7 @@ const StatContainer = styled.div`
   flex-direction: column;
   width: 100%;
   justify-content: center;
+  margin: ${SPACING.LG};
 
   @media (min-width: 600px) {
     flex-direction: row;
@@ -62,13 +63,14 @@ const StatContainer = styled.div`
 const StatItem = styled.span`
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.bgColor ?? COLORS.SECONDARY};
+  background-color: ${(props) => props.bgColor ?? COLORS.PRIMARY};
   padding: ${SPACING.MD};
   border-radius: ${SPACING.MD};
-  color: ${COLORS.WHITE};
+  color: ${COLORS.GRAY_LIGHT};
   width: 100%;
   height: 100px;
   align-items: start;
+  box-shadow: 0 5px 20px ${COLORS.GRAY_DARK};
 
   > *:first-child {
     margin-bottom: auto;
@@ -251,7 +253,7 @@ const ProfilePage = () => {
             <StatItem>
               <Icon name={ICONS.faBookBookmark} />
               <p>ยืมไปแล้ว</p>
-              <span>50 ครั้ง</span>
+              <span>0 ครั้ง</span>
             </StatItem>
             <StatItem>
               <Icon name={ICONS.faHandHoldingHand} />
@@ -262,6 +264,11 @@ const ProfilePage = () => {
               <Icon name={ICONS.faBook} />
               <p>ถือหนังสืออยู่</p>
               <span>0 / 5 เล่ม</span>
+            </StatItem>
+            <StatItem>
+              <Icon name={ICONS.faBookBookmark} />
+              <p></p>
+              <span>0 ครั้ง</span>
             </StatItem>
           </StatContainer>
 
@@ -355,13 +362,13 @@ const ProfilePage = () => {
             )}
           </SwiperContainer>
 
-          <TopicHead>
+          {/* <TopicHead>
             <h3> ประวัติการยืม</h3>{' '}
             <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
               <span> ดูทั้งหมด </span>
               <Icon name={ICONS.faChevronRight} />
             </ViewAll>
-          </TopicHead>
+          </TopicHead> */}
         </ContentWrapper>
       </BackgroundContainer>
     </>
