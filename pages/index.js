@@ -252,7 +252,7 @@ const Home = () => {
                 modules={[Scrollbar]}
                 className="mySwiper"
               >
-                {recommendBook.map((book) => (
+                {recommendBook?.map((book) => (
                   <SwiperSlide key={`recommendBook-${book._id}`}>
                     <BookCard bookInfo={book}></BookCard>
                   </SwiperSlide>
@@ -283,7 +283,7 @@ const Home = () => {
                 modules={[Scrollbar]}
                 className="mySwiper"
               >
-                {newBook.map((book) => (
+                {newBook?.map((book) => (
                   <SwiperSlide key={`newBook-${book._id}`}>
                     <BookCard bookInfo={book}></BookCard>
                   </SwiperSlide>

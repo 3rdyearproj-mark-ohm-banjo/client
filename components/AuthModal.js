@@ -7,6 +7,7 @@ import {ModalBackground, ModalContainer} from './Modal'
 import RegisterBanner from '../public/static/images/register-banner.png'
 import LoginBanner from '../public/static/images/people-group-reading.jpg'
 import Image from 'next/image'
+import {useTransition, a} from 'react-spring'
 
 const PageBanner = styled.div`
   height: 100%;
@@ -53,6 +54,11 @@ const ContentWrapper = styled.div`
 const AuthModal = ({show, setShow}) => {
   const [showRegister, setShowRegister] = useState(false)
   const modalRef = useRef()
+  const slideModal = useTransition(show, {
+    from: {opacity: 0, y: 0},
+    enter: {opacity: 1, y: 400},
+    leave: {opacity: 0, y: 0},
+  })
 
   const setCloseModal = () => {
     setShow(false)
@@ -75,70 +81,80 @@ const AuthModal = ({show, setShow}) => {
     <>
       {show && (
         <ModalBackground>
-          <ModalContainer
-            maxWidth="975px"
-            maxHeight="max-content"
-            ref={modalRef}
-          >
-            <ContentWrapper>
-              {showRegister ? (
-                <>
-                  <PageBanner>
-                    <BannerHeader>
-                      <div>ร่วมเป็นส่วนหนึ่งกับเราได้ง่ายๆ</div>
-                      <span>เพียงกรอกข้อมูลเพื่อสมัครสมาชิก~</span>
-                    </BannerHeader>
+          <section>
+            {slideModal((style, item) =>
+              item ? (
+                <a.div style={style}>
+                  <ModalContainer
+                    maxWidth="975px"
+                    maxHeight="max-content"
+                    ref={modalRef}
+                  >
+                    <ContentWrapper>
+                      {showRegister ? (
+                        <>
+                          <PageBanner>
+                            <BannerHeader>
+                              <div>ร่วมเป็นส่วนหนึ่งกับเราได้ง่ายๆ</div>
+                              <span>เพียงกรอกข้อมูลเพื่อสมัครสมาชิก~</span>
+                            </BannerHeader>
 
-                    <BannerImage>
-                      <Image
-                        alt="login-banner"
-                        src={RegisterBanner}
-                        layout="responsive"
-                        width={500}
-                        height={350}
-                      />
-                    </BannerImage>
+                            <BannerImage>
+                              <Image
+                                alt="login-banner"
+                                src={RegisterBanner}
+                                layout="responsive"
+                                width={500}
+                                height={350}
+                              />
+                            </BannerImage>
 
-                    <BannerHeader>
-                      <div>บริการยืมหนังสือ</div>
-                      <span>
-                        และบริจาคหนังสือเพื่อร่วมกันสร้างสังคมแห่งการแบ่งปัน
-                      </span>
-                    </BannerHeader>
-                  </PageBanner>
-                  <RegisterForm
-                    onShowRegister={setShowRegister}
-                    onShow={setShow}
-                  />
-                </>
+                            <BannerHeader>
+                              <div>บริการยืมหนังสือ</div>
+                              <span>
+                                และบริจาคหนังสือเพื่อร่วมกันสร้างสังคมแห่งการแบ่งปัน
+                              </span>
+                            </BannerHeader>
+                          </PageBanner>
+                          <RegisterForm
+                            onShowRegister={setShowRegister}
+                            onShow={setShow}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <PageBanner>
+                            <BannerHeader>
+                              <div>บริการยืมหนังสือ</div>
+                              <span>
+                                และบริจาคหนังสือเพื่อร่วมกันสร้างสังคมแห่งการแบ่งปัน
+                              </span>
+                            </BannerHeader>
+                            <BannerImage>
+                              <Image
+                                alt="login-banner"
+                                src={LoginBanner}
+                                layout="responsive"
+                                width={500}
+                                height={400}
+                              />
+                            </BannerImage>
+                          </PageBanner>
+                          <LoginForm
+                            onShowRegister={setShowRegister}
+                            onSuccess={() => setShow(false)}
+                            onShow={setShow}
+                          />
+                        </>
+                      )}
+                    </ContentWrapper>
+                  </ModalContainer>
+                </a.div>
               ) : (
-                <>
-                  <PageBanner>
-                    <BannerHeader>
-                      <div>บริการยืมหนังสือ</div>
-                      <span>
-                        และบริจาคหนังสือเพื่อร่วมกันสร้างสังคมแห่งการแบ่งปัน
-                      </span>
-                    </BannerHeader>
-                    <BannerImage>
-                      <Image
-                        alt="login-banner"
-                        src={LoginBanner}
-                        layout="responsive"
-                        width={500}
-                        height={400}
-                      />
-                    </BannerImage>
-                  </PageBanner>
-                  <LoginForm
-                    onShowRegister={setShowRegister}
-                    onSuccess={() => setShow(false)}
-                    onShow={setShow}
-                  />
-                </>
-              )}
-            </ContentWrapper>
-          </ModalContainer>
+                ''
+              )
+            )}
+          </section>
         </ModalBackground>
       )}
     </>

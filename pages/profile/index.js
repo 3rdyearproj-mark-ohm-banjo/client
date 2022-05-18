@@ -163,7 +163,8 @@ const NavItem = styled.li`
 
 const ProfilePage = () => {
   const router = useRouter()
-  const {totalBookDonation, user, setUser} = useContext(UserContext)
+  const {totalBookDonation, user, setUser, setTotalBookDonation} =
+    useContext(UserContext)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [deleteItem, setDeleteItem] = useState({})
 
@@ -172,9 +173,12 @@ const ProfilePage = () => {
       user.donationHistory &&
       totalBookDonation !== user.donationHistory?.length
     ) {
-      userService.getCurrentUser().then((res) => setUser(res.data.data[0]))
+      userService.getCurrentUser().then((res) => {
+        setTotalBookDonation(res.data.data[0]?.donationHistory?.length)
+        setUser(res.data.data[0])
+      })
     }
-  }, [totalBookDonation])
+  }, [totalBookDonation, user?.donationHistory])
 
   const handleDeleteSubmit = () => {
     userService.cancelDonation(deleteItem?.bookId).then(() => {
@@ -265,11 +269,6 @@ const ProfilePage = () => {
               <p>ถือหนังสืออยู่</p>
               <span>0 / 5 เล่ม</span>
             </StatItem>
-            <StatItem>
-              <Icon name={ICONS.faBookBookmark} />
-              <p></p>
-              <span>0 ครั้ง</span>
-            </StatItem>
           </StatContainer>
 
           <TopicHead>
@@ -345,10 +344,10 @@ const ProfilePage = () => {
                 {user?.donationHistory?.map((history) => (
                   <SwiperSlide key={`donation-book-${history._id}`}>
                     <BookOwnerCard
-                      bookId={history.book._id}
-                      bookInfo={history.book.bookShelf}
-                      donationTime={formatDate(history.donationTime)}
-                      canCancel={history.book.currentHolder === user._id}
+                      bookId={history.book?._id}
+                      bookInfo={history.book?.bookShelf}
+                      donationTime={formatDate(history?.donationTime)}
+                      canCancel={history.book?.currentHolder === user._id}
                       onCancel={(showModal, bookId) => {
                         setShowCancelModal(showModal)
                         setDeleteItem(bookId)
