@@ -178,6 +178,7 @@ const ProfilePage = () => {
         setUser(res.data.data[0])
       })
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalBookDonation, user?.donationHistory])
 
   const handleDeleteSubmit = () => {
