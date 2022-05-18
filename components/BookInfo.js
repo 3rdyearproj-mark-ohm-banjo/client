@@ -24,7 +24,7 @@ const BookContainer = styled.section`
 
   @media (min-width: 768px) {
     flex-direction: row;
-    gap: ${SPACING.LG};
+    gap: 30px;
 
     > section {
       flex-grow: 1;

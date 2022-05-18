@@ -5,10 +5,9 @@ import styled from 'styled-components'
 import {SPACING} from '../styles/spacing'
 import Background from '../public/static/images/background-default.png'
 import {COLORS} from '../styles/colors'
-import {Icon, SearchDropdown} from '../components'
+import {Divider, Icon} from '../components'
 import {FONTS} from '../styles/fonts'
 import BackgroundContainer from '../components/BackgroundContainer'
-import IconButton from '../components/IconButton'
 import {ICONS} from '../config/icon'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import {Scrollbar} from 'swiper'
@@ -16,10 +15,12 @@ import 'swiper/css'
 import 'swiper/css/scrollbar'
 import {css} from 'styled-components'
 import {useRouter} from 'next/router'
-import {TYPES} from '../config/types-mockup'
 import shelfService from '../api/request/shelfService'
 import {default_param} from '../config/searchQuery'
 import {ContentWrapper} from '../components/Layout'
+import Reading from '../public/static/images/student-reading.png'
+import Image from 'next/image'
+import Trail from '../components/springs/Trail'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -33,64 +34,101 @@ const BookListContainer = styled.section`
   width: 100%;
 `
 
-const ToolContainer = styled.section`
-  max-width: 550px;
-  margin: 0 ${SPACING.MD};
+const BannerWrapper = styled.div`
+  display: flex;
   width: 100%;
-  padding: ${SPACING.MD};
-`
-
-const SearchContainer = styled.div``
-
-const ToolItemContainer = styled.div`
-  display: flex;
-  gap: ${SPACING.LG};
-
-  > button {
-    flex-shrink: 0;
-  }
-`
-
-const FilterContainer = styled.div`
-  transition: 0.3s;
-  border-radius: ${SPACING.MD};
-  background-color: ${COLORS.GRAY_LIGHT_3};
-  padding: ${SPACING.MD};
-  margin: ${SPACING.MD} 0;
-  display: flex;
+  padding: ${SPACING.LG};
+  gap: ${SPACING['2X']};
   flex-direction: column;
-  gap: ${SPACING.SM};
 
   @media (min-width: 768px) {
     flex-direction: row;
   }
 `
 
-const SearchInputContainer = styled.div`
-  height: 40px;
+const AppDescribe = styled.div`
   width: 100%;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.LG};
+`
 
-  > button {
-    position: absolute;
-    top: 3px;
-    right: 3px;
-    width: 36px;
-    height: 36px;
+const AppName = styled.h1`
+  font-size: 32px;
+  font-weight: 600;
+  font-family: ${FONTS.SARABUN};
+  color: ${COLORS.PRIMARY};
+
+  @media (min-width: 768px) {
+    font-size: 38px;
   }
 `
 
-const Input = styled.input`
-  border-radius: 20px;
-  border: 1px solid ${COLORS.GRAY_DARK};
-  font-family: ${FONTS.PRIMARY};
-  padding: ${SPACING.SM} ${SPACING.LG};
-  outline: none;
-  font-size: 16px;
-  width: 100%;
+const AppHeader = styled.h3`
+  font-size: 24px;
+  font-weight: 600;
+  color: ${COLORS.PRIMARY};
 
-  &:focus {
-    border-color: ${COLORS.PRIMARY};
+  @media (min-width: 768px) {
+    font-size: 28px;
+  }
+`
+
+const ImageContainer = styled.div`
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+`
+
+const Description = styled.p`
+  line-height: 1.75em;
+  letter-spacing: 0.025em;
+`
+
+const SearchButton = styled.button`
+  @keyframes Gradient {
+    50% {
+      background-position: 140% 50%;
+      transform: skew(-2deg);
+    }
+  }
+
+  position: relative;
+  background: linear-gradient(-45deg, #f4ed3c, #ef435a, #114273, #66c1ed);
+  background-size: 400% 100%;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: none;
+  border-radius: ${SPACING.MD};
+  padding: ${SPACING.SM};
+  font-family: ${FONTS.PRIMARY};
+  align-self: start;
+
+  > div {
+    color: ${COLORS.WHITE};
+    padding: 0 ${SPACING.MD};
+    border-radius: inherit;
+    position: relative;
+    z-index: 1;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  &:hover {
+    animation: Gradient 3s ease infinite;
+
+    &:after {
+      content: '';
+      position: absolute;
+      background-size: inherit;
+      background-image: inherit;
+      animation: inherit;
+      left: 0px;
+      right: 0px;
+      top: 2px;
+      height: 100%;
+      filter: blur(1rem);
+    }
   }
 `
 
@@ -119,23 +157,13 @@ const Title = styled.h3`
   }
 `
 
-const BreadCrumb = styled.ul`
-  display: flex;
-  align-self: start;
-  align-items: center;
-  font-size: 14px;
-  gap: ${SPACING.MD};
-`
-
 const Home = () => {
   const router = useRouter()
-  const [isTriggerFilter, setIsTriggerFilter] = useState(false)
-  const [queryParam, setQueryParam] = useState(default_param)
   const [recommendBook, setRecommendBook] = useState([])
   const [newBook, setNewBook] = useState([])
 
   const handleClickSearch = () => {
-    router.push({pathname: '/search', query: queryParam})
+    router.push({pathname: '/search', query: default_param})
   }
 
   useEffect(() => {
@@ -162,48 +190,43 @@ const Home = () => {
       </Head>
       <BackgroundContainer link={Background.src}>
         <ContentWrapper>
-          <ToolContainer>
-            <SearchContainer>
-              <ToolItemContainer>
-                <SearchInputContainer>
-                  <Input
-                    type="search"
-                    placeholder="ค้นหาหนังสือ..."
-                    onChange={(e) => {
-                      setQueryParam({
-                        ...queryParam,
-                        searchText: e.target.value,
-                      })
-                    }}
-                    value={queryParam.searchText}
-                  />
-                  <IconButton
-                    onClick={handleClickSearch}
-                    name={ICONS.faSearch}
-                    borderRadius="50%"
-                  />
-                </SearchInputContainer>
-                <IconButton
-                  name={ICONS.faFilter}
-                  borderRadius="8px"
-                  onClick={() => setIsTriggerFilter(!isTriggerFilter)}
-                  isActive={isTriggerFilter}
-                />
-              </ToolItemContainer>
-              {isTriggerFilter && (
-                <FilterContainer>
-                  <SearchDropdown
-                    dataList={TYPES}
-                    onClickDropdown={(val) =>
-                      setQueryParam({...queryParam, type: val})
-                    }
-                    showCurrentData
-                  />
-                  <SearchDropdown />
-                </FilterContainer>
-              )}
-            </SearchContainer>
-          </ToolContainer>
+          <BannerWrapper>
+            <ImageContainer>
+              <Image
+                src={Reading.src}
+                alt="reading banner"
+                width={600}
+                height={600}
+                layout="responsive"
+              />
+            </ImageContainer>
+
+            <AppDescribe>
+              <Trail open={true}>
+                <AppName>Share My Book</AppName>
+                <Divider lineColor={COLORS.PRIMARY}></Divider>
+                <span>แอปพลิเคชันส่งต่อหนังสือ </span>
+              </Trail>
+
+              <Trail open={true}>
+                <AppHeader>เป็นแอปพลิเคชันไว้ทำอะไรล่ะ?</AppHeader>
+                <Description>
+                  &nbsp;&nbsp; &nbsp;&nbsp;
+                  &nbsp;&nbsp;เป็นแอปพลิเคชันที่มีบริการให้คุณสามารถยืมหนังสือในระบบ
+                  ซึ่งหนังสือในระบบนั้นก็มาจากผู้ที่สนใจที่จะบริจาคหนังสือที่ตนเองไม่ต้องการจะเก็บสะสมไว้
+                  และด้วยความที่เป็นระบบยืมหนังสือ
+                  ระบบของเราจึงเหมือนเป็นชั้นหนังสือกลางที่ไม่ว่าใครก็สามารถมาขอยืมหนังสือกับเราได้
+                  หากเวลาที่คุณยืมหมดลงคุณก็จะต้องส่งหนังสือที่คุณยืมไปให้คนที่มาขอยืมต่อ
+                  เพื่อเป็นการส่งต่อหนังสือต่อไป
+                  ทำให้หนังสือที่เราได้รับบริจาคยังวนเวียนอยู่ในระบบและทำให้หนังสือเหล่านั้นได้มอบความรู้และความบันเทิงให้กับผู้อืนต่อไป
+                </Description>
+              </Trail>
+
+              <SearchButton onClick={handleClickSearch}>
+                <div>ค้นหาหนังสือที่คุณสนใจ</div>
+              </SearchButton>
+            </AppDescribe>
+          </BannerWrapper>
 
           <BookListContainer>
             <RecommendWrapper>
@@ -229,7 +252,7 @@ const Home = () => {
                 modules={[Scrollbar]}
                 className="mySwiper"
               >
-                {recommendBook.map((book) => (
+                {recommendBook?.map((book) => (
                   <SwiperSlide key={`recommendBook-${book._id}`}>
                     <BookCard bookInfo={book}></BookCard>
                   </SwiperSlide>
@@ -260,7 +283,7 @@ const Home = () => {
                 modules={[Scrollbar]}
                 className="mySwiper"
               >
-                {newBook.map((book) => (
+                {newBook?.map((book) => (
                   <SwiperSlide key={`newBook-${book._id}`}>
                     <BookCard bookInfo={book}></BookCard>
                   </SwiperSlide>

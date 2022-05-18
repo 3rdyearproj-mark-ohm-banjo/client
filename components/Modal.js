@@ -30,6 +30,7 @@ export const ModalContainer = styled.div`
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: ${(props) => props.flexDirection ?? 'column'};
+  overflow: hidden;
 `
 
 const Modal = ({children}) => {

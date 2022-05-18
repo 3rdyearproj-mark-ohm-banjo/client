@@ -18,6 +18,7 @@ const Dropdown = styled.div`
   z-index: 1000;
   right: 0;
   overflow: hidden;
+  margin-top: ${SPACING.XS};
 `
 
 const ActiveStyled = css`
@@ -27,12 +28,13 @@ const ActiveStyled = css`
 `
 
 const Option = styled.div`
-  padding: ${SPACING.MD};
+  padding: ${SPACING.SM};
   cursor: pointer;
   min-width: 240px;
   background-color: ${COLORS.WHITE};
   color: ${COLORS.PRIMARY};
   transition: 0.2s;
+  font-size: 14px;
 
   &:hover {
     ${ActiveStyled}

@@ -14,13 +14,18 @@ export const logout = () => {
   return res
 }
 
-export const getCurrentUser = async () => {
-  const res = await axios.get('user/profile')
+export const getCurrentUser = () => {
+  const res = axios.get('user/profile')
   return res
 }
 
 export const register = (userData) => {
   const res = axios.post(`/register`, userData)
+  return res
+}
+
+export const cancelDonation = (bookId) => {
+  const res = axios.delete(`user/canceldonation/${bookId}`)
   return res
 }
 
@@ -30,4 +35,5 @@ export default {
   logout,
   register,
   getCurrentUser,
+  cancelDonation,
 }

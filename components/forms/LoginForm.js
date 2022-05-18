@@ -4,13 +4,13 @@ import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import Button from '../Button'
 import {ICONS} from '../../config/icon'
-import IconButton from '../IconButton'
 import InputWithIcon from './InputWithIcon'
 import {AuthFormWrapper} from '../Layout'
 import {login} from '../../api/request/userService'
 import UserContext from '../../context/userContext'
 import Icon from '../Icon'
 import {validateEmail} from '../../utils/validate'
+import {GoogleLogin} from 'react-google-login'
 
 const Header = styled.div`
   text-align: center;
@@ -76,7 +76,7 @@ const ErrMessage = styled.div`
 const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const {updateUser, updateIsAuth} = useContext(UserContext)
+  const {setUser, setIsAuth, setTotalBookDonation} = useContext(UserContext)
   const forgotPassword = () => {}
   const [resErrStatus, setResErrStatus] = useState()
   const [error, setError] = useState([])
@@ -102,11 +102,14 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
     if (validate()) {
       return await login(email, password)
         .then((res) => {
-          updateUser(res.data?.user)
-          updateIsAuth(true)
+          setUser(res.data?.user)
+          setIsAuth(true)
+          setTotalBookDonation(res.data?.user?.donationHistory?.length)
+          console.log(res.data?.user)
           onSuccess()
         })
         .catch((err) => {
+          console.log(err)
           setResErrStatus(err.response.status)
         })
     }
@@ -123,6 +126,14 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       setError((errs) => errs.filter((err) => err !== 'password'))
     }
   }, [password])
+
+  const googleLogin = (data) => {
+    console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, data)
+  }
+
+  const googleLoginFailed = (data) => {
+    console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, data)
+  }
 
   return (
     <AuthFormWrapper>
@@ -175,16 +186,13 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       <OtherLoginChoice>
         <ChoiceHeader>หรือเข้าสู่ระบบด้วยบัญชี</ChoiceHeader>
         <ChoiceWrapper>
-          <IconButton
-            name={ICONS.faFacebook}
-            iconSize="2x"
-            onClick={() => {}}
-          ></IconButton>
-          <IconButton
-            name={ICONS.faGoogle}
-            iconSize="2x"
-            onClick={() => {}}
-          ></IconButton>
+          <GoogleLogin
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+            buttonText="เข้าสู่ระบบด้วย Google"
+            onSuccess={googleLogin}
+            onFailure={googleLoginFailed}
+            cookiePolicy={'single_host_origin'}
+          ></GoogleLogin>
         </ChoiceWrapper>
       </OtherLoginChoice>
     </AuthFormWrapper>

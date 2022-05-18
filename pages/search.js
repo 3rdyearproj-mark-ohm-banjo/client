@@ -19,6 +19,7 @@ import {usePublishersQuery} from '../api/query/usePublisher'
 import {BoxLayout, ContentWrapper} from '../components/Layout'
 import SelectDropdown from '../components/SelectDropdown'
 import {bookSortList} from '../config/sortList'
+import {a, useTransition} from 'react-spring'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -169,6 +170,11 @@ const SearchPage = ({isEmptyQuery}) => {
   const {data: publishers} = usePublishersQuery()
   const [bookData, setBookData] = useState([])
   const [totalPage, setTotalPage] = useState(0)
+  const slide = useTransition(isTriggerFilter, {
+    from: {opacity: 0, y: -20},
+    enter: {opacity: 1, y: 0},
+    leave: {opacity: 0, y: -20},
+  })
 
   const onPageChange = (page) => {
     router.push({
@@ -270,82 +276,92 @@ const SearchPage = ({isEmptyQuery}) => {
                     <Icon name={ICONS.faFilter}></Icon> ตัวกรอง
                   </Button>
                 </ToolItemContainer>
-                {isTriggerFilter && (
-                  <FilterContainer>
-                    <SearchDropdown
-                      dataList={
-                        currentTypes
-                          ? types.filter(
-                              (type) => currentTypes.indexOf(type.id) === -1
-                            )
-                          : types
-                      }
-                      onClickDropdown={(val) =>
-                        router.push({
-                          pathname: '/search',
-                          query: {
-                            ...queryParam,
-                            types: queryParam.types
-                              ? queryParam.types + ',' + val
-                              : val,
-                          },
-                        })
-                      }
-                      placeHolder="ค้นหาประเภทหนังสือ..."
-                    />
-                    <SearchDropdown
-                      dataList={publishers}
-                      onClickDropdown={(val) =>
-                        router.push({
-                          pathname: '/search',
-                          query: {...queryParam, publisher: val},
-                        })
-                      }
-                      placeHolder="ค้นหาสำนักพิมพ์..."
-                      showCurrentData
-                      value={router?.query?.publisher}
-                    />
 
-                    <SortWrapper>
-                      <SelectDropdown
-                        dropdownList={bookSortList}
-                        text="เรียงจาก"
-                        icon={ICONS.faSort}
-                        onClickDropdown={(val) => sortClick(val)}
-                        value={{
-                          sortBy: router?.query?.sortBy,
-                          isDescending: router?.query?.isDescending,
-                        }}
-                      />
-                    </SortWrapper>
-
-                    {currentTypes?.length > 0 && (
-                      <TypeContainer>
-                        {currentTypes?.map((type) => (
-                          <TypeItem
-                            key={type}
-                            onClick={() => {
+                <div>
+                  {slide((style, item) =>
+                    item ? (
+                      <a.div style={style}>
+                        <FilterContainer>
+                          <SearchDropdown
+                            dataList={
+                              currentTypes
+                                ? types.filter(
+                                    (type) =>
+                                      currentTypes.indexOf(type.id) === -1
+                                  )
+                                : types
+                            }
+                            onClickDropdown={(val) =>
                               router.push({
-                                pathname: 'search',
+                                pathname: '/search',
                                 query: {
                                   ...queryParam,
-                                  types: currentTypes
-                                    .filter(
-                                      (currentType) => currentType !== type
-                                    )
-                                    .toString(),
+                                  types: queryParam.types
+                                    ? queryParam.types + ',' + val
+                                    : val,
                                 },
-                                // shallow: true,
                               })
-                            }}
-                          >
-                            {types.find((item) => item.id === type)?.name}
-                          </TypeItem>
-                        ))}
-                      </TypeContainer>
-                    )}
-                  </FilterContainer>
-                )}
+                            }
+                            placeHolder="ค้นหาประเภทหนังสือ..."
+                          />
+                          <SearchDropdown
+                            dataList={publishers}
+                            onClickDropdown={(val) =>
+                              router.push({
+                                pathname: '/search',
+                                query: {...queryParam, publisher: val},
+                              })
+                            }
+                            placeHolder="ค้นหาสำนักพิมพ์..."
+                            showCurrentData
+                            value={router?.query?.publisher}
+                          />
+
+                          <SortWrapper>
+                            <SelectDropdown
+                              dropdownList={bookSortList}
+                              text="เรียงจาก"
+                              icon={ICONS.faSort}
+                              onClickDropdown={(val) => sortClick(val)}
+                              value={{
+                                sortBy: router?.query?.sortBy,
+                                isDescending: router?.query?.isDescending,
+                              }}
+                            />
+                          </SortWrapper>
+
+                          {currentTypes?.length > 0 && (
+                            <TypeContainer>
+                              {currentTypes?.map((type) => (
+                                <TypeItem
+                                  key={type}
+                                  onClick={() => {
+                                    router.push({
+                                      pathname: 'search',
+                                      query: {
+                                        ...queryParam,
+                                        types: currentTypes
+                                          .filter(
+                                            (currentType) =>
+                                              currentType !== type
+                                          )
+                                          .toString(),
+                                      },
+                                    })
+                                  }}
+                                >
+                                  {types.find((item) => item.id === type)?.name}
+                                </TypeItem>
+                              ))}
+                            </TypeContainer>
+                          )}
+                        </FilterContainer>
+                      </a.div>
+                    ) : (
+                      ''
+                    )
+                  )}
+                </div>
               </div>
             </ToolContainer>
 

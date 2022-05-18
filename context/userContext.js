@@ -8,6 +8,7 @@ const UserContext = createContext()
 export const UserContextProvider = ({children}) => {
   const [user, setUser] = useState({})
   const [isAuth, setIsAuth] = useState(false)
+  const [totalBookDonation, setTotalBookDonation] = useState(0)
   const router = useRouter()
 
   useEffect(() => {
@@ -16,22 +17,16 @@ export const UserContextProvider = ({children}) => {
       .then((res) => {
         setUser(res.data.data[0])
         setIsAuth(true)
+        setTotalBookDonation(res.data.data[0].donationHistory.length)
       })
       .catch(() => {})
   }, [])
-
-  const updateUser = (userData) => {
-    setUser(userData)
-  }
-
-  const updateIsAuth = (auth) => {
-    setIsAuth(auth)
-  }
 
   const logoutHandler = () => {
     logout()
     setUser({})
     setIsAuth(false)
+    setTotalBookDonation(0)
     if (router.pathname.includes('profile')) {
       router.push('/')
     }
@@ -39,10 +34,12 @@ export const UserContextProvider = ({children}) => {
 
   const context = {
     user,
-    updateUser,
+    setUser,
     isAuth,
     logoutHandler,
-    updateIsAuth,
+    setIsAuth,
+    totalBookDonation,
+    setTotalBookDonation,
   }
 
   return <UserContext.Provider value={context}>{children}</UserContext.Provider>

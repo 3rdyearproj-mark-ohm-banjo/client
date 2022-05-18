@@ -198,7 +198,7 @@ const SearchDropdown = ({
               isError={isError}
               disabled={isDisabled}
             >
-              {dataList.find((item) => item.id === selectedItem)?.name ??
+              {dataList?.find((item) => item.id === selectedItem)?.name ??
                 placeHolder}
             </FakeInput>
             <IconContainer
