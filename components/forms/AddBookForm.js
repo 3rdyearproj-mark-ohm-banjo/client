@@ -10,7 +10,6 @@ import Icon from '../Icon'
 import {ICONS, ICON_SIZE} from '../../config/icon'
 import {useDropzone} from 'react-dropzone'
 import SearchDropdown from '../SearchDropdown'
-import {ISBN_LIST} from '../../config/ISBN-mockup'
 import shelfService from '../../api/request/shelfService'
 import {useTypesQuery} from '../../api/query/useType'
 import {usePublishersQuery} from '../../api/query/usePublisher'
@@ -407,25 +406,6 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
               isError={errors?.indexOf('ISBN') !== -1}
               disabled={isbnBookToEdit ? true : false}
             ></Input>
-            {bookData?.ISBN.length > 0 && bookData?.ISBN.length < 17 && (
-              <SuggestContainer>
-                {ISBN_LIST.map((ISBN, i) => {
-                  if (ISBN.startsWith(bookData?.ISBN)) {
-                    return (
-                      <SuggestItem
-                        key={`suggest-ISBN-${i}`}
-                        onClick={() => {
-                          onChangeIsbn(ISBN)
-                          onSuggestClick(ISBN)
-                        }}
-                      >
-                        {ISBN}
-                      </SuggestItem>
-                    )
-                  }
-                })}
-              </SuggestContainer>
-            )}
           </SuggestInputContainer>
 
           {errors?.indexOf('ISBN') !== -1 && (
