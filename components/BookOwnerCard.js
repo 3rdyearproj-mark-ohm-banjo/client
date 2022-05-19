@@ -44,7 +44,7 @@ const BookOwnerCard = ({
       <ImageMock>
         {bookInfo?.imageCover && (
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+            src={`/bookShelf/bsImage/${bookInfo?.imageCover}`}
             alt={bookInfo?.bookName}
             layout="fill"
             objectFit="contain"

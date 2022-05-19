@@ -116,7 +116,7 @@ const BookCard = ({bookInfo}) => {
         onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
       >
         <Image
-          src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+          src={`/bookShelf/bsImage/${bookInfo?.imageCover}`}
           alt={bookInfo?.bookName}
           layout="fill"
           objectFit="cover"
