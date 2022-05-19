@@ -109,7 +109,6 @@ const BottomZone = styled.div`
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
   const {isAuth} = useContext(UserContext)
-
   return (
     <Card>
       <BookImageContainer
