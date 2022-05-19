@@ -197,12 +197,12 @@ const BookInfo = ({bookInfo}) => {
           >
             <SwiperSlide>
               <BookImage
-                src={`/bookShelf/bsImage/${bookInfo?.imageCover}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
             </SwiperSlide>
             <SwiperSlide>
               <BookImage
-                src={`/bookShelf/bsImage/${bookInfo?.imageCover}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
             </SwiperSlide>
           </Swiper>

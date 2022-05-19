@@ -109,14 +109,13 @@ const BottomZone = styled.div`
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
   const {isAuth} = useContext(UserContext)
-
   return (
     <Card>
       <BookImageContainer
         onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
       >
         <Image
-          src={`/bookShelf/bsImage/${bookInfo?.imageCover}`}
+          src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
           alt={bookInfo?.bookName}
           layout="fill"
           objectFit="cover"
