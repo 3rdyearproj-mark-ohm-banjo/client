@@ -41,7 +41,7 @@ const SwiperContainer = styled.div`
 const OtherContentContainer = styled.section`
   max-width: 100%;
   width: 100%;
-  margin: 0 auto;
+  margin: 30px auto;
 
   @media (min-width: 1050px) {
     max-width: 1050px;

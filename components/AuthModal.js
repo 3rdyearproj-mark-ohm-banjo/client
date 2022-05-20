@@ -56,7 +56,7 @@ const AuthModal = ({show, setShow}) => {
   const modalRef = useRef()
   const slideModal = useTransition(show, {
     from: {opacity: 0, y: 0},
-    enter: {opacity: 1, y: 400},
+    enter: {opacity: 1, y: 425},
     leave: {opacity: 0, y: 0},
   })
 
@@ -118,7 +118,7 @@ const AuthModal = ({show, setShow}) => {
                           </PageBanner>
                           <RegisterForm
                             onShowRegister={setShowRegister}
-                            onShow={setShow}
+                            onShow={setCloseModal}
                           />
                         </>
                       ) : (
@@ -143,7 +143,7 @@ const AuthModal = ({show, setShow}) => {
                           <LoginForm
                             onShowRegister={setShowRegister}
                             onSuccess={() => setShow(false)}
-                            onShow={setShow}
+                            onShow={setCloseModal}
                           />
                         </>
                       )}

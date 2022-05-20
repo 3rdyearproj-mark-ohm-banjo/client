@@ -57,6 +57,7 @@ const TextArea = styled.textarea`
   padding: 6px 12px;
   font-family: ${FONTS.PRIMARY};
   outline: none;
+  resize: none;
 
   ::placeholder {
     color: ${COLORS.GRAY_DARK};

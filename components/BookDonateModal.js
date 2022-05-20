@@ -66,8 +66,8 @@ const BookDonateModal = ({onClose, onSubmit}) => {
         </StatusImage>
         <ModalContent>
           <div>
-            <ModalHead>ยินดีด้วย~</ModalHead>
-            <ModalText>การบริจาคหนังสือของคุณสำเร็จได้ด้วยดี</ModalText>
+            <ModalHead>ขอบคุณนะ~</ModalHead>
+            <ModalText>หนังสือของคุณได้รับการลงทะเบียนเรียบร้อยแล้ว</ModalText>
           </div>
           <div>
             <Button btnSize="sm" onClick={onSubmit}>

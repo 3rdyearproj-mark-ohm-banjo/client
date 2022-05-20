@@ -8,6 +8,7 @@ import InputWithIcon from './InputWithIcon'
 import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import Icon from '../Icon'
+import {validateEmail, validateTel} from '../../utils/validate'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
@@ -26,6 +27,17 @@ const NavWrap = styled.div`
   }
 `
 
+const ErrMessage = styled.div`
+  background-color: ${COLORS.RED_2};
+  color: ${COLORS.WHITE};
+  padding: 2px ${SPACING.MD};
+  border-radius: ${SPACING.MD};
+  width: max-content;
+  margin: ${SPACING.LG} 0;
+  font-size: 14px;
+  font-weight: 600;
+`
+
 const RegisterForm = ({onShowRegister, onShow}) => {
   const [userData, setUserData] = useState({
     email: '',
@@ -40,11 +52,14 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     let errorArr = []
 
     Object.keys(userData).map((key) => {
-      if (userData[key].length < 1) {
+      if (
+        userData[key].length < 1 ||
+        (key === 'email' && !validateEmail(userData.email)) ||
+        (key === 'tel' && !validateTel(userData.tel))
+      ) {
         errorArr.push(key)
       }
     })
-
     if (errorArr.length > 0) {
       setErrors(errorArr)
       return 0
@@ -55,7 +70,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
 
   const registerHandle = async (e) => {
     e.preventDefault()
-    if (validate) {
+    if (validate()) {
       return await register(userData).then(() => onShowRegister(false))
     }
   }
@@ -70,7 +85,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
       <NavWrap>
         <div onClick={() => onShowRegister(false)}>
           <Icon name={ICONS.faChevronLeft}></Icon>
-          <span> เข้าสู่ระบบ</span>
+          <span>เข้าสู่ระบบ</span>
         </div>
         <div onClick={() => onShow(false)}>
           <span>ปิด</span>
@@ -86,6 +101,11 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           maxLength={60}
           placeholder="กรอกอีเมล"
         />
+
+        {errors.indexOf('email') !== -1 && (
+          <ErrMessage>กรุณากรอกอีเมลให้ถูกต้อง</ErrMessage>
+        )}
+
         <InputWithIcon
           label="ชื่อผู้ใช้"
           type="text"
@@ -94,6 +114,10 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           maxLength={20}
           placeholder="กรอกชื่อผู้ใช้"
         />
+        {errors.indexOf('username') !== -1 && (
+          <ErrMessage>คุณยังไม่ได้กรอกชื่อผู้ใช้</ErrMessage>
+        )}
+
         <InputWithIcon
           label="รหัสผ่าน"
           iconName={ICONS.faLock}
@@ -102,6 +126,10 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('password', data)}
           placeholder="กรอกรหัสผ่าน"
         />
+
+        {errors.indexOf('password') !== -1 && (
+          <ErrMessage>คุณยังไม่ได้กรอกรหัสผ่าน</ErrMessage>
+        )}
 
         <InputWithIcon
           label="ที่อยู่สำหรับจัดส่ง"
@@ -112,6 +140,10 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           maxLength={200}
         />
 
+        {errors.indexOf('address') !== -1 && (
+          <ErrMessage>คุณยังไม่ได้กรอกที่อยู่</ErrMessage>
+        )}
+
         <InputWithIcon
           label="เบอร์โทร"
           iconName={ICONS.faPhone}
@@ -121,13 +153,12 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           maxLength={10}
         />
 
+        {errors.indexOf('tel') !== -1 && (
+          <ErrMessage>กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข</ErrMessage>
+        )}
+
         <ButtonWrapper>
-          <Button
-            fullWidth
-            btnSize="sm"
-            bgColor={COLORS.RED_2}
-            onClick={registerHandle}
-          >
+          <Button fullWidth btnSize="sm" bgColor={COLORS.RED_2} type="submit">
             สมัครสมาชิก
           </Button>
         </ButtonWrapper>
