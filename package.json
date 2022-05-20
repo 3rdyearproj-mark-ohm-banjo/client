@@ -29,7 +29,8 @@
     "sharp": "^0.30.4",
     "styled-components": "^5.3.5",
     "swiper": "^8.1.4",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^4.0.4",
+    "yarn": "^1.22.18"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^2.0.6",
