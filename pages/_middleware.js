@@ -6,7 +6,35 @@ const middleware = (req) => {
   const authToken = cookies.jwt
   const url = req.url
   const currentUrl = req.nextUrl.clone()
-  const secret = process.env.SECRET_KEY
+
+  if (
+    url.includes('/') &&
+    authToken &&
+    jwt_decode(authToken)?.role === 'admin' &&
+    !url.includes('/admin')
+  ) {
+    currentUrl.pathname = '/admin'
+    return NextResponse.redirect(currentUrl)
+  }
+
+  if (url.includes('/admin')) {
+    if (!authToken) {
+      currentUrl.pathname = '/'
+      return NextResponse.redirect(currentUrl)
+    }
+    try {
+      jwt_decode(authToken)
+      if (jwt_decode(authToken)?.role === 'admin') {
+        return NextResponse.next()
+      } else {
+        currentUrl.pathname = '/'
+        return NextResponse.redirect(currentUrl)
+      }
+    } catch (e) {
+      currentUrl.pathname = '/'
+      return NextResponse.redirect(currentUrl)
+    }
+  }
 
   if (url.includes('/profile')) {
     if (!authToken) {
@@ -21,6 +49,7 @@ const middleware = (req) => {
       return NextResponse.redirect(currentUrl)
     }
   }
+
   return NextResponse.next()
 }
 

@@ -11,6 +11,7 @@ import UserContext from '../../context/userContext'
 import Icon from '../Icon'
 import {validateEmail} from '../../utils/validate'
 import {GoogleLogin} from 'react-google-login'
+import {useRouter} from 'next/router'
 
 const Header = styled.div`
   text-align: center;
@@ -80,6 +81,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const forgotPassword = () => {}
   const [resErrStatus, setResErrStatus] = useState()
   const [error, setError] = useState([])
+  const router = useRouter()
 
   const validate = () => {
     let errArr = []
@@ -105,11 +107,12 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
           setUser(res.data?.user)
           setIsAuth(true)
           setTotalBookDonation(res.data?.user?.donationHistory?.length)
-          console.log(res.data?.user)
+          if (res.data?.user?.role === 'admin') {
+            router.push('/admin')
+          }
           onSuccess()
         })
         .catch((err) => {
-          console.log(err)
           setResErrStatus(err.response.status)
         })
     }

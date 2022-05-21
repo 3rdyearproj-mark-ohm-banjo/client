@@ -6,6 +6,7 @@ import {QueryClient, QueryClientProvider} from 'react-query'
 import {queryClientConfig} from '../config/query-client'
 import {UserContextProvider} from '../context/userContext'
 import axios from 'axios'
+import UserLayout from '../components/layouts/UserLayout'
 
 fontAwesomeConfig.autoAddCss = false
 const GlobalStyle = getGlobalStyle()
@@ -14,14 +15,15 @@ axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
 axios.defaults.withCredentials = true
 
 function MyApp({Component, pageProps}) {
+  const Layout = Component.Layout || UserLayout
+
   return (
     <QueryClientProvider client={queryClient}>
       <UserContextProvider>
         <GlobalStyle />
-        <main>
-          <NavigationBar />
+        <Layout>
           <Component {...pageProps} />
-        </main>
+        </Layout>
       </UserContextProvider>
     </QueryClientProvider>
   )

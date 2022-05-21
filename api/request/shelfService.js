@@ -56,20 +56,24 @@ const addShelf = async (data, file) => {
 }
 
 const editShelf = async (data, file) => {
-  // const formData = new FormData()
-  // if (file) {
-  //   formData.append('imgfile', file[0])
-  // }
-  // formData.append('book', JSON.stringify(data))
-  // const res = await axios
-  //   .put(`${BASE_URL}/bookShelf/bs/${data.ISBN}`, formData, {
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data',
-  //     },
-  //   })
-  //   .then((res) => res.data)
-  //   .catch((err) => err.response.data)
-  // return res
+  const formData = new FormData()
+  console.log(file,Object.keys(file[0]).length)
+  if (Object.keys(file[0]).length > 1) {
+    formData.append('imgfile', file[0])
+  }
+  formData.append('book', JSON.stringify(data))
+  console.log(file[0])
+  const res = await axios
+    .put(`/admin/bookShelf/${data._id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((res) => res.data)
+    .catch((err) => {
+      return err.response.data
+    })
+  return res
 }
 
 const deleteShelf = (id) => {}
