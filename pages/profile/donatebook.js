@@ -53,12 +53,18 @@ const DonateBookPage = () => {
   const [showResModal, setShowResModal] = useState(false)
   const router = useRouter()
   const {totalBookDonation, setTotalBookDonation} = useContext(UserContext)
+  const [clearForm, setClearForm] = useState(false)
 
   const submitBookShelf = (bookData, imageFile) => {
     shelfService.addShelf(bookData, imageFile).then((res) => {
-      setShowResModal(true)
-      setIsbn(res?.data?.ISBN)
-      setTotalBookDonation(totalBookDonation + 1)
+      if (res.success) {
+        setShowResModal(true)
+        setIsbn(res?.data?.ISBN)
+        setTotalBookDonation(totalBookDonation + 1)
+        setClearForm(true)
+      } else {
+        alert(res.error)
+      }
     })
   }
 
@@ -104,6 +110,8 @@ const DonateBookPage = () => {
               onStepChange={setCurrentStep}
               onPrevious={() => setCurrentStep(0)}
               onSubmit={submitBookShelf}
+              setClearForm={setClearForm}
+              clearForm={clearForm}
             />
           )}
         </AddBookLayout>

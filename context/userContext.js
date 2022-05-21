@@ -27,7 +27,10 @@ export const UserContextProvider = ({children}) => {
     setUser({})
     setIsAuth(false)
     setTotalBookDonation(0)
-    if (router.pathname.includes('profile')) {
+    if (
+      router.pathname.includes('profile') ||
+      router.pathname.includes('admin')
+    ) {
       router.push('/')
     }
   }

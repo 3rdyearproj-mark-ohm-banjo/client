@@ -200,7 +200,14 @@ const TypeItem = styled.div`
   ${(props) => props.disabled && 'opacity: 0.6;'}
 `
 
-const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
+const AddBookForm = ({
+  onPrevious,
+  onStepChange,
+  onSubmit,
+  isbnBookToEdit,
+  clearForm,
+  setClearForm,
+}) => {
   const defaultBookData = {
     ISBN: '',
     bookName: '',
@@ -230,10 +237,12 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
   })
 
   useEffect(() => {
-    if (bookData?.imageCover) {
-      setImageFile([{preview: bookData?.imageCover}])
+    if (clearForm) {
+      setBookData(defaultBookData)
+      setImageFile([])
+      setClearForm(false)
     }
-  }, [bookData])
+  }, [clearForm])
 
   useEffect(() => {
     if (imageFile.length > 0) {
@@ -247,10 +256,14 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
   const getDataFromISBN = useCallback(
     (ISBN) => {
       shelfService.getShelfByIsbn(ISBN).then((res) => {
-        if (res.data.length > 0) {
+        if (res?.data?.length > 0) {
           res.data[0].types = res.data[0].types.map((type) => type._id)
           res.data[0].publisher = res.data[0].publisherId._id
-          res.data[0].imageCover = `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`
+          setImageFile([
+            {
+              preview: `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`,
+            },
+          ])
           setBookData(res.data[0])
           if (!isbnBookToEdit) {
             setDisabledAll(true)
@@ -267,7 +280,7 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
     if (isbnBookToEdit) {
       getDataFromISBN(isbnBookToEdit)
     }
-  }, [isbnBookToEdit, getDataFromISBN])
+  }, [isbnBookToEdit])
 
   const validate = () => {
     let errArr = [...errors]
@@ -296,9 +309,8 @@ const AddBookForm = ({onPrevious, onStepChange, onSubmit, isbnBookToEdit}) => {
 
   const submitForm = () => {
     if (validate()) {
+      console.log(imageFile)
       onSubmit(bookData, imageFile)
-      setBookData(defaultBookData)
-      setImageFile([])
     }
   }
 
