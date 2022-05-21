@@ -57,12 +57,10 @@ const addShelf = async (data, file) => {
 
 const editShelf = async (data, file) => {
   const formData = new FormData()
-  console.log(file,Object.keys(file[0]).length)
   if (Object.keys(file[0]).length > 1) {
     formData.append('imgfile', file[0])
   }
   formData.append('book', JSON.stringify(data))
-  console.log(file[0])
   const res = await axios
     .put(`/admin/bookShelf/${data._id}`, formData, {
       headers: {

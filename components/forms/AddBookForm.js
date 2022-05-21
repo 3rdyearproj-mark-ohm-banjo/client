@@ -309,7 +309,6 @@ const AddBookForm = ({
 
   const submitForm = () => {
     if (validate()) {
-      console.log(imageFile)
       onSubmit(bookData, imageFile)
     }
   }
