@@ -20,7 +20,6 @@ const BookEditPage = () => {
   const bookIsbn = router.query.isbn
 
   const editBookShelf = (bookData, imageFile) => {
-    console.log(imageFile)
     shelfService.editShelf(bookData, imageFile).then((res) => {
       if (res.success) {
         router.push(`/admin/search`)

@@ -8,7 +8,6 @@ const middleware = (req) => {
   const currentUrl = req.nextUrl.clone()
 
   if (
-    url.includes('/') &&
     authToken &&
     jwt_decode(authToken)?.role === 'admin' &&
     !url.includes('/admin')
