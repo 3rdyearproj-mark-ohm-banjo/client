@@ -4,6 +4,7 @@ import {SPACING} from '../styles/spacing'
 import {useDispatch} from 'react-redux'
 import {clearUser} from '../redux/feature/UserSlice'
 import {logout} from '../api/request/userService'
+import {useRouter} from 'next/router'
 
 const SideBarStyled = styled.div`
   background-color: ${COLORS.PURPLE_3};
@@ -32,11 +33,17 @@ const SideBarItem = styled.div`
 
 const SideBar = () => {
   const dispatch = useDispatch()
+  const router = useRouter()
 
-  const logoutHandler = () => {
-    dispatch(clearUser())
-    logout()
-    window.location.href('/')
+  const logoutHandler = async () => {
+    const removeUser = async () => {
+      logout()
+      return dispatch(clearUser())
+    }
+
+    return await removeUser().then(() => {
+      router.push('/')
+    })
   }
 
   return (
