@@ -53,12 +53,21 @@ const NavigationBar = () => {
   const isAuth = useSelector((state) => state.user.isAuth)
   const dispatch = useDispatch()
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const logoutHandler = () => {
-    logout()
-    dispatch(clearUser())
-    if (router.pathname.includes('profile')) {
-      router.push('/')
-    }
+  const logoutHandler = async () => {
+    const getResult = async () => await logout()
+    return getResult()
+      .then(() => {
+        dispatch(clearUser())
+        if (router.pathname.includes('profile')) {
+          router.push('/')
+        }
+      })
+      .catch((res) => {
+        if (res.response.status !== 200) {
+          dispatch(clearUser())
+          return router.push('/')
+        }
+      })
   }
 
   return (
