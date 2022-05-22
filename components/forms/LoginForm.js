@@ -105,7 +105,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
     if (validate()) {
       return await login(email, password)
         .then((res) => {
-          dispatch(updateUser({user: res.data?.user}))
+          dispatch(updateUser(res.data?.user))
           if (res.data?.user?.role === 'admin') {
             router.push('/admin')
           }

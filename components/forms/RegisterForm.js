@@ -44,6 +44,8 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     password: '',
     username: '',
     address: '',
+    firstname: '',
+    lastname: '',
     tel: '',
   })
   const [errors, setErrors] = useState([])
@@ -116,6 +118,30 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
         {errors.indexOf('username') !== -1 && (
           <ErrMessage>คุณยังไม่ได้กรอกชื่อผู้ใช้</ErrMessage>
+        )}
+
+        <InputWithIcon
+          label="ชื่อจริง"
+          type="text"
+          iconName={ICONS.faUser}
+          onChange={(data) => onChange('firstname', data)}
+          maxLength={50}
+          placeholder="กรอกชื่อ"
+        />
+        {errors.indexOf('firstname') !== -1 && (
+          <ErrMessage>คุณยังไม่ได้กรอกชื่อของคุณ</ErrMessage>
+        )}
+
+        <InputWithIcon
+          label="นามสกุล"
+          type="text"
+          iconName={ICONS.faUser}
+          onChange={(data) => onChange('lastname', data)}
+          maxLength={50}
+          placeholder="กรอกนามสกุล"
+        />
+        {errors.indexOf('lastname') !== -1 && (
+          <ErrMessage>คุณยังไม่ได้กรอกนามสกุล</ErrMessage>
         )}
 
         <InputWithIcon

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useContext} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import styled, {css} from 'styled-components'
 import Button from '../Button'
@@ -212,7 +212,6 @@ const AddBookForm = ({
     ISBN: '',
     bookName: '',
     author: '',
-    firstYearOfPublication: '',
     types: [],
     publisherId: '',
   }
@@ -242,7 +241,7 @@ const AddBookForm = ({
       setImageFile([])
       setClearForm(false)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clearForm])
 
   useEffect(() => {
@@ -281,7 +280,7 @@ const AddBookForm = ({
     if (isbnBookToEdit) {
       getDataFromISBN(isbnBookToEdit)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isbnBookToEdit])
 
   const validate = () => {
@@ -333,20 +332,6 @@ const AddBookForm = ({
     if (ISBN.length === 13) {
       getDataFromISBN(ISBN)
     }
-  }
-
-  const handleYear = (value) => {
-    if (!value.match(/\d/g) && value.length > 0) {
-      return
-    } else if (value < 0 || (value > YEAR && value.length > 3)) {
-      setErrors([...errors, 'firstYearOfPublication'])
-    } else {
-      setErrors(errors.filter((err) => err !== 'firstYearOfPublication'))
-    }
-    setBookData({
-      ...bookData,
-      firstYearOfPublication: value,
-    })
   }
 
   const onClickType = (type) => {
@@ -473,24 +458,6 @@ const AddBookForm = ({
             )}
           </InputControl>
         )}
-
-        <InputControl width="calc(50% - 8px)">
-          <Label>ปีที่พิมพ์ครั้งแรก</Label>
-          <Input
-            type="text"
-            onChange={(e) => handleYear(e.target.value)}
-            value={bookData?.firstYearOfPublication}
-            placeholder="ปีที่พิมพ์ครั้งแรก"
-            maxLength="4"
-            isError={errors?.indexOf('firstYearOfPublication') !== -1}
-            disabled={disabledAll}
-          ></Input>
-          {errors?.indexOf('firstYearOfPublication') !== -1 && (
-            <ErrorText>
-              กรุณากรอกปีที่พิมพ์ครั้งแรก และไม่เกินปี {YEAR}
-            </ErrorText>
-          )}
-        </InputControl>
 
         <InputControl>
           <Label>

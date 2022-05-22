@@ -17,8 +17,8 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      state.user = action.payload.user
-      state.totalBookDonation = action.payload.user.donationHistory.length
+      state.user = action.payload
+      state.totalBookDonation = action.payload?.donationHistory.length
       state.isAuth = true
       state.loading = false
     },
