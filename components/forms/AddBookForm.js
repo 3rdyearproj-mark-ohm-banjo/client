@@ -242,6 +242,7 @@ const AddBookForm = ({
       setImageFile([])
       setClearForm(false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clearForm])
 
   useEffect(() => {
@@ -280,6 +281,7 @@ const AddBookForm = ({
     if (isbnBookToEdit) {
       getDataFromISBN(isbnBookToEdit)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isbnBookToEdit])
 
   const validate = () => {

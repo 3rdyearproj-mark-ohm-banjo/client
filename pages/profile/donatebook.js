@@ -14,7 +14,7 @@ import {useRouter} from 'next/router'
 import BookDonateModal from '../../components/BookDonateModal'
 import shelfService from '../../api/request/shelfService'
 import {useDispatch} from 'react-redux'
-import {incrementTotalDonationCount} from '../../redux/slice/UserSlice'
+import {incrementTotalDonationCount} from '../../redux/feature/UserSlice'
 
 const Image = styled.img`
   margin: 0 auto;
