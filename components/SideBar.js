@@ -77,8 +77,7 @@ const SideBar = () => {
         onClick={() => {
           dispatch(clearUser())
           logout()
-          router.push('/')
-          console.log('hello')
+          router.push('/search')
         }}
       >
         ออกจากระบบ
