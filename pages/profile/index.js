@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext} from 'react'
+import {useState, useEffect} from 'react'
 import styled, {css} from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
 import {BackgroundContainer, Button, Icon} from '../../components'
@@ -13,12 +13,13 @@ import 'swiper/css'
 import 'swiper/css/scrollbar'
 import {Scrollbar} from 'swiper'
 import BookOwnerCard from '../../components/BookOwnerCard'
-import shelfService from '../../api/request/shelfService'
 import {useRouter} from 'next/router'
-import UserContext from '../../context/userContext'
 import {formatDate} from '../../utils/format'
 import ConfirmModal from '../../components/ConfirmModal'
 import userService from '../../api/request/userService'
+import {useDispatch, useSelector} from 'react-redux'
+import {updateUser} from '../../redux/feature/UserSlice'
+import Head from 'next/head'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
@@ -163,10 +164,11 @@ const NavItem = styled.li`
 
 const ProfilePage = () => {
   const router = useRouter()
-  const {totalBookDonation, user, setUser, setTotalBookDonation} =
-    useContext(UserContext)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [deleteItem, setDeleteItem] = useState({})
+  const user = useSelector((state) => state.user.user)
+  const totalBookDonation = useSelector((state) => state.user.totalBookDonation)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (
@@ -174,21 +176,22 @@ const ProfilePage = () => {
       totalBookDonation !== user.donationHistory?.length
     ) {
       userService.getCurrentUser().then((res) => {
-        setTotalBookDonation(res.data.data[0]?.donationHistory?.length)
-        setUser(res.data.data[0])
+        dispatch(updateUser(res.data.data[0]))
       })
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalBookDonation, user?.donationHistory])
 
   const handleDeleteSubmit = () => {
     userService.cancelDonation(deleteItem?.bookId).then(() => {
-      setUser({
-        ...user,
-        donationHistory: user.donationHistory.filter(
-          (history) => history.book._id !== deleteItem?.bookId
-        ),
-      })
+      dispatch(
+        updateUser({
+          ...user,
+          donationHistory: user.donationHistory.filter(
+            (history) => history.book._id !== deleteItem?.bookId
+          ),
+        })
+      )
       setShowCancelModal(false)
       setDeleteItem({})
     })
@@ -201,6 +204,9 @@ const ProfilePage = () => {
 
   return (
     <>
+      <Head>
+        <title>Share my Book - ข้อมูลของฉัน</title>
+      </Head>
       <ConfirmModal
         onSubmit={handleDeleteSubmit}
         onClose={handleShowModal}

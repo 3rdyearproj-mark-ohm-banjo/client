@@ -180,13 +180,12 @@ const AdminSearchPage = ({isEmptyQuery}) => {
     router.push({
       pathname: '/admin/search',
       query: {...queryParam, page},
-      shallow: true,
     })
   }
 
   const handleClickSearch = (e) => {
     e.preventDefault()
-    router.push({pathname: '/admin/search', query: queryParam, shallow: true})
+    router.push({pathname: '/admin/search', query: queryParam})
   }
 
   const sortClick = (val) => {
@@ -225,7 +224,6 @@ const AdminSearchPage = ({isEmptyQuery}) => {
       router.push({
         pathname: '/admin/search',
         query: default_param,
-        shallow: true,
       })
     }
   }, [isEmptyQuery, router])

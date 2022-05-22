@@ -1,7 +1,9 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import SideBar from '../SideBar'
 import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
+import {useDispatch} from 'react-redux'
+import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 
 const FlexLayout = styled.div`
   display: flex;
@@ -16,6 +18,12 @@ const ContentLayout = styled.div`
 `
 
 const AdminLayout = ({children}) => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchCurrentUser())
+  }, [dispatch])
+
   return (
     <FlexLayout>
       <SideBar />

@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router'
-import React, {useContext} from 'react'
+import React from 'react'
 import styled, {css} from 'styled-components'
 import {TYPES_STYLE} from '../config/types-styles'
 import {COLORS} from '../styles/colors'
@@ -7,8 +7,8 @@ import {FONTS} from '../styles/fonts'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
 import Image from 'next/image'
-import UserContext from '../context/userContext'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
 const Card = styled.div`
   display: flex;
@@ -108,7 +108,7 @@ const BottomZone = styled.div`
 
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
-  const {isAuth} = useContext(UserContext)
+  const isAuth = useSelector((state) => state.user.isAuth)
   return (
     <Card>
       <BookImageContainer
