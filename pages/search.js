@@ -180,13 +180,12 @@ const SearchPage = ({isEmptyQuery}) => {
     router.push({
       pathname: '/search',
       query: {...queryParam, page},
-      shallow: true,
     })
   }
 
   const handleClickSearch = (e) => {
     e.preventDefault()
-    router.push({pathname: '/search', query: queryParam, shallow: true})
+    router.push({pathname: '/search', query: queryParam})
   }
 
   const sortClick = (val) => {
@@ -222,7 +221,7 @@ const SearchPage = ({isEmptyQuery}) => {
 
   useEffect(() => {
     if (isEmptyQuery) {
-      router.push({pathname: '/search', query: default_param, shallow: true})
+      router.push({pathname: '/search', query: default_param})
     }
   }, [isEmptyQuery, router])
 

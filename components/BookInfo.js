@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React from 'react'
 import {Button, Icon} from './'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -9,7 +9,7 @@ import {TYPES_STYLE} from '../config/types-styles'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import {EffectFlip} from 'swiper'
 import 'swiper/css/effect-flip'
-import UserContext from '../context/userContext'
+import {useSelector} from 'react-redux'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -182,7 +182,7 @@ const RoundContent = styled.div`
 `
 
 const BookInfo = ({bookInfo}) => {
-  const {isAuth} = useContext(UserContext)
+  const isAuth = useSelector((state) => state.user.isAuth)
 
   return (
     <>

@@ -1,9 +1,10 @@
-import React, {useContext} from 'react'
 import styled, {css} from 'styled-components'
-import UserContext from '../context/userContext'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import {useRouter} from 'next/router'
+import {useDispatch} from 'react-redux'
+import {clearUser} from '../redux/feature/UserSlice'
+import {logout} from '../api/request/userService'
 
 const SideBarStyled = styled.div`
   background-color: ${COLORS.PURPLE_3};
@@ -32,7 +33,7 @@ const SideBarItem = styled.div`
 
 const SideBar = () => {
   const router = useRouter()
-  const {logoutHandler} = useContext(UserContext)
+  const dispatch = useDispatch()
 
   return (
     <SideBarStyled>
@@ -72,7 +73,15 @@ const SideBar = () => {
       >
         ข้อมูลการรายงาน
       </SideBarItem>
-      <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
+      <SideBarItem
+        onClick={() => {
+          logout()
+          dispatch(clearUser())
+          router.push('/')
+        }}
+      >
+        ออกจากระบบ
+      </SideBarItem>
     </SideBarStyled>
   )
 }

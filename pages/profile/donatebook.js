@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react'
+import React, {useState} from 'react'
 import styled from 'styled-components'
 import {AGREEMENT_CONFIG} from '../../config/agreement'
 import {COLORS} from '../../styles/colors'
@@ -13,7 +13,8 @@ import {AddBookLayout} from '../../components/Layout'
 import {useRouter} from 'next/router'
 import BookDonateModal from '../../components/BookDonateModal'
 import shelfService from '../../api/request/shelfService'
-import UserContext from '../../context/userContext'
+import {useDispatch} from 'react-redux'
+import {incrementTotalDonationCount} from '../../redux/slice/UserSlice'
 
 const Image = styled.img`
   margin: 0 auto;
@@ -52,15 +53,15 @@ const DonateBookPage = () => {
   const [isbn, setIsbn] = useState({})
   const [showResModal, setShowResModal] = useState(false)
   const router = useRouter()
-  const {totalBookDonation, setTotalBookDonation} = useContext(UserContext)
   const [clearForm, setClearForm] = useState(false)
+  const dispatch = useDispatch()
 
   const submitBookShelf = (bookData, imageFile) => {
     shelfService.addShelf(bookData, imageFile).then((res) => {
       if (res.success) {
         setShowResModal(true)
         setIsbn(res?.data?.ISBN)
-        setTotalBookDonation(totalBookDonation + 1)
+        dispatch(incrementTotalDonationCount())
         setClearForm(true)
       } else {
         alert(res.error)

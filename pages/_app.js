@@ -1,12 +1,12 @@
 import {getGlobalStyle} from '../styles/globalStyles'
 import {config as fontAwesomeConfig} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
-import NavigationBar from '../components/NavigationBar'
 import {QueryClient, QueryClientProvider} from 'react-query'
 import {queryClientConfig} from '../config/query-client'
-import {UserContextProvider} from '../context/userContext'
 import axios from 'axios'
 import UserLayout from '../components/layouts/UserLayout'
+import {Provider} from 'react-redux'
+import {store} from '../redux/store'
 
 fontAwesomeConfig.autoAddCss = false
 const GlobalStyle = getGlobalStyle()
@@ -16,15 +16,14 @@ axios.defaults.withCredentials = true
 
 function MyApp({Component, pageProps}) {
   const Layout = Component.Layout || UserLayout
-
   return (
     <QueryClientProvider client={queryClient}>
-      <UserContextProvider>
+      <Provider store={store}>
         <GlobalStyle />
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </UserContextProvider>
+      </Provider>
     </QueryClientProvider>
   )
 }

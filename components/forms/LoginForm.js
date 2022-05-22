@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
@@ -7,11 +7,12 @@ import {ICONS} from '../../config/icon'
 import InputWithIcon from './InputWithIcon'
 import {AuthFormWrapper} from '../Layout'
 import {login} from '../../api/request/userService'
-import UserContext from '../../context/userContext'
 import Icon from '../Icon'
 import {validateEmail} from '../../utils/validate'
 import {GoogleLogin} from 'react-google-login'
 import {useRouter} from 'next/router'
+import {useDispatch} from 'react-redux'
+import {updateUser} from '../../redux/feature/UserSlice'
 
 const Header = styled.div`
   text-align: center;
@@ -77,11 +78,11 @@ const ErrMessage = styled.div`
 const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const {setUser, setIsAuth, setTotalBookDonation} = useContext(UserContext)
   const forgotPassword = () => {}
   const [resErrStatus, setResErrStatus] = useState()
   const [error, setError] = useState([])
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const validate = () => {
     let errArr = []
@@ -104,16 +105,14 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
     if (validate()) {
       return await login(email, password)
         .then((res) => {
-          setUser(res.data?.user)
-          setIsAuth(true)
-          setTotalBookDonation(res.data?.user?.donationHistory?.length)
+          dispatch(updateUser({user: res.data?.user}))
           if (res.data?.user?.role === 'admin') {
             router.push('/admin')
           }
           onSuccess()
         })
         .catch((err) => {
-          setResErrStatus(err.response.status)
+          setResErrStatus(err.response)
         })
     }
   }

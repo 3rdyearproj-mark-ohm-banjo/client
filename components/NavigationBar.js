@@ -1,12 +1,14 @@
-import React, {useState, useContext} from 'react'
+import React, {useState} from 'react'
 import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import Icon from './Icon'
 import {ICONS, ICON_SIZE} from '../config/icon'
 import {SPACING} from '../styles/spacing'
 import {useRouter} from 'next/router'
-import UserContext from '../context/userContext'
 import AuthModal from './AuthModal'
+import {useDispatch, useSelector} from 'react-redux'
+import {logout} from '../api/request/userService'
+import {clearUser} from '../redux/feature/UserSlice'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -48,8 +50,16 @@ const MenuIcon = styled.li`
 
 const NavigationBar = () => {
   const router = useRouter()
-  const {isAuth, logoutHandler} = useContext(UserContext)
+  const isAuth = useSelector((state) => state.user.isAuth)
+  const dispatch = useDispatch()
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const logoutHandler = () => {
+    logout()
+    dispatch(clearUser())
+    if (router.pathname.includes('profile')) {
+      router.push('/')
+    }
+  }
 
   return (
     <>
