@@ -36,14 +36,9 @@ const SideBar = () => {
   const router = useRouter()
 
   const logoutHandler = async () => {
-    const removeUser = async () => {
-      logout()
-      return dispatch(clearUser())
-    }
-
-    return await removeUser().then(() => {
-      router.push('/')
-    })
+    logout()
+    dispatch(clearUser())
+    router.push('/')
   }
 
   return (
