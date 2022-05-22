@@ -18,7 +18,7 @@ import {formatDate} from '../../utils/format'
 import ConfirmModal from '../../components/ConfirmModal'
 import userService from '../../api/request/userService'
 import {useDispatch, useSelector} from 'react-redux'
-import {updateUser} from '../../redux/feature/UserSlice'
+import {fetchCurrentUser, updateUser} from '../../redux/feature/UserSlice'
 import Head from 'next/head'
 
 const UserProfile = styled.div`
@@ -120,6 +120,9 @@ const EmptyState = styled.div`
   line-height: 200px;
   font-size: 20px;
   font-weight: 600;
+  text-align: center;
+  background-color: ${COLORS.GRAY_LIGHT};
+  border-radius: ${SPACING.MD};
 `
 
 const ViewAll = styled.div`
@@ -172,13 +175,12 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (
-      user.donationHistory &&
-      totalBookDonation !== user.donationHistory?.length
+      user?.donationHistory &&
+      totalBookDonation !== user?.donationHistory?.length
     ) {
-      userService.getCurrentUser().then((res) => {
-        dispatch(updateUser(res.data.data[0]))
-      })
+      dispatch(fetchCurrentUser())
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalBookDonation, user?.donationHistory])
 
@@ -249,7 +251,7 @@ const ProfilePage = () => {
             <Circle></Circle>
             <UserNameContainer>
               <span>สวัสดี, คุณ</span>
-              <UserName>{user.username}</UserName>
+              <UserName>{user?.firstname}</UserName>
             </UserNameContainer>
           </UserProfile>
           <NavMenu>
@@ -316,11 +318,13 @@ const ProfilePage = () => {
           </SwiperContainer>
 
           <TopicHead>
-            <h3>หนังสือที่บริจาค</h3>{' '}
-            <ViewAll onClick={() => router.push('/profile/mydonation')}>
-              <span> ดูทั้งหมด </span>
-              <Icon name={ICONS.faChevronRight} />
-            </ViewAll>
+            <h3>หนังสือที่บริจาค</h3>
+            {user?.donationHistory?.length > 0 && (
+              <ViewAll onClick={() => router.push('/profile/mydonation')}>
+                <span> ดูทั้งหมด </span>
+                <Icon name={ICONS.faChevronRight} />
+              </ViewAll>
+            )}
           </TopicHead>
           <SwiperContainer>
             {user?.donationHistory?.length > 0 ? (

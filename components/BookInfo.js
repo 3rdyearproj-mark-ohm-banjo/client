@@ -235,10 +235,6 @@ const BookInfo = ({bookInfo}) => {
           </NumberGroup>
           <RoundBoxContainer>
             <RoundContent>
-              <span>ปีแรกที่พิมพ์</span>
-              <span>{bookInfo?.firstYearOfPublication}</span>
-            </RoundContent>
-            <RoundContent>
               <span>สำนักพิมพ์</span>
               <span>{bookInfo?.publisherId?.publisherName}</span>
             </RoundContent>

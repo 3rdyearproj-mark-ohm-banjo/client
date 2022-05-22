@@ -56,8 +56,8 @@ const SideBar = () => {
         จัดการประเภทหนังสือ
       </SideBarItem>
       <SideBarItem
-        onClick={() => router.push('/admin/publisher')}
-        isActive={router.pathname === '/admin/publisher'}
+        onClick={() => router.push('/admin/publishers')}
+        isActive={router.pathname === '/admin/publishers'}
       >
         จัดการข้อมูลสำนักพิมพ์
       </SideBarItem>
