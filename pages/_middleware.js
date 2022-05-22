@@ -7,6 +7,15 @@ const middleware = (req) => {
   const url = req.url
   const currentUrl = req.nextUrl.clone()
 
+  if (
+    authToken &&
+    jwt_decode(authToken)?.role === 'admin' &&
+    !url.includes('/admin')
+  ) {
+    currentUrl.pathname = '/admin'
+    return NextResponse.redirect(currentUrl)
+  }
+
   if (url.includes('/admin')) {
     if (!authToken) {
       currentUrl.pathname = '/'
@@ -24,15 +33,6 @@ const middleware = (req) => {
       currentUrl.pathname = '/'
       return NextResponse.redirect(currentUrl)
     }
-  }
-
-  if (
-    authToken &&
-    jwt_decode(authToken)?.role === 'admin' &&
-    !url.includes('/admin')
-  ) {
-    currentUrl.pathname = '/admin'
-    return NextResponse.redirect(currentUrl)
   }
 
   if (url.includes('/profile')) {
