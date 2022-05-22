@@ -75,9 +75,10 @@ const SideBar = () => {
       </SideBarItem>
       <SideBarItem
         onClick={() => {
-          logout()
           dispatch(clearUser())
+          logout()
           router.push('/')
+          console.log('hello')
         }}
       >
         ออกจากระบบ
