@@ -1,11 +1,10 @@
 import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import {clearUser} from '../redux/feature/UserSlice'
 import {logout} from '../api/request/userService'
 import {useRouter} from 'next/router'
-import {useEffect} from 'react'
 
 const SideBarStyled = styled.div`
   background-color: ${COLORS.PURPLE_3};
@@ -35,7 +34,6 @@ const SideBarItem = styled.div`
 const SideBar = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const isAuth = useSelector((state) => state.user.isAuth)
 
   const logoutHandler = async () => {
     const getResult = async () => await logout()
@@ -51,12 +49,6 @@ const SideBar = () => {
         }
       })
   }
-
-  useEffect(() => {
-    if (!isAuth) {
-      router.push('/')
-    }
-  }, [isAuth, router])
 
   return (
     <SideBarStyled>
