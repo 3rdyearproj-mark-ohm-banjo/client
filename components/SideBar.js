@@ -35,6 +35,12 @@ const SideBar = () => {
   const router = useRouter()
   const dispatch = useDispatch()
 
+  const logoutHandler = () => {
+    dispatch(clearUser())
+    logout()
+    router.push('/')
+  }
+
   return (
     <SideBarStyled>
       <SideBarItem
@@ -73,15 +79,7 @@ const SideBar = () => {
       >
         ข้อมูลการรายงาน
       </SideBarItem>
-      <SideBarItem
-        onClick={() => {
-          dispatch(clearUser())
-          logout()
-          router.push('/search')
-        }}
-      >
-        ออกจากระบบ
-      </SideBarItem>
+      <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
     </SideBarStyled>
   )
 }
