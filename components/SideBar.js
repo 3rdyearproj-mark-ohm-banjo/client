@@ -1,7 +1,6 @@
 import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
-import {useRouter} from 'next/router'
 import {useDispatch} from 'react-redux'
 import {clearUser} from '../redux/feature/UserSlice'
 import {logout} from '../api/request/userService'
@@ -32,13 +31,12 @@ const SideBarItem = styled.div`
 `
 
 const SideBar = () => {
-  const router = useRouter()
   const dispatch = useDispatch()
 
   const logoutHandler = () => {
     dispatch(clearUser())
     logout()
-    router.push('/')
+    window.location.href('/')
   }
 
   return (
