@@ -12,6 +12,7 @@ const SideBarStyled = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${SPACING.MD};
+  flex-shrink: 0;
 `
 
 const ActiveItemStyled = css`

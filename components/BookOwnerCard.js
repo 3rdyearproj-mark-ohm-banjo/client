@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import {SPACING} from '../styles/spacing'
 import Button from './Button'
 import PropTypes from 'prop-types'
+import {useRouter} from 'next/router'
 
 const CardLayout = styled.div`
   width: 200px;
@@ -19,6 +20,7 @@ const ImageMock = styled.div`
   width: 100%;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 `
 
 const BookName = styled.p`
@@ -39,9 +41,10 @@ const BookOwnerCard = ({
   donationTime,
   onCancel,
 }) => {
+  const router = useRouter()
   return (
     <CardLayout>
-      <ImageMock>
+      <ImageMock onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
         {bookInfo?.imageCover && (
           <Image
             src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}

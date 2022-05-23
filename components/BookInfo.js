@@ -10,6 +10,8 @@ import {Swiper, SwiperSlide} from 'swiper/react'
 import {EffectFlip} from 'swiper'
 import 'swiper/css/effect-flip'
 import {useSelector} from 'react-redux'
+import {animated, useSpring} from 'react-spring'
+import AnimatedNumber from './springs/AnimatedNumber'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -32,7 +34,7 @@ const BookContainer = styled.section`
   }
 `
 
-const BookInfoContainer = styled.section`
+const BookInfoContainer = styled(animated.section)`
   display: flex;
   flex-direction: column;
 `
@@ -183,107 +185,122 @@ const RoundContent = styled.div`
 
 const BookInfo = ({bookInfo}) => {
   const isAuth = useSelector((state) => state.user.isAuth)
+  const user = useSelector((state) => state.user.user)
+  const slideIn = useSpring({
+    from: {opacity: 0, y: -50},
+    to: {opacity: 1, y: 0},
+  })
+
+  const isOwner = user?.donationHistory?.some(
+    (info) =>
+      info?.book?.bookShelf?._id === bookInfo?._id &&
+      info?.book?.currentHolder === user?._id
+  )
 
   return (
-    <>
-      <BookContainer>
-        <BookImageContainer>
-          <Swiper
-            effect={'flip'}
-            grabCursor={true}
-            modules={[EffectFlip]}
-            className="mySwiper"
-            loop={true}
-          >
-            <SwiperSlide>
-              <BookImage
-                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BookImage
-                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
-              />
-            </SwiperSlide>
-          </Swiper>
-        </BookImageContainer>
-        <BookInfoContainer>
-          <BookName>{bookInfo?.bookName}</BookName>
-          <ISBN>{bookInfo?.ISBN}</ISBN>
-          <SectionContent padding={`${SPACING.SM} 0`}>
-            <HeadText>
-              <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
-            </HeadText>
-          </SectionContent>
+    <BookContainer>
+      <BookImageContainer>
+        <Swiper
+          effect={'flip'}
+          grabCursor={true}
+          modules={[EffectFlip]}
+          className="mySwiper"
+          loop={true}
+        >
+          <SwiperSlide>
+            <BookImage
+              src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <BookImage
+              src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+            />
+          </SwiperSlide>
+        </Swiper>
+      </BookImageContainer>
+      <BookInfoContainer style={slideIn}>
+        <BookName style={slideIn}>{bookInfo?.bookName}</BookName>
+        <ISBN>{bookInfo?.ISBN}</ISBN>
+        <SectionContent padding={`${SPACING.SM} 0`}>
+          <HeadText>
+            <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
+          </HeadText>
+        </SectionContent>
 
-          <NumberGroup>
-            <ContentBox>
-              ยอดการยืม
-              <NumberBox>
-                {bookInfo?.totalBorrow?.toLocaleString('en-US')}
-                <Unit>ครั้ง</Unit>
-              </NumberBox>
-            </ContentBox>
+        <NumberGroup>
+          <ContentBox>
+            ยอดการยืม
+            <NumberBox>
+              <AnimatedNumber maxNumber={bookInfo?.totalBorrow} />
+              <Unit>ครั้ง</Unit>
+            </NumberBox>
+          </ContentBox>
 
-            <ContentBox>
-              จำนวนที่ว่างให้ยืม
-              <NumberBox>
-                {bookInfo?.totalAvailable?.toLocaleString('en-US')}
-                <Unit>เล่ม</Unit>
-              </NumberBox>
-            </ContentBox>
-          </NumberGroup>
-          <RoundBoxContainer>
-            <RoundContent>
-              <span>สำนักพิมพ์</span>
-              <span>{bookInfo?.publisherId?.publisherName}</span>
-            </RoundContent>
-          </RoundBoxContainer>
+          <ContentBox>
+            จำนวนที่ว่างให้ยืม
+            <NumberBox>
+              <AnimatedNumber maxNumber={bookInfo?.totalAvailable} />
+              <Unit>เล่ม</Unit>
+            </NumberBox>
+          </ContentBox>
+        </NumberGroup>
+        <RoundBoxContainer>
+          <RoundContent>
+            <span>สำนักพิมพ์</span>
+            <span>{bookInfo?.publisherId?.publisherName}</span>
+          </RoundContent>
+        </RoundBoxContainer>
 
-          <HeadText> ประเภทของหนังสือ</HeadText>
-          <TypeContainer>
-            {bookInfo?.types?.map((type) => (
-              <TypeBox
-                key={`bookType-${type._id}`}
-                bgColor={
+        <HeadText> ประเภทของหนังสือ</HeadText>
+        <TypeContainer>
+          {bookInfo?.types?.map((type) => (
+            <TypeBox
+              key={`bookType-${type._id}`}
+              bgColor={
+                TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
+                  ?.color
+              }
+            >
+              <Icon
+                name={
                   TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
-                    ?.color
+                    ?.icon ?? TYPES_STYLE['default'].icon
                 }
-              >
-                <Icon
-                  name={
-                    TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
-                      ?.icon ?? TYPES_STYLE['default'].icon
-                  }
-                />
+              />
 
-                {type?.typeName}
-              </TypeBox>
-            ))}
-          </TypeContainer>
+              {type?.typeName}
+            </TypeBox>
+          ))}
+        </TypeContainer>
 
-          <ButtonWrapper>
-            {isAuth && (
-              <Button
-                btnType="whiteBorder"
-                isDisabled
-                withIcon
-                fullWidth
-                iconName={ICONS.faBook}
-              >
-                ดูข้อมูลการยืมของคุณ
-              </Button>
-            )}
+        <ButtonWrapper>
+          {isOwner && (
+            <Button
+              btnType="whiteBorder"
+              isDisabled
+              withIcon
+              fullWidth
+              iconName={ICONS.faBook}
+              onClick={() => router.push('/profile/info')}
+            >
+              ดูข้อมูลการบริจาคของคุณ
+            </Button>
+          )}
 
-            {!isAuth && (
-              <Button withIcon fullWidth iconName={ICONS.faBook}>
-                ยืมหนังสือ
-              </Button>
-            )}
-          </ButtonWrapper>
-        </BookInfoContainer>
-      </BookContainer>
-    </>
+          {(!isAuth || !isOwner) && (
+            <Button
+              withIcon
+              fullWidth
+              iconName={ICONS.faBook}
+              onClick={() => {}}
+            >
+              ยืมหนังสือ
+            </Button>
+          )}
+        </ButtonWrapper>
+      </BookInfoContainer>
+    </BookContainer>
   )
 }
 

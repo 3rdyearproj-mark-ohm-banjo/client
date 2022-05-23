@@ -29,6 +29,7 @@ const PageItem = styled.li`
   line-height: 28px;
   text-align: center;
   user-select: none;
+  transition: 0.2s;
 
   &:hover,
   &.-active {

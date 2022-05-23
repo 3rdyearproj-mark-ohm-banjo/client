@@ -21,6 +21,8 @@ import {ContentWrapper} from '../components/Layout'
 import Reading from '../public/static/images/student-reading.png'
 import Image from 'next/image'
 import Trail from '../components/springs/Trail'
+import Fade from '../components/springs/Fade'
+import {useSpring, animated} from 'react-spring'
 
 const BookListContainer = styled.section`
   display: flex;
@@ -29,7 +31,6 @@ const BookListContainer = styled.section`
   margin: 30px 0 16px;
   justify-content: center;
   max-width: 100%;
-  max-height: 1000px;
   height: 100%;
   width: 100%;
 `
@@ -147,7 +148,7 @@ const RecommendWrapper = styled.section`
   ${(props) => props.type === 'secondary' && SecondaryRecommendStyled}
 `
 
-const Title = styled.h3`
+const Title = styled(animated.h3)`
   font-size: 24px;
   font-weight: 800;
   margin-bottom: ${SPACING.SM};
@@ -161,6 +162,10 @@ const Home = () => {
   const router = useRouter()
   const [recommendBook, setRecommendBook] = useState([])
   const [newBook, setNewBook] = useState([])
+  const headerTransition = useSpring({
+    from: {x: 500},
+    to: {x: 0},
+  })
 
   const handleClickSearch = () => {
     router.push({pathname: '/search', query: default_param})
@@ -192,13 +197,15 @@ const Home = () => {
         <ContentWrapper>
           <BannerWrapper>
             <ImageContainer>
-              <Image
-                src={Reading.src}
-                alt="reading banner"
-                width={600}
-                height={600}
-                layout="responsive"
-              />
+              <Fade>
+                <Image
+                  src={Reading.src}
+                  alt="reading banner"
+                  width={600}
+                  height={600}
+                  layout="responsive"
+                />
+              </Fade>
             </ImageContainer>
 
             <AppDescribe>
@@ -230,65 +237,70 @@ const Home = () => {
 
           <BookListContainer>
             <RecommendWrapper>
-              <Title>
+              <Title style={headerTransition}>
                 หนังสือยอดนิยมที่สุด <Icon name={ICONS.faFire} />
               </Title>
-              <Swiper
-                slidesPerView={1}
-                spaceBetween={10}
-                breakpoints={{
-                  600: {
-                    slidesPerView: 2,
-                    spaceBetween: 40,
-                  },
-                  1024: {
-                    slidesPerView: 3,
-                    spaceBetween: 50,
-                  },
-                }}
-                scrollbar={{
-                  hide: true,
-                }}
-                modules={[Scrollbar]}
-                className="mySwiper"
-              >
-                {recommendBook?.map((book) => (
-                  <SwiperSlide key={`recommendBook-${book._id}`}>
-                    <BookCard bookInfo={book}></BookCard>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+
+              <Fade>
+                <Swiper
+                  slidesPerView={1}
+                  spaceBetween={10}
+                  breakpoints={{
+                    600: {
+                      slidesPerView: 2,
+                      spaceBetween: 40,
+                    },
+                    800: {
+                      slidesPerView: 3,
+                      spaceBetween: 50,
+                    },
+                  }}
+                  scrollbar={{
+                    hide: true,
+                  }}
+                  modules={[Scrollbar]}
+                  className="mySwiper"
+                >
+                  {recommendBook?.map((book) => (
+                    <SwiperSlide key={`recommendBook-${book._id}`}>
+                      <BookCard bookInfo={book} isCarousel></BookCard>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </Fade>
             </RecommendWrapper>
 
             <RecommendWrapper type="secondary">
-              <Title>
+              <Title style={headerTransition}>
                 หนังสือมาใหม่ <Icon name={ICONS.faCalendarDays} />
               </Title>
-              <Swiper
-                slidesPerView={1}
-                spaceBetween={10}
-                breakpoints={{
-                  600: {
-                    slidesPerView: 2,
-                    spaceBetween: 40,
-                  },
-                  1024: {
-                    slidesPerView: 3,
-                    spaceBetween: 50,
-                  },
-                }}
-                scrollbar={{
-                  hide: true,
-                }}
-                modules={[Scrollbar]}
-                className="mySwiper"
-              >
-                {newBook?.map((book) => (
-                  <SwiperSlide key={`newBook-${book._id}`}>
-                    <BookCard bookInfo={book}></BookCard>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+              <Fade>
+                <Swiper
+                  slidesPerView={1}
+                  spaceBetween={10}
+                  breakpoints={{
+                    600: {
+                      slidesPerView: 2,
+                      spaceBetween: 40,
+                    },
+                    800: {
+                      slidesPerView: 3,
+                      spaceBetween: 50,
+                    },
+                  }}
+                  scrollbar={{
+                    hide: true,
+                  }}
+                  modules={[Scrollbar]}
+                  className="mySwiper"
+                >
+                  {newBook?.map((book) => (
+                    <SwiperSlide key={`newBook-${book._id}`}>
+                      <BookCard bookInfo={book} isCarousel></BookCard>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </Fade>
             </RecommendWrapper>
           </BookListContainer>
         </ContentWrapper>

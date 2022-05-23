@@ -8,7 +8,9 @@ import {SPACING} from '../styles/spacing'
 import Button from './Button'
 import Image from 'next/image'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
+import {useSelector} from 'react-redux'
+import {useSpring, animated} from 'react-spring'
+import {Flex} from './Layout'
 
 const Card = styled.div`
   display: flex;
@@ -63,7 +65,7 @@ const BookName = styled.div`
   ${(props) => props.isLong && 'font-size: 16px;'}
 `
 
-const Types = styled.div`
+const Types = styled(animated.div)`
   margin: ${SPACING.XS} 0;
   display: flex;
   flex-wrap: wrap;
@@ -96,7 +98,7 @@ const BorrowCount = styled.span`
   }
 `
 
-const BottomZone = styled.div`
+const BottomZone = styled(animated.div)`
   flex-grow: 1;
   display: flex;
   align-items: end;
@@ -108,7 +110,18 @@ const BottomZone = styled.div`
 
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
-  const isAuth = useSelector((state) => state.user.isAuth)
+  const user = useSelector((state) => state.user.user)
+  const isOwner = user?.donationHistory?.some(
+    (info) =>
+      info?.book?.bookShelf?._id === bookInfo?._id &&
+      info?.book?.currentHolder === user?._id
+  )
+
+  const slideIn = useSpring({
+    from: {opacity: 0, x: 50},
+    to: {opacity: 1, x: 0},
+  })
+
   return (
     <Card>
       <BookImageContainer
@@ -128,7 +141,7 @@ const BookCard = ({bookInfo}) => {
         >
           {bookInfo?.bookName}
         </BookName>
-        <Types>
+        <Types style={slideIn}>
           {bookInfo?.types?.map((type) => (
             <Type
               key={`bookType-${type?._id}`}
@@ -143,34 +156,36 @@ const BookCard = ({bookInfo}) => {
           ))}
         </Types>
 
-        <BorrowCount>
-          <span>การยืม</span> {bookInfo?.totalBorrow.toLocaleString('en-US')}{' '}
-          ครั้ง
-        </BorrowCount>
+        <Flex gap={SPACING.MD}>
+          <BorrowCount>
+            <span>การยืม</span> {bookInfo?.totalBorrow.toLocaleString('en-US')}{' '}
+            ครั้ง
+          </BorrowCount>
+          <BorrowCount color={COLORS.PRIMARY}>
+            <span>
+              เหลือ <b>{bookInfo?.totalAvailable.toLocaleString('en-US')}</b>{' '}
+              เล่ม
+            </span>
+          </BorrowCount>
+        </Flex>
 
-        <BorrowCount color={COLORS.PRIMARY}>
-          <span>
-            เหลือ <b>{bookInfo?.totalAvailable.toLocaleString('en-US')}</b> เล่ม
-          </span>
-        </BorrowCount>
-
-        <BottomZone>
-          {isAuth ? (
+        <BottomZone style={slideIn}>
+          {isOwner && (
             <Button
               btnSize="sm"
               btnType="whiteBorder"
               onClick={() => router.push(`/profile`)}
             >
-              ดูข้อมูลการยืม
+              ดูข้อมูลการบริจาค
             </Button>
-          ) : (
-            <>
-              {bookInfo?.totalAvailable > 0 ? (
-                <Button btnSize="sm">ยืมหนังสือ</Button>
-              ) : (
-                <Button btnSize="sm">ต่อคิว</Button>
-              )}
-            </>
+          )}
+          {!isOwner && (
+            <Button
+              btnSize="sm"
+              onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
+            >
+              ยืมหนังสือ
+            </Button>
           )}
         </BottomZone>
       </BookInfoContainer>
@@ -179,3 +194,7 @@ const BookCard = ({bookInfo}) => {
 }
 
 export default BookCard
+
+BookCard.propTypes = {
+  bookInfo: PropTypes.object,
+}
