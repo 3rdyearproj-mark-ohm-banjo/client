@@ -14,7 +14,7 @@ import {useRouter} from 'next/router'
 import BookDonateModal from '../../components/BookDonateModal'
 import shelfService from '../../api/request/shelfService'
 import {useDispatch} from 'react-redux'
-import {incrementTotalDonationCount} from '../../redux/feature/UserSlice'
+import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 
 const Image = styled.img`
   margin: 0 auto;
@@ -61,8 +61,8 @@ const DonateBookPage = () => {
       if (res.success) {
         setShowResModal(true)
         setIsbn(res?.data?.ISBN)
-        dispatch(incrementTotalDonationCount())
         setClearForm(true)
+        dispatch(fetchCurrentUser())
       } else {
         alert(res.error)
       }

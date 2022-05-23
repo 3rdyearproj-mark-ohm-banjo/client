@@ -71,6 +71,16 @@ const Dropdown = styled.div`
   z-index: 100;
   border-radius: 0 8px 8px;
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    background-color: ${COLORS.GRAY_LIGHT};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${COLORS.PRIMARY};
+    border-radius: 5px;
+  }
 `
 
 const IconContainer = styled.div`

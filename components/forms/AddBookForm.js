@@ -288,7 +288,9 @@ const AddBookForm = ({
     Object.keys(bookData).map((key) => {
       if (
         (typeof bookData[key] !== 'number' && !bookData[key]) ||
-        (Array.isArray(bookData[key]) && bookData[key].length < 1)
+        (Array.isArray(bookData[key]) &&
+          bookData[key].length < 1 &&
+          key === 'types')
       ) {
         errArr.push(key)
       } else {
@@ -329,7 +331,7 @@ const AddBookForm = ({
     }
     setBookData({...bookData, ISBN})
 
-    if (ISBN.length === 13) {
+    if (ISBN.length === 13 && !isbnBookToEdit) {
       getDataFromISBN(ISBN)
     }
   }
@@ -402,7 +404,6 @@ const AddBookForm = ({
               maxLength="17"
               placeholder="ISBN"
               isError={errors?.indexOf('ISBN') !== -1}
-              disabled={isbnBookToEdit ? true : false}
             ></Input>
           </SuggestInputContainer>
 

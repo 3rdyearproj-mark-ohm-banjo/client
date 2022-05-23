@@ -20,17 +20,24 @@ import {BoxLayout, ContentWrapper} from '../components/Layout'
 import SelectDropdown from '../components/SelectDropdown'
 import {bookSortList} from '../config/sortList'
 import {a, useTransition} from 'react-spring'
+import AnimatedNumber from '../components/springs/AnimatedNumber'
 
 const BookListContainer = styled.section`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${SPACING.LG};
-  margin: 30px 0 16px;
-  justify-content: center;
+  margin: ${SPACING.LG} 0;
   max-width: 100%;
-  max-height: 1000px;
   height: 100%;
   width: 100%;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: ${SPACING.LG};
+
+  @media (min-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1000px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `
 
 const PaginationWrapper = styled.div`
@@ -122,11 +129,14 @@ const BreadCrumbLink = styled.li`
 const NoResult = styled.div`
   height: 200px;
   width: 100%;
-  line-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   font-size: 24px;
   background-color: ${COLORS.GRAY_LIGHT_2};
   border-radius: ${SPACING.MD};
+  margin-top: ${SPACING.LG};
 `
 
 const TypeContainer = styled.section`
@@ -159,6 +169,14 @@ const SortWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
 `
+const ResultCount = styled.div`
+  text-align: left;
+  align-self: end;
+  margin: 0 ${SPACING['2X']};
+  color: ${COLORS.GRAY_DARK};
+  font-family: ${FONTS.SARABUN};
+  font-size: 14px;
+`
 
 const SearchPage = ({isEmptyQuery}) => {
   const router = useRouter()
@@ -169,11 +187,18 @@ const SearchPage = ({isEmptyQuery}) => {
   const {data: types} = useTypesQuery()
   const {data: publishers} = usePublishersQuery()
   const [bookData, setBookData] = useState([])
-  const [totalPage, setTotalPage] = useState(0)
+  const [total, setTotal] = useState(0)
+
   const slide = useTransition(isTriggerFilter, {
     from: {opacity: 0, y: -20},
     enter: {opacity: 1, y: 0},
     leave: {opacity: 0, y: -20},
+  })
+
+  const bookTransition = useTransition(bookData, {
+    from: {opacity: 0, y: 100},
+    enter: {opacity: 1, y: 0},
+    trail: 100,
   })
 
   const onPageChange = (page) => {
@@ -185,7 +210,7 @@ const SearchPage = ({isEmptyQuery}) => {
 
   const handleClickSearch = (e) => {
     e.preventDefault()
-    router.push({pathname: '/search', query: queryParam})
+    router.push({pathname: '/search', query: {...queryParam, page: 1}})
   }
 
   const sortClick = (val) => {
@@ -213,7 +238,7 @@ const SearchPage = ({isEmptyQuery}) => {
     if (router.query.page) {
       setQueryParam(router.query)
       shelfService.searchBookShelf(router.query, pageSize).then((res) => {
-        setTotalPage(res.total)
+        setTotal(res.total)
         setBookData(res.data)
       })
     }
@@ -298,6 +323,7 @@ const SearchPage = ({isEmptyQuery}) => {
                                   types: queryParam.types
                                     ? queryParam.types + ',' + val
                                     : val,
+                                  page: 1,
                                 },
                               })
                             }
@@ -308,7 +334,7 @@ const SearchPage = ({isEmptyQuery}) => {
                             onClickDropdown={(val) =>
                               router.push({
                                 pathname: '/search',
-                                query: {...queryParam, publisher: val},
+                                query: {...queryParam, publisher: val, page: 1},
                               })
                             }
                             placeHolder="ค้นหาสำนักพิมพ์..."
@@ -364,24 +390,27 @@ const SearchPage = ({isEmptyQuery}) => {
               </div>
             </ToolContainer>
 
-            <BookListContainer>
-              {bookData?.length > 0 && (
-                <>
-                  {bookData.map((book) => (
-                    <BookCard key={`book-${book?._id}`} bookInfo={book} />
-                  ))}
-                </>
-              )}
+            <ResultCount>
+              พบหนังสือ <AnimatedNumber maxNumber={total} /> เล่ม
+            </ResultCount>
 
-              {(!bookData || bookData?.length === 0) && (
-                <NoResult>ขออภัย ไม่พบข้อมูลการค้นหานี้</NoResult>
-              )}
-            </BookListContainer>
+            {bookData?.length > 0 && (
+              <BookListContainer>
+                {bookTransition((props, item) => (
+                  <a.div key={`book-${item._id}`} style={props}>
+                    <BookCard bookInfo={item} />
+                  </a.div>
+                ))}
+              </BookListContainer>
+            )}
+            {(!bookData || bookData?.length === 0) && (
+              <NoResult>ไม่พบข้อมูลการค้นหานี้</NoResult>
+            )}
 
-            {Math.ceil(totalPage / pageSize) > 1 && (
+            {Math.ceil(total / pageSize) > 1 && (
               <PaginationWrapper>
                 <Pagination
-                  totalPage={Math.ceil(totalPage / pageSize)}
+                  totalPage={Math.ceil(total / pageSize)}
                   currentPage={parseInt(queryParam.page)}
                   onPageChange={onPageChange}
                 />

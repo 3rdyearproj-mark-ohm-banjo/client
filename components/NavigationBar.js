@@ -9,6 +9,7 @@ import AuthModal from './AuthModal'
 import {useDispatch, useSelector} from 'react-redux'
 import {logout} from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
+import {Hidden} from './Layout'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -22,10 +23,14 @@ const NavigationBarStyled = styled.nav`
 `
 
 const ContentWrapper = styled.ul`
-  margin: 0 auto;
+  margin: 10px auto;
   max-width: 900px;
   display: flex;
   justify-content: space-between;
+
+  @media (min-width: 450px) {
+    margin: 0 auto;
+  }
 `
 
 const ActiveStyled = css`
@@ -80,7 +85,7 @@ const NavigationBar = () => {
             isActive={router.pathname === '/'}
           >
             <Icon name={ICONS.faHome} size={ICON_SIZE.lg} />
-            <span>หน้าหลัก</span>
+            <Hidden breakPoint="450px">หน้าหลัก</Hidden>
           </MenuIcon>
 
           {isAuth ? (
@@ -90,12 +95,12 @@ const NavigationBar = () => {
                 isActive={router.pathname === '/profile/donatebook'}
               >
                 <Icon name={ICONS.faHandHoldingHand} size={ICON_SIZE.lg} />
-                <span>บริจาคหนังสือ</span>
+                <Hidden breakPoint="450px">บริจาคหนังสือ</Hidden>
               </MenuIcon>
 
               <MenuIcon>
                 <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
-                <span>การแจ้งเตือน</span>
+                <Hidden breakPoint="450px">การแจ้งเตือน</Hidden>
               </MenuIcon>
 
               <MenuIcon
@@ -103,17 +108,17 @@ const NavigationBar = () => {
                 isActive={router.pathname === '/profile'}
               >
                 <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
-                <span>ข้อมูลของฉัน</span>
+                <Hidden breakPoint="450px">ข้อมูลของฉัน</Hidden>
               </MenuIcon>
               <MenuIcon onClick={logoutHandler}>
                 <Icon name={ICONS.faSignOut} size={ICON_SIZE.lg} />
-                <span>ออกจากระบบ</span>
+                <Hidden breakPoint="450px">ออกจากระบบ</Hidden>
               </MenuIcon>
             </>
           ) : (
             <MenuIcon onClick={() => setShowAuthModal(true)}>
               <Icon name={ICONS.faSignIn} size={ICON_SIZE.lg} />
-              <span>เข้าสู่ระบบ</span>
+              <Hidden breakPoint="450px">เข้าสู่ระบบ</Hidden>
             </MenuIcon>
           )}
         </ContentWrapper>

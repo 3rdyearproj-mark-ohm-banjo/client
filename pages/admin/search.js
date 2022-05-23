@@ -185,7 +185,7 @@ const AdminSearchPage = ({isEmptyQuery}) => {
 
   const handleClickSearch = (e) => {
     e.preventDefault()
-    router.push({pathname: '/admin/search', query: queryParam})
+    router.push({pathname: '/admin/search', query: {...queryParam, page: 1}})
   }
 
   const sortClick = (val) => {
@@ -281,12 +281,13 @@ const AdminSearchPage = ({isEmptyQuery}) => {
                       }
                       onClickDropdown={(val) =>
                         router.push({
-                          pathname: '/search',
+                          pathname: '/admin/search',
                           query: {
                             ...queryParam,
                             types: queryParam.types
                               ? queryParam.types + ',' + val
                               : val,
+                            page: 1,
                           },
                         })
                       }
@@ -296,8 +297,8 @@ const AdminSearchPage = ({isEmptyQuery}) => {
                       dataList={publishers}
                       onClickDropdown={(val) =>
                         router.push({
-                          pathname: '/search',
-                          query: {...queryParam, publisher: val},
+                          pathname: '/admin/search',
+                          query: {...queryParam, publisher: val, page: 1},
                         })
                       }
                       placeHolder="ค้นหาสำนักพิมพ์..."
@@ -325,7 +326,7 @@ const AdminSearchPage = ({isEmptyQuery}) => {
                             key={type}
                             onClick={() => {
                               router.push({
-                                pathname: 'search',
+                                pathname: '/admin/search',
                                 query: {
                                   ...queryParam,
                                   types: currentTypes

@@ -73,7 +73,7 @@ const ViewMoreCard = styled.div`
   }
 
   @media (min-width: 600px) {
-    max-width: 320px;
+    max-width: 350px;
   }
 `
 
@@ -129,7 +129,7 @@ const BookShelfPage = ({bookShelf, relatedBook}) => {
                         slidesPerView: 2,
                         spaceBetween: 40,
                       },
-                      1024: {
+                      800: {
                         slidesPerView: 3,
                         spaceBetween: 50,
                       },
@@ -142,7 +142,7 @@ const BookShelfPage = ({bookShelf, relatedBook}) => {
                       <SwiperSlide
                         key={`relatedBook-type${item.type.typeName}-id${book._id}`}
                       >
-                        <BookCard bookInfo={book} />
+                        <BookCard bookInfo={book} isCarousel/>
                       </SwiperSlide>
                     ))}
 

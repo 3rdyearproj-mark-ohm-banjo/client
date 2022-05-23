@@ -45,3 +45,23 @@ export const AuthFormWrapper = styled.div`
     border-radius: 0 ${SPACING.SM} ${SPACING.SM} 0;
   }
 `
+
+export const Flex = styled.div`
+  display: flex;
+  flex-direction: ${(props) => props.flexDirection ?? 'row'};
+  gap: ${(props) => props.gap};
+  ${(props) => props.flexWrap && `flex-wrap: ${props.flexWrap};`}
+  ${(props) => props.alignItems && `align-items: ${props.alignItems};`}
+  ${(props) =>
+    props.justifyContent && `justify-content: ${props.justifyContent};`}
+  ${(props) => props.padding && `padding: ${props.padding};`}
+  ${(props) => props.margin && `padding: ${props.margin};`}
+`
+
+export const Hidden = styled.div`
+  display: none;
+
+  @media (min-width: ${(props) => props.breakPoint ?? '768px'}) {
+    display: ${(props) => props.display ?? 'block'};
+  }
+`
