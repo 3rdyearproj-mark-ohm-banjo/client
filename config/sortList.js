@@ -1,6 +1,6 @@
 export const bookSortList = [
   {
-    id: {sortBy: '', isDescending: 'yes'},
+    id: {sortBy: '_id', isDescending: 'yes'},
     name: 'เรียงจากวันที่นำเข้าล่าสุด',
   },
   {
