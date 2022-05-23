@@ -104,13 +104,20 @@ const SearchButton = styled.button`
   padding: ${SPACING.SM};
   font-family: ${FONTS.PRIMARY};
   align-self: start;
+  width: 100%;
+  color: ${COLORS.WHITE};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  > * {
+    z-index: 1;
+  }
 
   > div {
-    color: ${COLORS.WHITE};
     padding: 0 ${SPACING.MD};
     border-radius: inherit;
     position: relative;
-    z-index: 1;
     font-size: 20px;
     font-weight: 600;
   }
@@ -158,10 +165,8 @@ const Title = styled(animated.h3)`
   }
 `
 
-const Home = () => {
+const Home = ({newBook, recommendBook}) => {
   const router = useRouter()
-  const [recommendBook, setRecommendBook] = useState([])
-  const [newBook, setNewBook] = useState([])
   const headerTransition = useSpring({
     from: {x: 500},
     to: {x: 0},
@@ -170,18 +175,6 @@ const Home = () => {
   const handleClickSearch = () => {
     router.push({pathname: '/search', query: default_param})
   }
-
-  useEffect(() => {
-    shelfService.getAllShelf().then((res) => {
-      setNewBook(res.data)
-      setRecommendBook(res.data)
-    })
-
-    return () => {
-      setNewBook([])
-      setRecommendBook([])
-    }
-  }, [])
 
   return (
     <>
@@ -230,6 +223,7 @@ const Home = () => {
               </Trail>
 
               <SearchButton onClick={handleClickSearch}>
+                <Icon name={ICONS.faSearch} size="lg" />
                 <div>ค้นหาหนังสือที่คุณสนใจ</div>
               </SearchButton>
             </AppDescribe>
@@ -307,6 +301,27 @@ const Home = () => {
       </BackgroundContainer>
     </>
   )
+}
+
+export async function getStaticProps() {
+  const recommendBook = await shelfService
+    .searchBookShelf(
+      {
+        sortBy: 'totalBorrow',
+        isDescending: 'yes',
+      },
+      5
+    )
+    .then((res) => res.data)
+  const newBook = await shelfService
+    .searchBookShelf({sortBy: '_id', isDescending: 'yes'}, 5)
+    .then((res) => {
+      return res.data
+    })
+
+  return {
+    props: {newBook, recommendBook}, // will be passed to the page component as props
+  }
 }
 
 export default Home
