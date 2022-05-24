@@ -12,6 +12,8 @@ import {FONTS} from '../styles/fonts'
 import {ICONS} from '../config/icon'
 import {bookSortList} from '../config/sortList'
 import PropTypes from 'prop-types'
+import {default_param} from '../config/searchQuery'
+import Icon from './Icon'
 
 const ToolContainer = styled.section`
   max-width: 95%;
@@ -106,6 +108,18 @@ const SortWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: ${SPACING.MD};
+`
+
+const ClearButton = styled.div`
+  background-color: ${COLORS.RED_1};
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.XS} ${SPACING.SM};
+  border-radius: ${SPACING.XS};
+  display: flex;
+  align-items: center;
+  gap: ${SPACING.SM};
+  cursor: pointer;
 `
 
 const SearchBookInput = ({baseSearchPath}) => {
@@ -174,7 +188,7 @@ const SearchBookInput = ({baseSearchPath}) => {
         <SearchDropdown
           dataList={
             currentTypes
-              ? types.filter((type) => currentTypes.indexOf(type.id) === -1)
+              ? types?.filter((type) => currentTypes.indexOf(type.id) === -1)
               : types
           }
           onClickDropdown={(val) =>
@@ -199,10 +213,27 @@ const SearchBookInput = ({baseSearchPath}) => {
           }
           placeHolder="ค้นหาสำนักพิมพ์..."
           showCurrentData
-          value={router?.query?.publisher}
+          value={router.query.publisher}
         />
 
         <SortWrapper>
+          {(router.query.publisher || router.query.types) && (
+            <ClearButton
+              onClick={() =>
+                router.push({
+                  pathname: baseSearchPath,
+                  query: {
+                    ...default_param,
+                    searchText: router.query.searchText,
+                  },
+                })
+              }
+            >
+              <span> ล้างการกรอง</span>
+              <Icon name={ICONS.faXmark} />
+            </ClearButton>
+          )}
+
           <SelectDropdown
             dropdownList={bookSortList}
             text="เรียงจาก"
@@ -232,7 +263,7 @@ const SearchBookInput = ({baseSearchPath}) => {
                   })
                 }}
               >
-                {types.find((item) => item.id === type)?.name}
+                {types?.find((item) => item.id === type)?.name}
               </TypeItem>
             ))}
           </TypeContainer>
