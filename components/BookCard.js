@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 import {useSelector} from 'react-redux'
 import {useSpring, animated} from 'react-spring'
 import {Flex} from './Layout'
+import Link from 'next/link'
 
 const Card = styled.div`
   display: flex;
@@ -124,23 +125,22 @@ const BookCard = ({bookInfo}) => {
 
   return (
     <Card>
-      <BookImageContainer
-        onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
-      >
-        <Image
-          src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
-          alt={bookInfo?.bookName}
-          layout="fill"
-          objectFit="cover"
-        />
-      </BookImageContainer>
+      <Link href={`/book/${bookInfo?.ISBN}`} passHref>
+        <BookImageContainer>
+          <Image
+            src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+            alt={bookInfo?.bookName}
+            layout="fill"
+            objectFit="cover"
+          />
+        </BookImageContainer>
+      </Link>
       <BookInfoContainer>
-        <BookName
-          isLong={bookInfo?.bookName.length > 30}
-          onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
-        >
-          {bookInfo?.bookName}
-        </BookName>
+        <Link href={`/book/${bookInfo?.ISBN}`} passHref>
+          <BookName isLong={bookInfo?.bookName.length > 30}>
+            {bookInfo?.bookName}
+          </BookName>
+        </Link>
         <Types style={slideIn}>
           {bookInfo?.types?.map((type) => (
             <Type
@@ -182,7 +182,7 @@ const BookCard = ({bookInfo}) => {
           {!isOwner && (
             <Button
               btnSize="sm"
-              onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}
+              onClick={() => router.push(`/book/${bookInfo?.ISBN}`)}
             >
               ยืมหนังสือ
             </Button>

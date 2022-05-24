@@ -15,6 +15,7 @@ import Head from 'next/head'
 import {default_param} from '../../config/searchQuery'
 import {BoxLayout, ContentWrapper} from '../../components/Layout'
 import {ICONS} from '../../config/icon'
+import NotFound from '../../components/NotFound'
 
 const BreadCrumb = styled.ul`
   display: flex;
@@ -90,8 +91,19 @@ const RelateContentHead = styled.h4`
   user-select: none;
 `
 
-const BookShelfPage = ({bookShelf, relatedBook}) => {
+const BookShelfPage = ({bookShelf, relatedBook, notFound}) => {
   const router = useRouter()
+  if (notFound) {
+    return (
+      <>
+        <Head>
+          <title>ไม่พบหนังสือที่มี ISBN นี้</title>
+        </Head>
+        <NotFound type="ISBN" />
+      </>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -142,7 +154,7 @@ const BookShelfPage = ({bookShelf, relatedBook}) => {
                       <SwiperSlide
                         key={`relatedBook-type${item.type.typeName}-id${book._id}`}
                       >
-                        <BookCard bookInfo={book} isCarousel/>
+                        <BookCard bookInfo={book} isCarousel />
                       </SwiperSlide>
                     ))}
 
@@ -178,36 +190,46 @@ export default BookShelfPage
 
 export const getServerSideProps = async (context) => {
   const {isbn} = context.query
-  const bookShelf = await shelfService
-    .getShelfByIsbn(isbn)
-    .then((res) => res.data[0])
+  let bookShelf = []
+  let relatedBook = []
+  let notFound = false
+  try {
+    const bookFetch = await shelfService
+      .getShelfByIsbn(isbn)
+      .then((res) => res.data[0])
 
-  let relatedBook = await Promise.all(
-    bookShelf.types.map(async (type) => {
-      const data = await shelfService
-        .searchBookShelf({types: type._id, page: 1}, 5)
-        .then((res) => {
-          return res.data.filter((item) => item.ISBN !== isbn)
-        })
+    let relatedBookFetch = await Promise.all(
+      bookFetch.types.map(async (type) => {
+        const data = await shelfService
+          .searchBookShelf({types: type._id, page: 1}, 5)
+          .then((res) => {
+            return res.data.filter((item) => item.ISBN !== isbn)
+          })
+        return {
+          type: {
+            id: type._id,
+            typeName: type.typeName,
+          },
+          data,
+        }
+      })
+    )
 
-      return {
-        type: {
-          id: type._id,
-          typeName: type.typeName,
-        },
-        data,
-      }
+    relatedBookFetch = relatedBookFetch.filter((type) => {
+      return type.data.length > 0
     })
-  )
 
-  relatedBook = relatedBook.filter((type) => {
-    return type.data.length > 0
-  })
+    bookShelf = bookFetch
+    relatedBook = relatedBookFetch
+  } catch {
+    notFound = true
+  }
 
   return {
     props: {
       bookShelf,
       relatedBook,
+      notFound,
     },
   }
 }

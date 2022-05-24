@@ -14,7 +14,7 @@ const Trail = ({open, children}) => {
     <div>
       {trail.map(({height, ...style}, index) => (
         <a.div key={index} style={style}>
-          <a.div style={{height}}>{items[index]}</a.div>
+          {items[index]}
         </a.div>
       ))}
     </div>
