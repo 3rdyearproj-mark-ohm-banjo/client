@@ -149,9 +149,7 @@ const SearchDropdown = ({
   const [isToggle, setIsToggle] = useState(false)
 
   useEffect(() => {
-    if (value) {
-      setSelectedItem(value)
-    }
+    setSelectedItem(value)
   }, [value])
 
   useEffect(() => {
