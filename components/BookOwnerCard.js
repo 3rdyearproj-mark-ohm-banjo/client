@@ -44,7 +44,7 @@ const BookOwnerCard = ({
   const router = useRouter()
   return (
     <CardLayout>
-      <ImageMock onClick={() => router.push(`/shelf/${bookInfo?.ISBN}`)}>
+      <ImageMock onClick={() => router.push(`/book/${bookInfo?.ISBN}`)}>
         {bookInfo?.imageCover && (
           <Image
             src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}

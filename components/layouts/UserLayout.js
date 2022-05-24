@@ -11,10 +11,10 @@ const UserLayout = ({children}) => {
   }, [dispatch])
 
   return (
-    <main>
+    <>
       <NavigationBar />
       {children}
-    </main>
+    </>
   )
 }
 

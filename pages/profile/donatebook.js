@@ -77,7 +77,7 @@ const DonateBookPage = () => {
 
       {showResModal && (
         <BookDonateModal
-          onSubmit={() => router.push(`/shelf/${isbn}`)}
+          onSubmit={() => router.push(`/book/${isbn}`)}
           onClose={setShowResModal}
         />
       )}

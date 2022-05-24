@@ -1,5 +1,7 @@
 import React from 'react'
 import {animated, useSpring} from 'react-spring'
+import styled from 'styled-components'
+import {FONTS} from '../../styles/fonts'
 
 const AnimatedNumber = ({maxNumber, reverse, toFixed}) => {
   const {number} = useSpring({

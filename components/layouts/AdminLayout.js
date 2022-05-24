@@ -14,7 +14,8 @@ const FlexLayout = styled.div`
 
 const ContentLayout = styled.div`
   margin: 0 auto;
-  padding: ${SPACING.LG} 0;
+  padding: ${SPACING.LG} ${SPACING.MD};
+  width: 100%;
 `
 
 const AdminLayout = ({children}) => {

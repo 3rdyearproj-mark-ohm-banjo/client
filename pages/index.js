@@ -1,4 +1,3 @@
-import {useState, useEffect} from 'react'
 import Head from 'next/head'
 import BookCard from '../components/BookCard'
 import styled from 'styled-components'
@@ -35,7 +34,7 @@ const BookListContainer = styled.section`
   width: 100%;
 `
 
-const BannerWrapper = styled.div`
+const BannerWrapper = styled.section`
   display: flex;
   width: 100%;
   padding: ${SPACING.LG};
@@ -197,6 +196,7 @@ const Home = ({newBook, recommendBook}) => {
                   width={600}
                   height={600}
                   layout="responsive"
+                  priority
                 />
               </Fade>
             </ImageContainer>
@@ -320,7 +320,7 @@ export async function getStaticProps() {
     })
 
   return {
-    props: {newBook, recommendBook}, // will be passed to the page component as props
+    props: {newBook, recommendBook},
   }
 }
 

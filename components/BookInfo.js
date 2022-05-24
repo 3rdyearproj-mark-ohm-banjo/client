@@ -113,9 +113,20 @@ const ContentBox = styled.div`
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: calc(33% - 8px);
+  width: calc(50% - 8px);
   align-self: stretch;
   justify-content: space-between;
+`
+
+const NumberTitle = styled.div`
+  background: ${COLORS.GRAY_LIGHT};
+  width: 100%;
+  padding: ${SPACING.SM};
+  border-radius: ${SPACING.SM} ${SPACING.SM} 0 0;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 600;
+  color: ${COLORS.PRIMARY};
 `
 
 const NumberBox = styled.div`
@@ -126,11 +137,10 @@ const NumberBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: ${SPACING.SM};
+  border-radius: 0 0 ${SPACING.SM} ${SPACING.SM};
   font-size: 32px;
   flex-direction: column;
   padding: ${SPACING.MD} 0;
-  font-weight: 600;
 `
 
 const Unit = styled.span`
@@ -169,16 +179,20 @@ const RoundBoxContainer = styled.div`
 `
 
 const RoundContent = styled.div`
-  padding: ${SPACING.SM} 0;
-  border: 1px solid ${COLORS.GRAY_DARK_4};
-  border-radius: ${SPACING.XS};
+  width: max-content;
+  margin: ${SPACING.MD} 0;
 
   > span {
-    border-right: 1px solid ${COLORS.GRAY_DARK_4};
-    padding: ${SPACING.SM};
+    padding: ${SPACING.SM} ${SPACING.MD};
+    background-color: ${COLORS.GRAY_LIGHT};
+    color: ${COLORS.PRIMARY};
+    border-radius: ${SPACING.SM} 0 0 ${SPACING.SM};
+    font-weight: 600;
 
-    &:not(:first-of-type) {
-      border-right: none;
+    &:last-child {
+      color: ${COLORS.GRAY_LIGHT};
+      background-color: ${COLORS.PRIMARY};
+      border-radius: 0 ${SPACING.SM} ${SPACING.SM} 0;
     }
   }
 `
@@ -230,7 +244,7 @@ const BookInfo = ({bookInfo}) => {
 
         <NumberGroup>
           <ContentBox>
-            ยอดการยืม
+            <NumberTitle>ยอดการยืม</NumberTitle>
             <NumberBox>
               <AnimatedNumber maxNumber={bookInfo?.totalBorrow} />
               <Unit>ครั้ง</Unit>
@@ -238,19 +252,18 @@ const BookInfo = ({bookInfo}) => {
           </ContentBox>
 
           <ContentBox>
-            จำนวนที่ว่างให้ยืม
+            <NumberTitle>จำนวนที่ว่างให้ยืม</NumberTitle>
             <NumberBox>
               <AnimatedNumber maxNumber={bookInfo?.totalAvailable} />
               <Unit>เล่ม</Unit>
             </NumberBox>
           </ContentBox>
         </NumberGroup>
-        <RoundBoxContainer>
-          <RoundContent>
-            <span>สำนักพิมพ์</span>
-            <span>{bookInfo?.publisherId?.publisherName}</span>
-          </RoundContent>
-        </RoundBoxContainer>
+
+        <RoundContent>
+          <span>สำนักพิมพ์</span>
+          <span>{bookInfo?.publisherId?.publisherName}</span>
+        </RoundContent>
 
         <HeadText> ประเภทของหนังสือ</HeadText>
         <TypeContainer>
