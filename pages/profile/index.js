@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react'
 import styled, {css} from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
 import {BackgroundContainer, Button, Icon} from '../../components'
-import BookBorrowingCard from '../../components/BookBorrowingCard'
+//import BookBorrowingCard from '../../components/BookBorrowingCard'
 import {ContentWrapper} from '../../components/Layout'
 import {ICONS} from '../../config/icon'
 import Background from '../../public/static/images/background-default.png'
@@ -20,32 +20,55 @@ import userService from '../../api/request/userService'
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchCurrentUser, updateUser} from '../../redux/feature/UserSlice'
 import Head from 'next/head'
+import ProfileHead from '../../components/ProfileHead'
+import ProfileLayout from '../../components/layouts/ProfileLayout'
 
-const UserProfile = styled.div`
-  padding: ${SPACING.SM};
-  border-radius: ${SPACING.MD};
+const TopicHead = styled.section`
+  width: 100%;
   display: flex;
-  gap: ${SPACING.MD};
+  gap: ${SPACING.SM};
+  align-items: center;
+  color: ${COLORS.PRIMARY};
+  margin: 16px 0 8px;
+
+  > h3 {
+    flex-grow: 1;
+    font-size: 20px;
+    font-weight: 600;
+  }
+`
+
+const SwiperContainer = styled.div`
+  width: 100%;
+
+  > div div.swiper-slide > div {
+    margin: 5px;
+    max-width: 90%;
+  }
+`
+
+const EmptyState = styled.div`
+  height: 200px;
+  line-height: 200px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  background-color: ${COLORS.GRAY_LIGHT};
+  border-radius: ${SPACING.MD};
   width: 100%;
 `
 
-const Circle = styled.div`
-  width: 80px;
-  height: 80px;
-  background-color: ${COLORS.PRIMARY};
-  border-radius: 50%;
-`
-
-const UserNameContainer = styled.div`
+const ViewAll = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-family: ${FONTS.SARABUN};
-`
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 14px;
+  cursor: pointer;
 
-const UserName = styled.h2`
-  font-size: 22px;
-  font-weight: 800;
+  &:hover {
+    opacity: 0.9;
+  }
 `
 
 const StatContainer = styled.div`
@@ -88,80 +111,6 @@ const StatItem = styled.span`
 
   @media (min-width: 600px) {
     max-width: 150px;
-  }
-`
-
-const TopicHead = styled.section`
-  width: 100%;
-  display: flex;
-  gap: ${SPACING.SM};
-  align-items: center;
-  color: ${COLORS.PRIMARY};
-  margin: 16px 0 8px;
-
-  > h3 {
-    flex-grow: 1;
-    font-size: 20px;
-    font-weight: 600;
-  }
-`
-
-const SwiperContainer = styled.div`
-  width: 100%;
-
-  > div div.swiper-slide > div {
-    margin: 5px;
-    max-width: 90%;
-  }
-`
-
-const EmptyState = styled.div`
-  height: 200px;
-  line-height: 200px;
-  font-size: 20px;
-  font-weight: 600;
-  text-align: center;
-  background-color: ${COLORS.GRAY_LIGHT};
-  border-radius: ${SPACING.MD};
-`
-
-const ViewAll = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.9;
-  }
-`
-
-const NavActive = css`
-  background-color: ${COLORS.PRIMARY};
-  color: ${COLORS.WHITE};
-`
-
-const NavMenu = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  background-color: ${COLORS.GRAY_LIGHT};
-  width: 100%;
-  border-radius: ${SPACING.MD};
-  gap: ${SPACING.LG};
-  padding: ${SPACING.MD};
-`
-
-const NavItem = styled.li`
-  ${(props) => props.isActive && NavActive}
-  padding: ${SPACING.SM} ${SPACING.LG};
-  border-radius: ${SPACING.MD};
-  cursor: pointer;
-  transition: 0.2s;
-
-  &:hover {
-    ${NavActive}
   }
 `
 
@@ -245,46 +194,30 @@ const ProfilePage = () => {
         </div>
       </ConfirmModal>
 
-      <BackgroundContainer link={Background.src}>
-        <ContentWrapper>
-          <UserProfile>
-            <Circle></Circle>
-            <UserNameContainer>
-              <span>สวัสดี, คุณ</span>
-              <UserName>{user?.firstname}</UserName>
-            </UserNameContainer>
-          </UserProfile>
-          <NavMenu>
-            <NavItem isActive={true}>ข้อมูลโดยรวม</NavItem>
-            <NavItem>หนังสือที่กำลังยืมอยู่</NavItem>
-            <NavItem>หนังสือที่บริจาค</NavItem>
-            <NavItem>ประวัติการยืม</NavItem>
-            <NavItem>ตั้งค่าบัญชี</NavItem>
-          </NavMenu>
+      <StatContainer>
+        <StatItem>
+          <Icon name={ICONS.faBookBookmark} />
+          <p>ยืมไปแล้ว</p>
+          <span>0 ครั้ง</span>
+        </StatItem>
+        <StatItem>
+          <Icon name={ICONS.faHandHoldingHand} />
+          <p>บริจาคไปแล้ว</p>
+          <span>{totalBookDonation} เล่ม</span>
+        </StatItem>
+        <StatItem>
+          <Icon name={ICONS.faBook} />
+          <p>ถือหนังสืออยู่</p>
+          <span>0 / 5 เล่ม</span>
+        </StatItem>
+      </StatContainer>
 
-          <StatContainer>
-            <StatItem>
-              <Icon name={ICONS.faBookBookmark} />
-              <p>ยืมไปแล้ว</p>
-              <span>0 ครั้ง</span>
-            </StatItem>
-            <StatItem>
-              <Icon name={ICONS.faHandHoldingHand} />
-              <p>บริจาคไปแล้ว</p>
-              <span>{totalBookDonation} เล่ม</span>
-            </StatItem>
-            <StatItem>
-              <Icon name={ICONS.faBook} />
-              <p>ถือหนังสืออยู่</p>
-              <span>0 / 5 เล่ม</span>
-            </StatItem>
-          </StatContainer>
+      <TopicHead>
+        <h3>หนังสือที่กำลังยืมอยู่</h3>
+      </TopicHead>
 
-          <TopicHead>
-            <h3>หนังสือที่กำลังยืมอยู่</h3>
-          </TopicHead>
-
-          <SwiperContainer>
+      <EmptyState>ไม่พบหนังสือที่กำลังยืมอยู่</EmptyState>
+      {/* <SwiperContainer>
             <Swiper
               slidesPerView={1}
               spaceBetween={10}
@@ -315,74 +248,80 @@ const ProfilePage = () => {
                 <BookBorrowingCard />
               </SwiperSlide>
             </Swiper>
-          </SwiperContainer>
+          </SwiperContainer> */}
 
-          <TopicHead>
-            <h3>หนังสือที่บริจาค</h3>
-            {user?.donationHistory?.length > 0 && (
-              <ViewAll onClick={() => router.push('/profile/mydonation')}>
-                <span> ดูทั้งหมด </span>
-                <Icon name={ICONS.faChevronRight} />
-              </ViewAll>
-            )}
-          </TopicHead>
-          <SwiperContainer>
-            {user?.donationHistory?.length > 0 ? (
-              <Swiper
-                slidesPerView={2}
-                spaceBetween={10}
-                breakpoints={{
-                  520: {
-                    slidesPerView: 2,
-                    spaceBetween: 20,
-                  },
-                  700: {
-                    slidesPerView: 3,
-                    spaceBetween: 20,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 20,
-                  },
-                }}
-                scrollbar={{
-                  hide: true,
-                }}
-                loopFillGroupWithBlank={true}
-                modules={[Scrollbar]}
-                className="mySwiper"
-              >
-                {user?.donationHistory?.map((history) => (
-                  <SwiperSlide key={`donation-book-${history._id}`}>
-                    <BookOwnerCard
-                      bookId={history.book?._id}
-                      bookInfo={history.book?.bookShelf}
-                      donationTime={formatDate(history?.donationTime)}
-                      canCancel={history.book?.currentHolder === user._id}
-                      onCancel={(showModal, bookId) => {
-                        setShowCancelModal(showModal)
-                        setDeleteItem(bookId)
-                      }}
-                    ></BookOwnerCard>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            ) : (
-              <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
-            )}
-          </SwiperContainer>
+      <TopicHead>
+        <h3>หนังสือที่บริจาค</h3>
+        {user?.donationHistory?.length > 0 && (
+          <ViewAll onClick={() => router.push('/profile/mydonation')}>
+            <span> ดูทั้งหมด </span>
+            <Icon name={ICONS.faChevronRight} />
+          </ViewAll>
+        )}
+      </TopicHead>
+      <SwiperContainer>
+        {user?.donationHistory?.length > 0 ? (
+          <Swiper
+            slidesPerView={2}
+            spaceBetween={10}
+            breakpoints={{
+              520: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              700: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 20,
+              },
+            }}
+            scrollbar={{
+              hide: true,
+            }}
+            loopFillGroupWithBlank={true}
+            modules={[Scrollbar]}
+            className="mySwiper"
+          >
+            {user?.donationHistory?.map((history) => (
+              <SwiperSlide key={`donation-book-${history._id}`}>
+                <BookOwnerCard
+                  bookId={history.book?._id}
+                  bookInfo={history.book?.bookShelf}
+                  donationTime={formatDate(
+                    history?.donationTime,
+                    true,
+                    true,
+                    true
+                  )}
+                  canCancel={history.book?.currentHolder === user._id}
+                  onCancel={(showModal, bookId) => {
+                    setShowCancelModal(showModal)
+                    setDeleteItem(bookId)
+                  }}
+                ></BookOwnerCard>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
+        )}
+      </SwiperContainer>
 
-          {/* <TopicHead>
-            <h3> ประวัติการยืม</h3>{' '}
-            <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
+      <TopicHead>
+        <h3> ประวัติการยืม</h3>{' '}
+        {/* <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
               <span> ดูทั้งหมด </span>
               <Icon name={ICONS.faChevronRight} />
-            </ViewAll>
-          </TopicHead> */}
-        </ContentWrapper>
-      </BackgroundContainer>
+            </ViewAll> */}
+      </TopicHead>
+      <EmptyState>คุณยังไม่เคยยืมหนังสือ</EmptyState>
     </>
   )
 }
+
+ProfilePage.Layout = ProfileLayout
 
 export default ProfilePage

@@ -1,10 +1,15 @@
 import React from 'react'
 import AdminLayout from '../../components/layouts/AdminLayout'
+import {AdminTitle} from '../../components/Admin'
 
-const index = () => {
-  return <div>index</div>
+const AdminPage = () => {
+  return (
+    <div>
+      <AdminTitle>ระบบจัดการข้อมูลของผู้ดูแลระบบ (Admin)</AdminTitle>
+    </div>
+  )
 }
 
-export default index
+export default AdminPage
 
-index.Layout = AdminLayout
+AdminPage.Layout = AdminLayout

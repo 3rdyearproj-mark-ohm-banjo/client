@@ -2,8 +2,8 @@ import {useQuery} from 'react-query'
 import {useCallback} from 'react'
 import publisherService from '../request/publisherService'
 
-export const usePublishersQuery = () => {
-  return useQuery('getAllPublisher', publisherService.getAllPublisher, {
+const usePublishers = () => {
+  return useQuery('getPublishers', publisherService.getAllPublisher, {
     select: useCallback(
       (data) =>
         data?.data?.map((item) => {
@@ -14,5 +14,8 @@ export const usePublishersQuery = () => {
         }),
       []
     ),
+    refetchOnMount: false,
   })
 }
+
+export default usePublishers

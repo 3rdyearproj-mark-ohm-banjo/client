@@ -3,8 +3,8 @@ import SearchDropdown from './SearchDropdown'
 import SelectDropdown from './SelectDropdown'
 import styled from 'styled-components'
 import IconButton from './IconButton'
-import {usePublishersQuery} from '../api/query/usePublisher'
-import {useTypesQuery} from '../api/query/useType'
+import usePublishers from '../api/query/usePublishers'
+import useTypes from '../api/query/useTypes'
 import {useRouter} from 'next/router'
 import {SPACING} from '../styles/spacing'
 import {COLORS} from '../styles/colors'
@@ -126,8 +126,8 @@ const SearchBookInput = ({baseSearchPath}) => {
   const router = useRouter()
   const [queryParam, setQueryParam] = useState(router.query)
   const currentTypes = router?.query?.types && router?.query?.types?.split(',')
-  const {data: types} = useTypesQuery()
-  const {data: publishers} = usePublishersQuery()
+  const {data: types} = useTypes()
+  const {data: publishers} = usePublishers()
 
   const handleClickSearch = (e) => {
     e.preventDefault()

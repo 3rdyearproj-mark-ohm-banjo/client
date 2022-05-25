@@ -24,7 +24,6 @@ export const ModalContainer = styled.div`
   border-radius: ${SPACING.SM};
   box-shadow: 0 5px 10px ${COLORS.GRAY_DARK};
   position: absolute;
-  transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

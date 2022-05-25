@@ -4,12 +4,14 @@ import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
 import Icon from '../Icon'
+import {Flex} from '../Layout'
 
 const InputControl = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: ${SPACING.SM};
   width: 100%;
+  color: ${COLORS.WHITE};
 
   &:not(:first-of-type) {
     margin-top: 20px;
@@ -64,6 +66,17 @@ const TextArea = styled.textarea`
   }
 `
 
+const ErrMessage = styled.div`
+  background-color: ${COLORS.RED_2};
+  color: ${COLORS.WHITE};
+  padding: 2px ${SPACING.MD};
+  border-radius: ${SPACING.MD};
+  width: max-content;
+  margin: ${SPACING.SM} 0;
+  font-size: 14px;
+  font-weight: 600;
+`
+
 const InputWithIcon = ({
   label,
   iconName,
@@ -71,10 +84,15 @@ const InputWithIcon = ({
   onChange,
   placeholder,
   maxLength,
+  error,
+  errorMessage,
 }) => {
   return (
     <InputControl>
-      <label>{label}</label>
+      <Flex alignItems="center" gap={`0 ${SPACING.MD}`}>
+        <label>{label}</label>
+        {error && <ErrMessage>{errorMessage}</ErrMessage>}
+      </Flex>
       <InputWrapper isTextArea={inputType === 'textarea'}>
         <InputIcon>
           <Icon name={iconName} />
