@@ -12,6 +12,7 @@ import {default_param} from '../../config/searchQuery'
 import Image from 'next/image'
 import AdminLayout from '../../components/layouts/AdminLayout'
 import SearchBookInput from '../../components/SearchBookInput'
+import {AdminTitle} from '../../components/Admin'
 
 const ImgContainer = styled.div`
   position: relative;
@@ -100,6 +101,7 @@ const AdminSearchPage = ({isEmptyQuery, bookData, total, pageSize}) => {
       <Head>
         <title>ADMIN - ค้นหาหนังสือ</title>
       </Head>
+      <AdminTitle>ค้นหาหนังสือ</AdminTitle>
 
       <SearchBookInput baseSearchPath={pathname} />
 

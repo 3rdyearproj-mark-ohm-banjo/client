@@ -32,7 +32,8 @@ const thaiMonths = {
 export const formatDate = (
   isoStringDate,
   isShortMonth = true,
-  isNationalYear = true
+  isNationalYear = true,
+  showTime = false
 ) => {
   let dateParse = new Date(isoStringDate)
   let year = isNationalYear
@@ -41,5 +42,16 @@ export const formatDate = (
   let month =
     thaiMonths[isShortMonth ? 'short' : 'full'][dateParse.getMonth() - 1]
   let date = dateParse.getDate()
+
+  let hour = dateParse.getHours()
+  let mins = dateParse.getMinutes()
+  if (mins.toString().length < 2) {
+    mins = '0' + mins
+  }
+
+  if (showTime) {
+    return date + ' ' + month + ' ' + year + ' / ' + hour + ':' + mins + ' น.'
+  }
+
   return date + ' ' + month + ' ' + year
 }

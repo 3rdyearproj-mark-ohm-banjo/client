@@ -117,7 +117,11 @@ const BookShelfPage = ({bookShelf, relatedBook, notFound}) => {
                 หน้าแรก
               </BreadCrumbLink>
               <Icon name={ICONS.faChevronRight} size={'sm'} />{' '}
-              <BreadCrumbLink onClick={() => router.push('/search')}>
+              <BreadCrumbLink
+                onClick={() =>
+                  router.push({pathname: '/search', query: default_param})
+                }
+              >
                 ค้นหาหนังสือ
               </BreadCrumbLink>
               <Icon name={ICONS.faChevronRight} size={'sm'} />

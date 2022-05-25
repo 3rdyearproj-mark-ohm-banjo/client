@@ -1,10 +1,12 @@
 import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {clearUser} from '../redux/feature/UserSlice'
 import {logout} from '../api/request/userService'
 import {useRouter} from 'next/router'
+import Icon from './Icon'
+import {ICONS} from '../config/icon'
 
 const SideBarStyled = styled.div`
   background-color: ${COLORS.PURPLE_3};
@@ -21,21 +23,33 @@ const ActiveItemStyled = css`
   cursor: pointer;
 `
 
+const SecondItemStyled = css`
+  background-color: ${COLORS.PURPLE};
+  display: flex;
+  gap: ${SPACING.MD};
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+`
+
 const SideBarItem = styled.div`
   color: ${COLORS.WHITE};
   padding: ${SPACING.MD};
   border-radius: ${SPACING.MD};
   transition: 0.2s;
   ${(props) => props.isActive && ActiveItemStyled}
+  ${(props) => props.isSecondary && SecondItemStyled}
 
   &:hover {
     ${ActiveItemStyled}
+    ${(props) => props.isSecondary && SecondItemStyled}
   }
 `
 
 const SideBar = () => {
   const dispatch = useDispatch()
   const router = useRouter()
+  const user = useSelector((state) => state.user.user)
 
   const logoutHandler = async () => {
     const getResult = async () => await logout()
@@ -54,6 +68,11 @@ const SideBar = () => {
 
   return (
     <SideBarStyled>
+      <SideBarItem isSecondary>
+        <span>คุณ {user.username}</span>
+        <Icon name={ICONS.faUserShield} />
+      </SideBarItem>
+
       <SideBarItem
         onClick={() => router.push('/admin/newadmin')}
         isActive={router.pathname === '/admin/newadmin'}

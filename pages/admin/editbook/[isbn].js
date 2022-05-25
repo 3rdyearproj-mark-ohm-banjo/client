@@ -5,6 +5,7 @@ import shelfService from '../../../api/request/shelfService'
 import AdminLayout from '../../../components/layouts/AdminLayout'
 import styled from 'styled-components'
 import {SPACING} from '../../../styles/spacing'
+import Head from 'next/head'
 
 const Wrapper = styled.div`
   padding: ${SPACING.LG} 0;
@@ -30,14 +31,19 @@ const BookEditPage = () => {
   }
 
   return (
-    <Wrapper>
-      <Title>คุณกำลังแก้ไขข้อมูลหนังสือ</Title>
-      <AddBookForm
-        isbnBookToEdit={bookIsbn}
-        onPrevious={() => router.push(`/admin/search`)}
-        onSubmit={editBookShelf}
-      ></AddBookForm>
-    </Wrapper>
+    <>
+      <Head>
+        <title>ADMIN - แก้ไขข้อมูลหนังสือ</title>
+      </Head>
+      <Wrapper>
+        <Title>คุณกำลังแก้ไขข้อมูลหนังสือ</Title>
+        <AddBookForm
+          isbnBookToEdit={bookIsbn}
+          onPrevious={() => router.push(`/admin/search`)}
+          onSubmit={editBookShelf}
+        ></AddBookForm>
+      </Wrapper>
+    </>
   )
 }
 

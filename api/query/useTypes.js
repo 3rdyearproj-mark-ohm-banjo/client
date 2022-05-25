@@ -2,8 +2,8 @@ import {useQuery} from 'react-query'
 import {useCallback} from 'react'
 import typeService from '../request/typeService'
 
-export const useTypesQuery = () => {
-  return useQuery('getAllType', typeService.getAllTypes, {
+const useTypes = () => {
+  return useQuery('getTypes', typeService.getAllTypes, {
     select: useCallback(
       (data) =>
         data?.data?.map((item) => {
@@ -14,5 +14,8 @@ export const useTypesQuery = () => {
         }),
       []
     ),
+    refetchOnMount: false,
   })
 }
+
+export default useTypes

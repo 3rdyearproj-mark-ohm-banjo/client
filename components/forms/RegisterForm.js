@@ -27,17 +27,6 @@ const NavWrap = styled.div`
   }
 `
 
-const ErrMessage = styled.div`
-  background-color: ${COLORS.RED_2};
-  color: ${COLORS.WHITE};
-  padding: 2px ${SPACING.MD};
-  border-radius: ${SPACING.MD};
-  width: max-content;
-  margin: ${SPACING.LG} 0;
-  font-size: 14px;
-  font-weight: 600;
-`
-
 const RegisterForm = ({onShowRegister, onShow}) => {
   const [userData, setUserData] = useState({
     email: '',
@@ -102,11 +91,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('email', data)}
           maxLength={60}
           placeholder="กรอกอีเมล"
+          error={errors.indexOf('email') !== -1}
+          errorMessage="กรุณากรอกอีเมลให้ถูกต้อง"
         />
-
-        {errors.indexOf('email') !== -1 && (
-          <ErrMessage>กรุณากรอกอีเมลให้ถูกต้อง</ErrMessage>
-        )}
 
         <InputWithIcon
           label="ชื่อผู้ใช้"
@@ -115,10 +102,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('username', data)}
           maxLength={20}
           placeholder="กรอกชื่อผู้ใช้"
+          error={errors.indexOf('username') !== -1}
+          errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
         />
-        {errors.indexOf('username') !== -1 && (
-          <ErrMessage>คุณยังไม่ได้กรอกชื่อผู้ใช้</ErrMessage>
-        )}
 
         <InputWithIcon
           label="ชื่อจริง"
@@ -127,10 +113,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('firstname', data)}
           maxLength={50}
           placeholder="กรอกชื่อ"
+          error={errors.indexOf('firstname') !== -1}
+          errorMessage="คุณยังไม่ได้กรอกชื่อของคุณ"
         />
-        {errors.indexOf('firstname') !== -1 && (
-          <ErrMessage>คุณยังไม่ได้กรอกชื่อของคุณ</ErrMessage>
-        )}
 
         <InputWithIcon
           label="นามสกุล"
@@ -139,10 +124,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('lastname', data)}
           maxLength={50}
           placeholder="กรอกนามสกุล"
+          error={errors.indexOf('lastname') !== -1}
+          errorMessage="คุณยังไม่ได้กรอกนามสกุล"
         />
-        {errors.indexOf('lastname') !== -1 && (
-          <ErrMessage>คุณยังไม่ได้กรอกนามสกุล</ErrMessage>
-        )}
 
         <InputWithIcon
           label="รหัสผ่าน"
@@ -151,11 +135,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           maxLength={30}
           onChange={(data) => onChange('password', data)}
           placeholder="กรอกรหัสผ่าน"
+          error={errors.indexOf('password') !== -1}
+          errorMessage="คุณยังไม่ได้กรอกรหัสผ่าน"
         />
-
-        {errors.indexOf('password') !== -1 && (
-          <ErrMessage>คุณยังไม่ได้กรอกรหัสผ่าน</ErrMessage>
-        )}
 
         <InputWithIcon
           label="ที่อยู่สำหรับจัดส่ง"
@@ -164,11 +146,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('address', data)}
           placeholder="ที่อยู่สำหรับจัดส่ง"
           maxLength={200}
+          error={errors.indexOf('address') !== -1}
+          errorMessage="คุณยังไม่ได้กรอกที่อยู่"
         />
-
-        {errors.indexOf('address') !== -1 && (
-          <ErrMessage>คุณยังไม่ได้กรอกที่อยู่</ErrMessage>
-        )}
 
         <InputWithIcon
           label="เบอร์โทร"
@@ -177,11 +157,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('tel', data)}
           placeholder="กรอกเบอร์โทร"
           maxLength={10}
+          error={errors.indexOf('tel') !== -1}
+          errorMessage="กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข"
         />
-
-        {errors.indexOf('tel') !== -1 && (
-          <ErrMessage>กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข</ErrMessage>
-        )}
 
         <ButtonWrapper>
           <Button fullWidth btnSize="sm" bgColor={COLORS.RED_2} type="submit">

@@ -11,8 +11,8 @@ import {ICONS, ICON_SIZE} from '../../config/icon'
 import {useDropzone} from 'react-dropzone'
 import SearchDropdown from '../SearchDropdown'
 import shelfService from '../../api/request/shelfService'
-import {useTypesQuery} from '../../api/query/useType'
-import {usePublishersQuery} from '../../api/query/usePublisher'
+import useTypes from '../../api/query/useTypes'
+import usePublishers from '../../api/query/usePublishers'
 
 const Form = styled.form`
   display: flex;
@@ -219,8 +219,8 @@ const AddBookForm = ({
   const [imageFile, setImageFile] = useState([])
   const [errors, setErrors] = useState([])
   const [disabledAll, setDisabledAll] = useState(false)
-  const {data: types, isLoading: loadingTypes} = useTypesQuery()
-  const {data: publishers, isLoading: loadingPublishers} = usePublishersQuery()
+  const {data: types, isLoading: loadingTypes} = useTypes()
+  const {data: publishers, isLoading: loadingPublishers} = usePublishers()
   const {getRootProps} = useDropzone({
     disabled: disabledAll,
     accept: 'image/*',

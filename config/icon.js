@@ -43,6 +43,7 @@ import {
   faTrash,
   faFaceSadTear,
   faPenToSquare,
+  faUserShield,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
@@ -94,6 +95,7 @@ export const ICONS = {
   faTrash,
   faFaceSadTear,
   faPenToSquare,
+  faUserShield,
 }
 export const ICON_SIZE = {
   xs: 'xs',

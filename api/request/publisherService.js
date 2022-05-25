@@ -7,7 +7,10 @@ const getAllPublisher = async () => {
 
 const getPublisherById = () => {}
 
-const addPublisher = (data) => {}
+const addPublisher = async (data) => {
+  const res = await axios.post('/publisher', data)
+  return res
+}
 
 const editPublisher = (data) => {}
 
