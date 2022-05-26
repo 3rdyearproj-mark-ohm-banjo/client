@@ -42,7 +42,14 @@ const CircleIcon = styled.div`
 
 const ConfirmModal = ({onShow, onClose, header, children, icon, iconBg}) => {
   const modalRef = useRef()
-  useOutsideAlerter(onClose, modalRef)
+
+  const onCloseHandler = (close) => {
+    if (!close) {
+      onClose()
+    }
+  }
+
+  useOutsideAlerter(onCloseHandler, modalRef)
 
   return (
     <>
