@@ -171,7 +171,14 @@ const SearchDropdown = ({
     setCurrentSearch('')
   }
   const SearchDropdownRef = useRef(null)
-  useOutsideAlerter(setIsToggle, SearchDropdownRef)
+
+  const toggleHandler = (toggle) => {
+    if (!toggle) {
+      setIsToggle(toggle)
+    }
+  }
+
+  useOutsideAlerter(toggleHandler, SearchDropdownRef)
 
   return (
     <SearchDropdownContainer ref={SearchDropdownRef}>

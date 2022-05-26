@@ -86,6 +86,7 @@ const InputWithIcon = ({
   maxLength,
   error,
   errorMessage,
+  value,
 }) => {
   return (
     <InputControl>
@@ -112,6 +113,7 @@ const InputWithIcon = ({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             maxLength={maxLength}
+            value={value}
           />
         )}
       </InputWrapper>

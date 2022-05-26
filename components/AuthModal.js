@@ -70,9 +70,11 @@ const AuthModal = ({show, setShow}) => {
     leave: {opacity: 0, y: 0},
   })
 
-  const setCloseModal = () => {
-    setShow(false)
-    setShowRegister(false)
+  const setCloseModal = (isInside) => {
+    if (!isInside) {
+      setShow(false)
+      setShowRegister(false)
+    }
   }
 
   useOutsideAlerter(setCloseModal, modalRef)

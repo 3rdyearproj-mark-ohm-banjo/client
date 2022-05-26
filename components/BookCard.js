@@ -174,7 +174,7 @@ const BookCard = ({bookInfo}) => {
             <Button
               btnSize="sm"
               btnType="whiteBorder"
-              onClick={() => router.push(`/profile`)}
+              onClick={() => router.push(`/profile/mydonation`)}
             >
               ดูข้อมูลการบริจาค
             </Button>

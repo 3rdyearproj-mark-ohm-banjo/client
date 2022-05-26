@@ -1,8 +1,8 @@
 import {useQuery} from 'react-query'
-import userService from '../request/userService'
+import shelfService from '../request/shelfService'
 
-const useISBNbook = () => {
-  return useQuery('getCurrentUser', userService.getCurrentUser)
+const useISBNbook = (isbn) => {
+  return useQuery('getBookByIsbn', () => shelfService.getShelfByIsbn(isbn))
 }
 
 export default useISBNbook

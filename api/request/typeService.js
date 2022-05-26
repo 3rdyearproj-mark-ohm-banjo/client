@@ -8,7 +8,7 @@ const getAllTypes = async () => {
 const getTypeById = () => {}
 
 const addType = async (data) => {
-  const res = await axios.post('/type', data)
+  const res = await axios.post('/type', {typeName: data})
   return res
 }
 

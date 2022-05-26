@@ -1,13 +1,13 @@
 import React from 'react'
-import {ICONS} from '../config/icon'
 import styled, {css} from 'styled-components'
-import Icon from './Icon'
 import {FONTS} from '../styles/fonts'
 import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import {useSelector} from 'react-redux'
 import Link from 'next/link'
 import {useRouter} from 'next/router'
+import BookWorm from '../public/static/images/bookworm.png'
+import Image from 'next/image'
 
 const UserProfile = styled.div`
   padding: ${SPACING.SM};
@@ -20,8 +20,9 @@ const UserProfile = styled.div`
 const Circle = styled.div`
   width: 80px;
   height: 80px;
-  background-color: ${COLORS.PRIMARY};
   border-radius: 50%;
+  position: relative;
+  overflow: hidden;
 `
 
 const UserNameContainer = styled.div`
@@ -70,7 +71,14 @@ const ProfileHead = () => {
   return (
     <>
       <UserProfile>
-        <Circle></Circle>
+        <Circle>
+          <Image
+            src={BookWorm.src}
+            alt="bookworm icon"
+            objectFit="contain"
+            layout="fill"
+          ></Image>
+        </Circle>
         <UserNameContainer>
           <span>สวัสดี, คุณ</span>
           <UserName>{user?.username}</UserName>
@@ -82,20 +90,21 @@ const ProfileHead = () => {
             ข้อมูลโดยรวม
           </NavItem>
         </Link>
-        <NavItem isActive={router.pathname === '/profile/myborrowing'}>
-          หนังสือที่กำลังยืมอยู่
-        </NavItem>
+        <Link href="/profile/borrowing" passHref>
+          <NavItem isActive={router.pathname === '/profile/borrowing'}>
+            หนังสือที่กำลังยืมอยู่
+          </NavItem>
+        </Link>
         <Link href="/profile/mydonation" passHref>
           <NavItem isActive={router.pathname === '/profile/mydonation'}>
             หนังสือที่บริจาค
           </NavItem>
         </Link>
-        <NavItem isActive={router.pathname === '/profile/borrowhistory'}>
-          ประวัติการยืม
-        </NavItem>
-        <NavItem isActive={router.pathname === '/profile/setting'}>
-          ตั้งค่าบัญชี
-        </NavItem>
+        <Link href="/profile/borrowhistory" passHref>
+          <NavItem isActive={router.pathname === '/profile/borrowhistory'}>
+            ประวัติการยืม
+          </NavItem>
+        </Link>
       </NavMenu>
     </>
   )
