@@ -112,7 +112,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
           onSuccess()
         })
         .catch((err) => {
-          setResErrStatus(err.response)
+          setResErrStatus(err.response.status)
         })
     }
   }
