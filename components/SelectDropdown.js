@@ -45,7 +45,14 @@ const Option = styled.div`
 const SelectDropdown = ({text, dropdownList, value, icon, onClickDropdown}) => {
   const [isToggle, setIsToggle] = useState(false)
   const selectRef = useRef()
-  useOutsideAlerter(setIsToggle, selectRef)
+
+  const toggleHandler = (toggle) => {
+    if (!toggle) {
+      setIsToggle(toggle)
+    }
+  }
+
+  useOutsideAlerter(toggleHandler, selectRef)
 
   return (
     <SelectContainer ref={selectRef}>

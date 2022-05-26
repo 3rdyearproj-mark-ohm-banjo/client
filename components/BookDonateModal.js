@@ -51,7 +51,14 @@ const DonateMoreBtn = styled.button`
 
 const BookDonateModal = ({onClose, onSubmit}) => {
   const modalRef = useRef()
-  useOutsideAlerter(onClose, modalRef)
+
+  onCloseHandler = (close) => {
+    if (!close) {
+      onClose()
+    }
+  }
+
+  useOutsideAlerter(onCloseHandler, modalRef)
 
   return (
     <Modal>
