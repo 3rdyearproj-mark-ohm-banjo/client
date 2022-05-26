@@ -14,10 +14,15 @@ const EmptyState = styled.div`
   border-radius: ${SPACING.MD};
   width: 100%;
 `
-const BorrowHistoryPage = () => {
-  return <EmptyState>ระบบนี้ยังไม่เปิดให้บริการในขณะนี้</EmptyState>
+
+const BookBorrowingPage = () => {
+  return (
+    <EmptyState>
+      ระบบยืมหนังสือผ่านทางระบบยังไม่เปิดให้บริการในขณะนี้
+    </EmptyState>
+  )
 }
 
-BorrowHistoryPage.Layout = ProfileLayout
+BookBorrowingPage.Layout = ProfileLayout
 
-export default BorrowHistoryPage
+export default BookBorrowingPage

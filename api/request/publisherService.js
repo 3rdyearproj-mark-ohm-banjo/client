@@ -8,7 +8,7 @@ const getAllPublisher = async () => {
 const getPublisherById = () => {}
 
 const addPublisher = async (data) => {
-  const res = await axios.post('/publisher', data)
+  const res = await axios.post('/publisher', {publisherName: data})
   return res
 }
 

@@ -1,12 +1,13 @@
-import {useMutation} from 'react-query'
+import {useMutation, useQueryClient} from 'react-query'
 import publisherService from '../request/publisherService'
 
-const useAddPublisher = (publisher) => {
-  return useMutation(
-    'addPublisher',
-    () => publisherService.addPublisher(publisher),
-    {}
-  )
+const useAddPublisher = () => {
+  const queryClient = useQueryClient()
+  return useMutation(publisherService.addPublisher, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('getPublishers')
+    },
+  })
 }
 
 export default useAddPublisher

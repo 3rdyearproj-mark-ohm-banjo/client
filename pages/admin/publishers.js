@@ -9,6 +9,9 @@ import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import Head from 'next/head'
+import Pagination from '../../components/Pagination'
+import usePublishers from '../../api/query/usePublishers'
+import {useRouter} from 'next/router'
 
 const InputWrapper = styled.div`
   max-width: 500px;
@@ -21,9 +24,53 @@ const InputWrapper = styled.div`
   align-items: start;
 `
 
-const PublisherPage = () => {
+const Table = styled.table`
+  width: 100%;
+  border: 1px solid ${COLORS.GRAY_LIGHT};
+  border-radius: ${SPACING.MD};
+  overflow: hidden;
+  margin: ${SPACING.LG} 0;
+`
+
+const Thead = styled.thead`
+  > tr > td {
+    padding: ${SPACING.MD};
+    border: 1px solid ${COLORS.GRAY_LIGHT};
+    border-width: 0 0 1px 0;
+    background-color: ${COLORS.GRAY_LIGHT_2};
+    font-weight: 600;
+  }
+`
+
+const Tbody = styled.tbody`
+  > tr {
+    > td {
+      padding: ${SPACING.SM};
+      border: 1px solid ${COLORS.GRAY_LIGHT};
+      border-width: 0 0 1px 0;
+    }
+
+    &:last-of-type > td {
+      border: none;
+    }
+  }
+`
+
+const PaginationWrapper = styled.div`
+  border-radius: 28px;
+  margin: ${SPACING.MD} auto;
+  padding: ${SPACING.MD};
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`
+
+const PublisherPage = ({currentPage}) => {
   const [inputPublisher, setInputPublisher] = useState('')
   const {mutate: addPublisher} = useAddPublisher()
+  const {data: publishers} = usePublishers()
+  const pageSize = 10
+  const router = useRouter()
 
   const validate = () => {
     if (inputPublisher.length < 1) {
@@ -34,9 +81,16 @@ const PublisherPage = () => {
 
   const submitPublisher = () => {
     if (validate) {
-      return addPublisher(inputPublisher)
+      addPublisher(inputPublisher)
+      return setInputPublisher('')
     }
   }
+
+  const onPageChange = (page) => {
+    router.push({pathname: '/admin/publishers', query: {page}})
+  }
+
+  console.log(publishers)
 
   return (
     <>
@@ -51,6 +105,7 @@ const PublisherPage = () => {
             placeholder="กรอกชื่อสำนักพิมพ์"
             onChange={setInputPublisher}
             iconName={ICONS.faBook}
+            value={inputPublisher}
           ></InputWithIcon>
 
           <Button
@@ -61,6 +116,41 @@ const PublisherPage = () => {
             เพิ่มสำนักพิมพ์ใหม่
           </Button>
         </InputWrapper>
+
+        <Table>
+          <Thead>
+            <tr>
+              <td>ID</td>
+              <td>ชื่อสำนักพิมพ์</td>
+              <td></td>
+            </tr>
+          </Thead>
+
+          <Tbody>
+            {publishers
+              ?.slice(
+                (currentPage - 1) * pageSize,
+                (currentPage - 1) * pageSize + pageSize
+              )
+              ?.map((publisher) => (
+                <tr key={publisher.id}>
+                  <td>{publisher.id}</td>
+                  <td>{publisher.name}</td>
+                  <td></td>
+                </tr>
+              ))}
+          </Tbody>
+        </Table>
+
+        {Math.ceil(publishers?.length / pageSize) > 1 && (
+          <PaginationWrapper>
+            <Pagination
+              totalPage={Math.ceil(publishers.length / pageSize)}
+              currentPage={currentPage}
+              onPageChange={onPageChange}
+            />
+          </PaginationWrapper>
+        )}
       </div>
     </>
   )
@@ -68,3 +158,13 @@ const PublisherPage = () => {
 
 export default PublisherPage
 PublisherPage.Layout = AdminLayout
+
+export const getServerSideProps = (context) => {
+  console.log(context.query.page)
+
+  return {
+    props: {
+      currentPage: context.query.page ? +context.query.page : 1,
+    },
+  }
+}

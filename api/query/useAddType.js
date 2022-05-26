@@ -1,8 +1,13 @@
-import {useMutation} from 'react-query'
+import {useQueryClient, useMutation} from 'react-query'
 import typeService from '../request/typeService'
 
-const useAddType = (type) => {
-  return useMutation('addType', () => typeService.addType(type), {})
+const useAddType = () => {
+  const queryClient = useQueryClient()
+  return useMutation(typeService.addType, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('getTypes')
+    },
+  })
 }
 
 export default useAddType

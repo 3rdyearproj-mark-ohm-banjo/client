@@ -12,6 +12,7 @@ import 'swiper/css/effect-flip'
 import {useSelector} from 'react-redux'
 import {animated, useSpring} from 'react-spring'
 import AnimatedNumber from './springs/AnimatedNumber'
+import {useRouter} from 'next/router'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -198,6 +199,7 @@ const RoundContent = styled.div`
 `
 
 const BookInfo = ({bookInfo}) => {
+  const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
   const user = useSelector((state) => state.user.user)
   const slideIn = useSpring({
@@ -291,11 +293,10 @@ const BookInfo = ({bookInfo}) => {
           {isOwner && (
             <Button
               btnType="whiteBorder"
-              isDisabled
               withIcon
               fullWidth
               iconName={ICONS.faBook}
-              onClick={() => router.push('/profile/info')}
+              onClick={() => router.push('/profile/mydonation')}
             >
               ดูข้อมูลการบริจาคของคุณ
             </Button>

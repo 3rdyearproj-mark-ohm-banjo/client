@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 import styled, {css} from 'styled-components'
 import {COLORS} from '../styles/colors'
 import Icon from './Icon'
@@ -10,6 +10,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {logout} from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
 import {Hidden} from './Layout'
+import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -45,6 +46,7 @@ const MenuIcon = styled.li`
   font-size: 14px;
   transition: 0.2s;
   color: ${COLORS.GRAY_DARK};
+  position: relative;
   ${(props) => props.isActive && ActiveStyled}
 
   &:hover {
@@ -53,13 +55,44 @@ const MenuIcon = styled.li`
   }
 `
 
+const MenuDropdown = styled.ul`
+  position: absolute;
+  background-color: ${COLORS.GRAY_LIGHT_1};
+  padding: ${SPACING.SM};
+  width: 220px;
+  border-radius: ${SPACING.MD};
+  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.SM};
+  right: 0;
+`
+
+const MenuItem = styled.li`
+  padding: ${SPACING.SM} ${SPACING.MD};
+  width: 100%;
+  border-radius: ${SPACING.MD};
+  transition: 0.2s;
+
+  &:hover {
+    background-color: ${COLORS.PURPLE_3};
+    color: ${COLORS.WHITE};
+  }
+`
+
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
-  const dispatch = useDispatch()
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const dispatch = useDispatch()
+  const profileRef = useRef()
+  useOutsideAlerter(setShowProfileMenu, profileRef,'mouseover')
+
   const logoutHandler = async () => {
     const getResult = async () => await logout()
+    setShowProfileMenu(false)
     return getResult()
       .then(() => {
         dispatch(clearUser())
@@ -104,15 +137,24 @@ const NavigationBar = () => {
               </MenuIcon>
 
               <MenuIcon
-                onClick={() => router.push('/profile')}
                 isActive={router.pathname === '/profile'}
+                ref={profileRef}
               >
                 <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
                 <Hidden breakPoint="450px">ข้อมูลของฉัน</Hidden>
-              </MenuIcon>
-              <MenuIcon onClick={logoutHandler}>
-                <Icon name={ICONS.faSignOut} size={ICON_SIZE.lg} />
-                <Hidden breakPoint="450px">ออกจากระบบ</Hidden>
+                {showProfileMenu && (
+                  <MenuDropdown>
+                    <MenuItem
+                      onClick={() => {
+                        setShowProfileMenu(false)
+                        router.push('/profile')
+                      }}
+                    >
+                      ข้อมูลของฉัน
+                    </MenuItem>
+                    <MenuItem onClick={logoutHandler}>ออกจากระบบ</MenuItem>
+                  </MenuDropdown>
+                )}
               </MenuIcon>
             </>
           ) : (
