@@ -13,6 +13,8 @@ import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import BookOwnerCard from '../../components/BookOwnerCard'
 import userService from '../../api/request/userService'
+import Pagination from '../../components/Pagination'
+import {useRouter} from 'next/router'
 
 const Table = styled.table`
   width: 100%;
@@ -62,9 +64,39 @@ const MobileDonationWrapper = styled.div`
   }
 `
 
-const MyDonationPage = () => {
+const TitleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: ${SPACING.MD};
+  justify-content: start;
+  width: 100%;
+`
+
+const DonationCount = styled.span`
+  font-size: 14px;
+  color: ${COLORS.GRAY_DARK};
+`
+
+const Title = styled.h2`
+  font-size: 24px;
+  font-weight: 600;
+`
+
+const PaginationWrapper = styled.div`
+  border-radius: 28px;
+  margin: ${SPACING.MD} auto;
+  padding: ${SPACING.MD};
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`
+
+const MyDonationPage = ({currentPage}) => {
+  const pageSize = 5
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [deleteItem, setDeleteItem] = useState({})
+  const router = useRouter()
   const dispatch = useDispatch()
   const donationHistory = useSelector(
     (state) => state.user?.user?.donationHistory
@@ -98,6 +130,10 @@ const MyDonationPage = () => {
   const handleShowModal = () => {
     setShowCancelModal(false)
     setDeleteItem({})
+  }
+
+  const onPageChange = (page) => {
+    router.push({pathname: '/profile/mydonation', query: {page}})
   }
 
   return (
@@ -141,6 +177,13 @@ const MyDonationPage = () => {
         </div>
       </ConfirmModal>
 
+      <TitleWrapper>
+        <Title>หนังสือที่คุณบริจาคทั้งหมด</Title>
+        <DonationCount>
+          บริจาคแล้วทั้งหมด {donationHistory?.length} เล่ม
+        </DonationCount>
+      </TitleWrapper>
+
       <Table>
         <Thead>
           <tr>
@@ -153,65 +196,86 @@ const MyDonationPage = () => {
         </Thead>
 
         <Tbody>
-          {donationFormat?.map((row, i) => (
-            <tr key={`row${i}`}>
-              <td>
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
-                  alt={row.bookName}
-                  width={120}
-                  height={150}
-                  objectFit="contain"
-                />
-              </td>
-              <td>{row.ISBN}</td>
-              <td>{row.bookName}</td>
-              <td>{formatDate(row.donationTime, true, true, true)}</td>
-              <td>
-                {row.bookHistorys.length < 2 && row.currentHolder === userId ? (
-                  <Button
-                    btnSize="sm"
-                    btnType="orangeGradient"
-                    onClick={() => {
-                      setShowCancelModal(true)
-                      setDeleteItem({
-                        bookId: row.bookId,
-                        bookName: row?.bookName,
-                      })
-                    }}
-                  >
-                    ยกเลิกการบริจาค
-                  </Button>
-                ) : (
-                  <Button isDisabled>หนังสือถูกส่งต่อแล้ว</Button>
-                )}
-              </td>
-            </tr>
-          ))}
+          {donationFormat
+            ?.slice(
+              (currentPage - 1) * pageSize,
+              (currentPage - 1) * pageSize + pageSize
+            )
+            ?.map((row, i) => (
+              <tr key={`row${i}`}>
+                <td>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
+                    alt={row.bookName}
+                    width={120}
+                    height={150}
+                    objectFit="contain"
+                  />
+                </td>
+                <td>{row.ISBN}</td>
+                <td>{row.bookName}</td>
+                <td>{formatDate(row.donationTime, true, true, true)}</td>
+                <td>
+                  {row.bookHistorys.length < 2 &&
+                  row.currentHolder === userId ? (
+                    <Button
+                      btnSize="sm"
+                      btnType="orangeGradient"
+                      onClick={() => {
+                        setShowCancelModal(true)
+                        setDeleteItem({
+                          bookId: row.bookId,
+                          bookName: row?.bookName,
+                        })
+                      }}
+                    >
+                      ยกเลิกการบริจาค
+                    </Button>
+                  ) : (
+                    <Button isDisabled>หนังสือถูกส่งต่อแล้ว</Button>
+                  )}
+                </td>
+              </tr>
+            ))}
         </Tbody>
       </Table>
 
       <MobileDonationWrapper>
-        {donationFormat?.map((item) => (
-          <BookOwnerCard
-            key={item._id}
-            bookId={item.bookId}
-            bookInfo={item}
-            donationTime={formatDate(item.donationTime, true, true, true)}
-            canCancel={
-              item.bookHistorys.length < 2 && item.currentHolder === userId
-            }
-            onCancel={() => {
-              setShowCancelModal(true)
-              setDeleteItem({
-                bookId: item.bookId,
-                bookName: item?.bookName,
-              })
-            }}
-            cardType="secondary"
-          />
-        ))}
+        {donationFormat
+          ?.slice(
+            (currentPage - 1) * pageSize,
+            (currentPage - 1) * pageSize + pageSize
+          )
+          ?.map((item) => (
+            <BookOwnerCard
+              key={item._id}
+              bookId={item.bookId}
+              bookInfo={item}
+              donationTime={formatDate(item.donationTime, true, true, true)}
+              canCancel={
+                item.bookHistorys.length < 2 && item.currentHolder === userId
+              }
+              onCancel={() => {
+                setShowCancelModal(true)
+                setDeleteItem({
+                  bookId: item.bookId,
+                  bookName: item?.bookName,
+                })
+              }}
+              cardType="secondary"
+            />
+          ))}
       </MobileDonationWrapper>
+
+      {Math.ceil(donationHistory?.length / pageSize) > 1 && (
+        <PaginationWrapper>
+          <Pagination
+            totalPage={Math.ceil(donationHistory.length / pageSize)}
+            currentPage={currentPage}
+            onPageChange={onPageChange}
+          />
+        </PaginationWrapper>
+      )}
     </>
   )
 }
@@ -219,3 +283,11 @@ const MyDonationPage = () => {
 MyDonationPage.Layout = ProfileLayout
 
 export default MyDonationPage
+
+export const getServerSideProps = (context) => {
+  return {
+    props: {
+      currentPage: context.query.page ? +context.query.page : 1,
+    },
+  }
+}
