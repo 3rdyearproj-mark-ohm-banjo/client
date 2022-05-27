@@ -177,7 +177,7 @@ export const getServerSideProps = async (context) => {
   await shelfService.searchBookShelf(context.query, pageSize).then((res) => {
     total = res.total ?? 0
     bookData = res.data ?? []
-
+  })
   return {
     props: {
       isEmptyQuery: Object.keys(context.query).length < 1 ? true : false,
