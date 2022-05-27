@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import React from 'react'
 import styled from 'styled-components'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
@@ -15,7 +16,14 @@ const EmptyState = styled.div`
   width: 100%;
 `
 const BorrowHistoryPage = () => {
-  return <EmptyState>ระบบนี้ยังไม่เปิดให้บริการในขณะนี้</EmptyState>
+  return (
+    <>
+      <Head>
+        <title>ประวัติการยืมของคุณ</title>
+      </Head>
+      <EmptyState>ระบบนี้ยังไม่เปิดให้บริการในขณะนี้</EmptyState>
+    </>
+  )
 }
 
 BorrowHistoryPage.Layout = ProfileLayout

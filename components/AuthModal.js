@@ -8,17 +8,15 @@ import RegisterBanner from '../public/static/images/register-banner.png'
 import LoginBanner from '../public/static/images/people-group-reading.jpg'
 import Image from 'next/image'
 import {useTransition, a} from 'react-spring'
-import {Flex} from './Layout'
 
 const PageBanner = styled.div`
-  height: 100%;
   width: 100%;
   max-width: 600px;
-  max-height: 600px;
   padding: 20px 0;
   display: flex;
   align-items: center;
   flex-direction: column;
+  justify-content: center;
 `
 
 const BannerImage = styled.div`
