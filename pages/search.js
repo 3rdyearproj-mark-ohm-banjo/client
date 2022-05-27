@@ -175,9 +175,8 @@ export const getServerSideProps = async (context) => {
   let bookData = []
 
   await shelfService.searchBookShelf(context.query, pageSize).then((res) => {
-    total = res.total
-    bookData = res.data
-  })
+    total = res.total ?? 0
+    bookData = res.data ?? []
 
   return {
     props: {
