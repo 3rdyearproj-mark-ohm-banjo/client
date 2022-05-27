@@ -19,7 +19,7 @@ const useTypes = () => {
       })
 
       if (otherIndex) {
-        typeFormatArr.splice(otherIndex, otherIndex)
+        typeFormatArr.splice(otherIndex, 1)
         typeFormatArr.push(other)
       }
 

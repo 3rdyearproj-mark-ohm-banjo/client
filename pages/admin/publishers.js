@@ -90,8 +90,6 @@ const PublisherPage = ({currentPage}) => {
     router.push({pathname: '/admin/publishers', query: {page}})
   }
 
-  console.log(publishers)
-
   return (
     <>
       <Head>
@@ -160,8 +158,6 @@ export default PublisherPage
 PublisherPage.Layout = AdminLayout
 
 export const getServerSideProps = (context) => {
-  console.log(context.query.page)
-
   return {
     props: {
       currentPage: context.query.page ? +context.query.page : 1,
