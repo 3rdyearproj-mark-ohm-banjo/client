@@ -153,12 +153,13 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         <InputWithIcon
           label="เบอร์โทร"
           iconName={ICONS.faPhone}
-          inputType="tel"
+          inputType="number"
           onChange={(data) => onChange('tel', data)}
           placeholder="กรอกเบอร์โทร"
           maxLength={10}
           error={errors.indexOf('tel') !== -1}
           errorMessage="กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข"
+          value={userData.tel}
         />
 
         <ButtonWrapper>

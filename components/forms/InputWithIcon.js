@@ -110,7 +110,13 @@ const InputWithIcon = ({
         ) : (
           <Input
             type={inputType}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              if (inputType === 'number' && /[a-zA-Z]/.test(e.target.value)) {
+                return
+              } else {
+                onChange(e.target.value)
+              }
+            }}
             placeholder={placeholder}
             maxLength={maxLength}
             value={value}
