@@ -18,6 +18,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {fetchCurrentUser, updateUser} from '../../redux/feature/UserSlice'
 import Head from 'next/head'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
+import toast, {Toaster} from 'react-hot-toast'
 
 const TopicHead = styled.section`
   width: 100%;
@@ -139,6 +140,7 @@ const ProfilePage = () => {
           ),
         })
       )
+      toast.success('ยกเลิกการบริจาคสำเร็จ')
       setShowCancelModal(false)
       setDeleteItem({})
     })
@@ -154,6 +156,7 @@ const ProfilePage = () => {
       <Head>
         <title>Share my Book - ข้อมูลของฉัน</title>
       </Head>
+      <Toaster />
       <ConfirmModal
         onSubmit={handleDeleteSubmit}
         onClose={handleShowModal}

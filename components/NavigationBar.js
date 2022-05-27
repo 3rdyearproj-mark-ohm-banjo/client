@@ -11,6 +11,7 @@ import {logout} from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
 import {Hidden} from './Layout'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
+import toast, {Toaster} from 'react-hot-toast'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -88,7 +89,7 @@ const NavigationBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const dispatch = useDispatch()
   const profileRef = useRef()
-  useOutsideAlerter(setShowProfileMenu, profileRef,'mouseover')
+  useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
 
   const logoutHandler = async () => {
     const getResult = async () => await logout()
@@ -96,21 +97,22 @@ const NavigationBar = () => {
     return getResult()
       .then(() => {
         dispatch(clearUser())
+        toast.success('ออกจากระบบสำเร็จ')
         if (router.pathname.includes('profile')) {
           router.push('/')
         }
       })
-      .catch((res) => {
-        if (res.response.status !== 200) {
-          dispatch(clearUser())
-          return router.push('/')
-        }
+      .catch(() => {
+        toast.success('ออกจากระบบสำเร็จ')
+        dispatch(clearUser())
+        return router.push('/')
       })
   }
 
   return (
     <>
       <AuthModal show={showAuthModal} setShow={setShowAuthModal} />
+      <Toaster />
       <NavigationBarStyled>
         <ContentWrapper>
           <MenuIcon

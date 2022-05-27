@@ -15,6 +15,7 @@ import BookOwnerCard from '../../components/BookOwnerCard'
 import userService from '../../api/request/userService'
 import Pagination from '../../components/Pagination'
 import {useRouter} from 'next/router'
+import toast, {Toaster} from 'react-hot-toast'
 
 const Table = styled.table`
   width: 100%;
@@ -121,6 +122,7 @@ const MyDonationPage = ({currentPage}) => {
 
   const handleDeleteSubmit = () => {
     userService.cancelDonation(deleteItem?.bookId).then(() => {
+      toast.success('ยกเลิกการบริจาคสำเร็จ')
       dispatch(fetchCurrentUser())
       setShowCancelModal(false)
       setDeleteItem({})
@@ -141,6 +143,7 @@ const MyDonationPage = ({currentPage}) => {
       <Head>
         <title>ประวัติการบริจาคของคุณ</title>
       </Head>
+      <Toaster />
       <ConfirmModal
         onSubmit={handleDeleteSubmit}
         onClose={handleShowModal}
