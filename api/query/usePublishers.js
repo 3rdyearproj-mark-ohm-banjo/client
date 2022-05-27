@@ -19,7 +19,7 @@ const usePublishers = () => {
       })
 
       if (otherIndex) {
-        publisherFormatArr.splice(otherIndex, otherIndex)
+        publisherFormatArr.splice(otherIndex, 1)
         publisherFormatArr.push(other)
       }
 
