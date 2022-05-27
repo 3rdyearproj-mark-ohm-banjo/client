@@ -52,7 +52,7 @@ const DonateMoreBtn = styled.button`
 const BookDonateModal = ({onClose, onSubmit}) => {
   const modalRef = useRef()
 
-  onCloseHandler = (close) => {
+  const onCloseHandler = (close) => {
     if (!close) {
       onClose()
     }
