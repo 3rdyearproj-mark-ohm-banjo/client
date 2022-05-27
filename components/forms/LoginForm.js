@@ -13,6 +13,7 @@ import {validateEmail} from '../../utils/validate'
 import {useRouter} from 'next/router'
 import {useDispatch} from 'react-redux'
 import {updateUser} from '../../redux/feature/UserSlice'
+import toast, {Toaster} from 'react-hot-toast'
 
 const Header = styled.div`
   text-align: center;
@@ -106,6 +107,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       return await login(email, password)
         .then((res) => {
           dispatch(updateUser(res.data?.user))
+          toast.success('เข้าสู่ระบบ สำเร็จ!')
           if (res.data?.user?.role === 'admin') {
             router.push('/admin')
           }
@@ -139,6 +141,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
 
   return (
     <AuthFormWrapper>
+      <Toaster />
       <NavWrap>
         <div onClick={() => onShow(false)}>
           <span>ปิด</span>
