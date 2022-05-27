@@ -383,9 +383,6 @@ const AddBookForm = ({
           )}
         </>
       )}
-      {errors?.indexOf('image') !== -1 && (
-        <ErrorText>กรุณาใส่รูปภาพของหนังสือ</ErrorText>
-      )}
 
       <Form>
         <InputControl>
@@ -507,6 +504,9 @@ const AddBookForm = ({
               <span>อัปโหลดไฟล์</span>
             </UploadButton>
           </UploadContainer>
+        )}
+        {errors?.indexOf('image') !== -1 && (
+          <ErrorText>กรุณาใส่รูปภาพของหนังสือ</ErrorText>
         )}
       </Form>
 
