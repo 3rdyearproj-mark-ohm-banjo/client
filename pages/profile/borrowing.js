@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
+import Head from 'next/head'
 
 const EmptyState = styled.div`
   height: 200px;
@@ -17,9 +18,14 @@ const EmptyState = styled.div`
 
 const BookBorrowingPage = () => {
   return (
-    <EmptyState>
-      ระบบยืมหนังสือผ่านทางระบบยังไม่เปิดให้บริการในขณะนี้
-    </EmptyState>
+    <>
+      <Head>
+        <title>หนังสือที่คุณยืมอยู่</title>
+      </Head>
+      <EmptyState>
+        ระบบยืมหนังสือผ่านทางระบบยังไม่เปิดให้บริการในขณะนี้
+      </EmptyState>
+    </>
   )
 }
 
