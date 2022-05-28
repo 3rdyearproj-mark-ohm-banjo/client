@@ -237,9 +237,12 @@ const SearchDropdown = ({
             ></OptionInput>
           )}
           {dataList
-            ?.filter((item) =>
-              item?.name?.toLowerCase()?.includes(currentSearch?.toLowerCase())
-            )
+            ?.filter((item) => {
+              let reg = new RegExp('^' + currentSearch, 'i')
+              if (reg.test(item.name)) {
+                return item
+              }
+            })
             ?.map((item, i) => (
               <OptionItem
                 key={`list-item${i}`}
