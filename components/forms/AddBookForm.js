@@ -355,7 +355,7 @@ const AddBookForm = ({
   }
 
   const onClickPublisher = (pubId) => {
-    setErrors(errors.filter((err) => err !== 'publisher'))
+    setErrors(errors.filter((err) => err !== 'publisherId'))
     setBookData({...bookData, publisherId: pubId})
   }
 
