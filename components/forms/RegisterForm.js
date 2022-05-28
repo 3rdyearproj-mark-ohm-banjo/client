@@ -27,6 +27,17 @@ const NavWrap = styled.div`
   }
 `
 
+const ErrMessage = styled.div`
+  background-color: ${COLORS.RED_2};
+  color: ${COLORS.WHITE};
+  padding: 2px ${SPACING.MD};
+  border-radius: ${SPACING.MD};
+  width: max-content;
+  margin: ${SPACING.LG} 0;
+  font-size: 14px;
+  font-weight: 600;
+`
+
 const RegisterForm = ({onShowRegister, onShow}) => {
   const [userData, setUserData] = useState({
     email: '',
@@ -59,16 +70,28 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     }
   }
 
-  const registerHandle = async (e) => {
+  const registerHandle = (e) => {
     e.preventDefault()
     if (validate()) {
-      return await register(userData).then(() => onShowRegister(false))
+      return register(userData)
+        .then((res) => {
+          onShowRegister(false)
+        })
+        .catch((err) => {
+          let errorArr = []
+          errorArr.push('existEmail')
+          setErrors(errorArr)
+        })
     }
   }
 
   const onChange = (key, value) => {
     setUserData({...userData, [key]: value})
     setErrors(errors.filter((err) => err !== key))
+
+    if (key === 'email') {
+      setErrors(errors.filter((err) => err !== 'existEmail'))
+    }
   }
 
   return (
@@ -94,6 +117,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('email') !== -1}
           errorMessage="กรุณากรอกอีเมลให้ถูกต้อง"
         />
+        {errors.indexOf('existEmail') !== -1 && (
+          <ErrMessage>อีเมลนี้ถูกใช้ไปแล้ว</ErrMessage>
+        )}
 
         <InputWithIcon
           label="ชื่อผู้ใช้"

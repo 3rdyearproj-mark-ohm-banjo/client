@@ -56,11 +56,11 @@ const RegisterModal = css`
 `
 
 const ResponsiveModal = styled(a.div)`
-  ${(props) => props.showRegister && RegisterModal}
+  ${(props) => props.showregister && RegisterModal}
 `
 
 const AuthModal = ({show, setShow}) => {
-  const [showRegister, setShowRegister] = useState(false)
+  const [showregister, setShowregister] = useState(false)
   const modalRef = useRef()
   const slideModal = useTransition(show, {
     from: {opacity: 0, y: 0},
@@ -71,7 +71,7 @@ const AuthModal = ({show, setShow}) => {
   const setCloseModal = (isInside) => {
     if (!isInside) {
       setShow(false)
-      setShowRegister(false)
+      setShowregister(false)
     }
   }
 
@@ -93,13 +93,16 @@ const AuthModal = ({show, setShow}) => {
         <ModalBackground>
           {slideModal((style, item) =>
             item ? (
-              <ResponsiveModal style={style} showRegister={showRegister}>
+              <ResponsiveModal
+                style={style}
+                showregister={showregister ? 'yes' : null}
+              >
                 <ModalContainer
                   maxWidth="975px"
                   maxHeight="max-content"
                   ref={modalRef}
                 >
-                  {showRegister ? (
+                  {showregister ? (
                     <ContentWrapper>
                       <PageBanner>
                         <BannerHeader>
@@ -124,7 +127,7 @@ const AuthModal = ({show, setShow}) => {
                         </BannerHeader>
                       </PageBanner>
                       <RegisterForm
-                        onShowRegister={setShowRegister}
+                        onShowRegister={setShowregister}
                         onShow={setCloseModal}
                       />
                     </ContentWrapper>
@@ -147,7 +150,7 @@ const AuthModal = ({show, setShow}) => {
                         </BannerImage>
                       </PageBanner>
                       <LoginForm
-                        onShowRegister={setShowRegister}
+                        onShowRegister={setShowregister}
                         onSuccess={() => setShow(false)}
                         onShow={setCloseModal}
                       />
