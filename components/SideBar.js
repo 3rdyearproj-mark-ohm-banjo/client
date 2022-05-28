@@ -1,0 +1,117 @@
+import styled, {css} from 'styled-components'
+import {COLORS} from '../styles/colors'
+import {SPACING} from '../styles/spacing'
+import {useDispatch, useSelector} from 'react-redux'
+import {clearUser} from '../redux/feature/UserSlice'
+import {logout} from '../api/request/userService'
+import {useRouter} from 'next/router'
+import Icon from './Icon'
+import {ICONS} from '../config/icon'
+
+const SideBarStyled = styled.div`
+  background-color: ${COLORS.PURPLE_3};
+  padding: ${SPACING.MD};
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.MD};
+  flex-shrink: 0;
+  min-width: 250px;
+`
+
+const ActiveItemStyled = css`
+  background-color: ${COLORS.PURPLE_2};
+  cursor: pointer;
+`
+
+const SecondItemStyled = css`
+  background-color: ${COLORS.PURPLE};
+  display: flex;
+  gap: ${SPACING.MD};
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+`
+
+const SideBarItem = styled.div`
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.MD};
+  border-radius: ${SPACING.MD};
+  transition: 0.2s;
+  ${(props) => props.isActive && ActiveItemStyled}
+  ${(props) => props.isSecondary && SecondItemStyled}
+
+  &:hover {
+    ${ActiveItemStyled}
+    ${(props) => props.isSecondary && SecondItemStyled}
+  }
+`
+
+const SideBar = () => {
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const user = useSelector((state) => state.user.user)
+
+  const logoutHandler = async () => {
+    const getResult = async () => await logout()
+    return getResult()
+      .then(() => {
+        dispatch(clearUser())
+        router.push('/')
+      })
+      .catch((res) => {
+        if (res.response.status !== 200) {
+          dispatch(clearUser())
+          return router.push('/')
+        }
+      })
+  }
+
+  return (
+    <SideBarStyled>
+      <SideBarItem isSecondary>
+        <span>คุณ {user.username}</span>
+        <Icon name={ICONS.faUserShield} />
+      </SideBarItem>
+
+      <SideBarItem
+        onClick={() => router.push('/admin/newadmin')}
+        isActive={router.pathname === '/admin/newadmin'}
+      >
+        เพิ่ม Admin
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/search')}
+        isActive={router.pathname === '/admin/search'}
+      >
+        ค้นหาหนังสือ
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/types')}
+        isActive={router.pathname === '/admin/types'}
+      >
+        จัดการประเภทหนังสือ
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/publishers')}
+        isActive={router.pathname === '/admin/publishers'}
+      >
+        จัดการข้อมูลสำนักพิมพ์
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/users')}
+        isActive={router.pathname === '/admin/users'}
+      >
+        จัดการผู้ใช้
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/report')}
+        isActive={router.pathname === '/admin/report'}
+      >
+        ข้อมูลการรายงาน
+      </SideBarItem>
+      <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
+    </SideBarStyled>
+  )
+}
+
+export default SideBar

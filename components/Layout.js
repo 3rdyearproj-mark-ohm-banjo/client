@@ -1,65 +1,67 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { SPACING } from '../styles/spacing'
+import {COLORS} from '../styles/colors'
+import {SPACING} from '../styles/spacing'
 
-const LayoutStyled = styled.section`
-  ${(props) => props.display && `display: ${props.display};`}
-  ${(props) => props.flexDirection && `flex-direction: ${props.flexDirection};`}
+export const ContentWrapper = styled.section`
+  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  width: ${(props) => props.width ?? '100%'};
+  margin: ${(props) => props.margin ?? '30px auto'};
+  display: flex;
+  flex-direction: column;
+  align-items: ${(props) => props.alignItems ?? 'center'};
+  justify-content: ${(props) => props.justifyContent ?? 'center'};
+  padding: ${(props) => props.padding ?? SPACING.MD};
+  background-color: ${(props) => props.bgColor ?? COLORS.GRAY_LIGHT_3};
+  border-radius: ${SPACING.MD};
+  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+  ${(props) => props.gap && `gap: ${props.gap};`}
+`
+
+export const BoxLayout = styled.div`
+  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  width: ${(props) => props.width ?? '100%'};
+`
+
+export const AddBookLayout = styled.section`
+  max-width: 768px;
+  width: 100%;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: ${COLORS.WHITE};
+  box-shadow: 0px 5px 20px ${COLORS.GRAY_DARK_1};
+  margin: 20px 0 80px;
+`
+
+export const AuthFormWrapper = styled.div`
+  background-color: ${COLORS.PURPLE_2};
+  width: 100%;
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.LG};
+  position: relative;
+  border-radius: ${SPACING.SM};
+
+  @media (min-width: 768px) {
+    padding: 50px;
+    border-radius: 0 ${SPACING.SM} ${SPACING.SM} 0;
+  }
+`
+
+export const Flex = styled.div`
+  display: flex;
+  flex-direction: ${(props) => props.flexDirection ?? 'row'};
+  gap: ${(props) => props.gap};
+  ${(props) => props.flexWrap && `flex-wrap: ${props.flexWrap};`}
   ${(props) => props.alignItems && `align-items: ${props.alignItems};`}
   ${(props) =>
     props.justifyContent && `justify-content: ${props.justifyContent};`}
-  padding: ${(props) => props.padding ?? SPACING.LG};
-  margin: ${(props) => props.margin ?? '0'};
-  ${(props) => props.bgColor && `background-color: ${props.bgColor};`}
-  ${(props) => props.textColor && `color: ${props.textColor};`}
-  ${(props) => props.textAlign && `text-align: ${props.textAlign};`}
-  ${(props) => props.boxShadow && `box-shadow: ${props.boxShadow};`}
+  ${(props) => props.padding && `padding: ${props.padding};`}
+  ${(props) => props.margin && `padding: ${props.margin};`}
 `
 
-const Layout = ({
-  display,
-  flexDirection,
-  alignItems,
-  justifyContent,
-  padding,
-  margin,
-  bgColor,
-  textColor,
-  textAlign,
-  boxShadow,
-  children,
-}) => {
-  return (
-    <LayoutStyled
-      display={display}
-      flexDirection={flexDirection}
-      alignItems={alignItems}
-      justifyContent={justifyContent}
-      padding={padding}
-      margin={margin}
-      bgColor={bgColor}
-      textColor={textColor}
-      textAlign={textAlign}
-      boxShadow={boxShadow}
-    >
-      {children}
-    </LayoutStyled>
-  )
-}
+export const Hidden = styled.div`
+  display: none;
 
-Layout.propTypes = {
-  display: PropTypes.string,
-  flexDirection: PropTypes.string,
-  alignItems: PropTypes.string,
-  justifyContent: PropTypes.string,
-  padding: PropTypes.string,
-  margin: PropTypes.string,
-  bgColor: PropTypes.string,
-  textColor: PropTypes.string,
-  textAlign: PropTypes.string,
-  boxShadow: PropTypes.string,
-  children: PropTypes.node,
-}
-
-export default Layout
+  @media (min-width: ${(props) => props.breakPoint ?? '768px'}) {
+    display: ${(props) => props.display ?? 'block'};
+  }
+`
