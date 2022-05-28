@@ -13,6 +13,7 @@ import {useSelector} from 'react-redux'
 import {animated, useSpring} from 'react-spring'
 import AnimatedNumber from './springs/AnimatedNumber'
 import {useRouter} from 'next/router'
+import toast from 'react-hot-toast'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -307,7 +308,9 @@ const BookInfo = ({bookInfo}) => {
               withIcon
               fullWidth
               iconName={ICONS.faBook}
-              onClick={() => {}}
+              onClick={() => {
+                toast.error('ระบบยืมหนังสือยังไม่เปิดให้บริการในตอนนี้')
+              }}
             >
               ยืมหนังสือ
             </Button>

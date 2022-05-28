@@ -184,7 +184,7 @@ const BookCard = ({bookInfo}) => {
               btnSize="sm"
               onClick={() => router.push(`/book/${bookInfo?.ISBN}`)}
             >
-              ยืมหนังสือ
+              ข้อมูลหนังสือ
             </Button>
           )}
         </BottomZone>
