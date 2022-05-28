@@ -107,8 +107,12 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         </div>
       </NavWrap>
       <form onSubmit={registerHandle}>
+        {errors.indexOf('existEmail') !== -1 && (
+          <ErrMessage>อีเมลหรือชื่อผู้ใช้ถูกใช้ไปแล้ว</ErrMessage>
+        )}
+
         <InputWithIcon
-          label="อีเมล"
+          label="อีเมล*"
           type="text"
           iconName={ICONS.faEnvelope}
           onChange={(data) => onChange('email', data)}
@@ -117,12 +121,9 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('email') !== -1}
           errorMessage="กรุณากรอกอีเมลให้ถูกต้อง"
         />
-        {errors.indexOf('existEmail') !== -1 && (
-          <ErrMessage>อีเมลนี้ถูกใช้ไปแล้ว</ErrMessage>
-        )}
 
         <InputWithIcon
-          label="ชื่อผู้ใช้"
+          label="ชื่อผู้ใช้*"
           type="text"
           iconName={ICONS.faUser}
           onChange={(data) => onChange('username', data)}
@@ -133,7 +134,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
 
         <InputWithIcon
-          label="ชื่อจริง"
+          label="ชื่อจริง*"
           type="text"
           iconName={ICONS.faUser}
           onChange={(data) => onChange('firstname', data)}
@@ -144,7 +145,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
 
         <InputWithIcon
-          label="นามสกุล"
+          label="นามสกุล*"
           type="text"
           iconName={ICONS.faUser}
           onChange={(data) => onChange('lastname', data)}
@@ -155,7 +156,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
 
         <InputWithIcon
-          label="รหัสผ่าน"
+          label="รหัสผ่าน*"
           iconName={ICONS.faLock}
           inputType="password"
           maxLength={30}
@@ -166,7 +167,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
 
         <InputWithIcon
-          label="ที่อยู่สำหรับจัดส่ง"
+          label="ที่อยู่สำหรับจัดส่ง*"
           iconName={ICONS.faLocationDot}
           inputType="textarea"
           onChange={(data) => onChange('address', data)}
@@ -177,7 +178,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
 
         <InputWithIcon
-          label="เบอร์โทร"
+          label="เบอร์โทร*"
           iconName={ICONS.faPhone}
           inputType="number"
           onChange={(data) => onChange('tel', data)}

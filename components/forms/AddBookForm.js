@@ -387,7 +387,7 @@ const AddBookForm = ({
       <Form>
         <InputControl>
           <Label>
-            ISBN{' '}
+            ISBN*{' '}
             <span>
               ( หากในระบบมีข้อมูลหนังสือที่ตรงกับ ISBN นี้แล้ว
               ระบบจะเติมข้อมูลส่วนที่เหลือให้ )
@@ -411,7 +411,7 @@ const AddBookForm = ({
           )}
         </InputControl>
         <InputControl>
-          <Label>ชื่อหนังสือ</Label>
+          <Label>ชื่อหนังสือ*</Label>
           <Input
             type="text"
             onChange={(e) => onChange('bookName', e.target.value)}
@@ -426,7 +426,7 @@ const AddBookForm = ({
         </InputControl>
 
         <InputControl width="100%">
-          <Label>ชื่อผู้แต่ง</Label>
+          <Label>ชื่อผู้แต่ง*</Label>
           <Input
             type="text"
             onChange={(e) => onChange('author', e.target.value)}
@@ -441,7 +441,7 @@ const AddBookForm = ({
         </InputControl>
         {!loadingPublishers && (
           <InputControl width="50%">
-            <Label>สำนักพิมพ์</Label>
+            <Label>สำนักพิมพ์*</Label>
             <SearchDropdown
               dataList={publishers}
               onClickDropdown={onClickPublisher}
@@ -459,7 +459,7 @@ const AddBookForm = ({
 
         <InputControl>
           <Label>
-            ประเภทหนังสือ <span>( สามารถเลือกประเภทได้สูงสุด 4 ประเภท )</span>
+            ประเภทหนังสือ* <span>( สามารถเลือกประเภทได้สูงสุด 4 ประเภท )</span>
           </Label>
 
           {bookData?.types.length > 0 && (
@@ -501,7 +501,7 @@ const AddBookForm = ({
 
             <UploadButton>
               <Icon name={ICONS.faDownload} size={ICON_SIZE['lg']} />
-              <span>อัปโหลดไฟล์</span>
+              <span>อัปโหลดไฟล์*</span>
             </UploadButton>
           </UploadContainer>
         )}

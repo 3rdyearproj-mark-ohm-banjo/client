@@ -157,7 +157,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       )}
       <form onSubmit={loginHandler}>
         <InputWithIcon
-          label="อีเมล"
+          label="อีเมล*"
           iconName={ICONS.faUser}
           inputType="email"
           onChange={setEmail}
@@ -168,7 +168,7 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
           <ErrMessage>กรุณากรอกอีเมลให้ถูกต้อง</ErrMessage>
         )}
         <InputWithIcon
-          label="รหัสผ่าน"
+          label="รหัสผ่าน*"
           iconName={ICONS.faLock}
           inputType="password"
           onChange={setPassword}
