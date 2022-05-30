@@ -178,7 +178,7 @@ const Home = ({newBook, recommendBook}) => {
   return (
     <>
       <Head>
-        <title>Share my Book</title>
+        <title>Share my Book Test01</title>
         <meta
           name="description"
           content="INT365/371 Share my Book Application"
