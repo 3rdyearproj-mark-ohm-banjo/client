@@ -4,6 +4,8 @@ COPY package*.json ./
 RUN npm install -g yarn --force
 RUN yarn install
 COPY . ./
-RUN yarn run build
+RUN yarn build
 
-CMD ["yarn", "run", "start"]
+ENV PORT 80
+
+CMD ["yarn", "start"]
