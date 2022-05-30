@@ -178,7 +178,7 @@ const Home = ({newBook, recommendBook}) => {
   return (
     <>
       <Head>
-        <title>Share my Book Test01</title>
+        <title>Share my Book</title>
         <meta
           name="description"
           content="INT365/371 Share my Book Application"
@@ -203,7 +203,7 @@ const Home = ({newBook, recommendBook}) => {
 
             <AppDescribe>
               <Trail open={true}>
-                <AppName>Share My Book</AppName>
+                <AppName>Share My Book Test01</AppName>
                 <Divider lineColor={COLORS.PRIMARY}></Divider>
                 <span>แอปพลิเคชันส่งต่อหนังสือ </span>
               </Trail>
