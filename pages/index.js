@@ -203,7 +203,7 @@ const Home = ({newBook, recommendBook}) => {
 
             <AppDescribe>
               <Trail open={true}>
-                <AppName>Share My Book Test05</AppName>
+                <AppName>Share My Book</AppName>
                 <Divider lineColor={COLORS.PRIMARY}></Divider>
                 <span>แอปพลิเคชันส่งต่อหนังสือ </span>
               </Trail>
