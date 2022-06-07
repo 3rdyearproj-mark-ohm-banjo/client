@@ -313,10 +313,16 @@ export async function getStaticProps() {
       5
     )
     .then((res) => res.data)
+    .catch(() => {
+      return []
+    })
   const newBook = await shelfService
     .searchBookShelf({sortBy: '_id', isDescending: 'yes'}, 5)
     .then((res) => {
       return res.data
+    })
+    .catch(() => {
+      return []
     })
 
   return {
