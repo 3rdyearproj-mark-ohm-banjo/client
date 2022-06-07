@@ -33,7 +33,6 @@ const searchBookShelf = async (params, size) => {
   const res = await axios
     .get(`/bookShelf/search`, {params: {...params, size}})
     .then((res) => res.data)
-    .catch((err) => err.response)
   return res
 }
 

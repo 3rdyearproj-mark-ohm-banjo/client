@@ -155,6 +155,11 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       {resErrStatus === 422 && (
         <ErrMessage>โปรดลองอีกครั้ง, อีเมลหรือรหัสผ่านไม่ถูกต้อง</ErrMessage>
       )}
+
+      {resErrStatus === 0 && (
+        <ErrMessage>เกิดข้อผิดพลาด ในการเชื่อมต่อ</ErrMessage>
+      )}
+
       <form onSubmit={loginHandler}>
         <InputWithIcon
           label="อีเมล*"
