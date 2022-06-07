@@ -303,8 +303,11 @@ const Home = ({newBook, recommendBook}) => {
   )
 }
 
-export async function getStaticProps() {
-  const recommendBook = await shelfService
+export async function getServerSideProps() {
+  let newBook = []
+  let recommendBook = []
+
+  await shelfService
     .searchBookShelf(
       {
         sortBy: 'totalBorrow',
@@ -312,17 +315,16 @@ export async function getStaticProps() {
       },
       5
     )
-    .then((res) => res.data)
+    .then((res) => (recommendBook = res.data))
     .catch(() => {
-      return []
+      return
     })
-  const newBook = await shelfService
+
+  await shelfService
     .searchBookShelf({sortBy: '_id', isDescending: 'yes'}, 5)
-    .then((res) => {
-      return res.data
-    })
+    .then((res) => (newBook = res.data))
     .catch(() => {
-      return []
+      return
     })
 
   return {
