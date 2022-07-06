@@ -45,7 +45,7 @@ const OtherContentContainer = styled.section`
   margin: 30px auto;
 
   @media (min-width: 1050px) {
-    max-width: 1050px;
+    max-width: 1200px;
   }
 `
 
@@ -93,15 +93,9 @@ const RelateContentHead = styled.h4`
 
 const BookShelfPage = ({bookShelf, relatedBook, notFound}) => {
   const router = useRouter()
-  if (notFound) {
-    return (
-      <>
-        <Head>
-          <title>ไม่พบหนังสือที่มี ISBN นี้</title>
-        </Head>
-        <NotFound type="ISBN" />
-      </>
-    )
+
+  if (!bookShelf || !relatedBook) {
+    return <div>Loading...</div>
   }
 
   return (
@@ -192,11 +186,11 @@ const BookShelfPage = ({bookShelf, relatedBook, notFound}) => {
 
 export default BookShelfPage
 
-export const getServerSideProps = async (context) => {
-  const {isbn} = context.query
-  let bookShelf = []
+export const getStaticProps = async ({params}) => {
+  const isbn = params.isbn
+  let bookShelf = {}
   let relatedBook = []
-  let notFound = false
+
   try {
     const bookFetch = await shelfService
       .getShelfByIsbn(isbn)
@@ -226,14 +220,25 @@ export const getServerSideProps = async (context) => {
     bookShelf = bookFetch
     relatedBook = relatedBookFetch
   } catch {
-    notFound = true
+    return {notFound: true}
+  }
+
+  if (Object.keys(bookShelf).length < 1) {
+    return {notFound: true}
   }
 
   return {
     props: {
       bookShelf,
       relatedBook,
-      notFound,
     },
+    revalidate: 10,
+  }
+}
+
+export const getStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
   }
 }

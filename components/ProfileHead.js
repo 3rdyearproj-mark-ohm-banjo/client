@@ -10,11 +10,11 @@ import BookWorm from '../public/static/images/bookworm.png'
 import Image from 'next/image'
 
 const UserProfile = styled.div`
-  padding: ${SPACING.SM};
-  border-radius: ${SPACING.MD};
+  width: 100%;
   display: flex;
   gap: ${SPACING.MD};
-  width: 100%;
+  padding: ${SPACING.SM};
+  border-radius: ${SPACING.MD};
 `
 
 const Circle = styled.div`
@@ -23,6 +23,7 @@ const Circle = styled.div`
   border-radius: 50%;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 `
 
 const UserNameContainer = styled.div`
@@ -30,29 +31,51 @@ const UserNameContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   font-family: ${FONTS.SARABUN};
+  overflow: hidden;
 `
 
 const UserName = styled.h2`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 22px;
   font-weight: 800;
 `
 
 const NavActive = css`
-  background-color: ${COLORS.PRIMARY};
+  background-color: ${COLORS.PURPLE_2};
   color: ${COLORS.WHITE};
 `
 
 const NavMenu = styled.ul`
   display: flex;
-  flex-wrap: wrap;
   background-color: ${COLORS.GRAY_LIGHT_2};
   width: 100%;
   border-radius: ${SPACING.MD};
   gap: ${SPACING.LG};
   padding: ${SPACING.MD};
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    height: ${SPACING.SM};
+  }
+
+  &::-webkit-scrollbar {
+    background-color: ${COLORS.GRAY_LIGHT};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${COLORS.GRAY_DARK};
+    border-radius: 5px;
+
+    &:hover {
+      background: ${COLORS.GRAY_DARK_1};
+    }
+  }
 `
 
 const NavItem = styled.li`
+  flex-shrink: 0;
   ${(props) => props.isActive && NavActive}
   padding: ${SPACING.SM} ${SPACING.LG};
   border-radius: ${SPACING.MD};
@@ -90,19 +113,34 @@ const ProfileHead = () => {
             ข้อมูลโดยรวม
           </NavItem>
         </Link>
+        <Link href="/profile/bookrequest" passHref>
+          <NavItem isActive={router.pathname === '/profile/bookrequest'}>
+            หนังสือที่จะได้รับ
+          </NavItem>
+        </Link>
         <Link href="/profile/borrowing" passHref>
           <NavItem isActive={router.pathname === '/profile/borrowing'}>
-            หนังสือที่กำลังยืมอยู่
+            หนังสือที่กำลังยืม
+          </NavItem>
+        </Link>
+        <Link href="/profile/forwarding" passHref>
+          <NavItem isActive={router.pathname === '/profile/forwarding'}>
+            หนังสือที่ต้องส่งต่อ
           </NavItem>
         </Link>
         <Link href="/profile/mydonation" passHref>
           <NavItem isActive={router.pathname === '/profile/mydonation'}>
-            หนังสือที่บริจาค
+            ประวัติการบริจาค
           </NavItem>
         </Link>
         <Link href="/profile/borrowhistory" passHref>
           <NavItem isActive={router.pathname === '/profile/borrowhistory'}>
             ประวัติการยืม
+          </NavItem>
+        </Link>
+        <Link href="/profile/info" passHref>
+          <NavItem isActive={router.pathname === '/profile/info'}>
+            แก้ไขข้อมูล
           </NavItem>
         </Link>
       </NavMenu>

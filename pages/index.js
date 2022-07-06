@@ -203,7 +203,7 @@ const Home = ({newBook, recommendBook}) => {
 
             <AppDescribe>
               <Trail open={true}>
-                <AppName>Share My Book Test01</AppName>
+                <AppName>Share My Book</AppName>
                 <Divider lineColor={COLORS.PRIMARY}></Divider>
                 <span>แอปพลิเคชันส่งต่อหนังสือ </span>
               </Trail>
@@ -303,7 +303,7 @@ const Home = ({newBook, recommendBook}) => {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   let newBook = []
   let recommendBook = []
 
@@ -329,6 +329,7 @@ export async function getServerSideProps() {
 
   return {
     props: {newBook, recommendBook},
+    revalidate: 30,
   }
 }
 

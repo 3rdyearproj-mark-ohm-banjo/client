@@ -6,18 +6,13 @@ const getShelfById = async (id) => {
 }
 
 const getShelfByIsbn = async (isbn) => {
-  const res = await axios
-    .get(`/bookShelf/isbn/${isbn}`)
-    .then((res) => res.data)
-    .catch((err) => err.response)
+  const res = await axios.get(`/bookShelf/isbn/${isbn}`).then((res) => res.data)
   return res
 }
 
 const getAllShelf = async () => {
-  const res = await axios
-    .get(`/bookShelf`)
-    .then((res) => res.data)
-    .catch((err) => err.response)
+  const res = await axios.get(`/bookShelf`).then((res) => res.data)
+
   return res
 }
 

@@ -78,7 +78,7 @@ const Dropdown = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${COLORS.PRIMARY};
+    background: ${COLORS.GRAY_DARK_2};
     border-radius: 5px;
   }
 `
@@ -93,6 +93,8 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  ${(props) => props.rotate && 'transform:rotate(180deg);'}
 `
 
 const FakeInput = styled.div`
@@ -202,8 +204,9 @@ const SearchDropdown = ({
             />
             <IconContainer
               onClick={() => !isDisabled && setIsToggle(!isToggle)}
+              rotate={isToggle}
             >
-              <Icon name={isToggle ? ICONS.faChevronUp : ICONS.faChevronDown} />
+              <Icon name={ICONS.faChevronDown} />
             </IconContainer>
           </>
         ) : (
@@ -218,8 +221,9 @@ const SearchDropdown = ({
             </FakeInput>
             <IconContainer
               onClick={() => !isDisabled && setIsToggle(!isToggle)}
+              rotate={isToggle}
             >
-              <Icon name={isToggle ? ICONS.faChevronUp : ICONS.faChevronDown} />
+              <Icon name={ICONS.faChevronDown} />
             </IconContainer>
           </>
         )}

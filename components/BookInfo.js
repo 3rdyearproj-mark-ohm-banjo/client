@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {Button, Icon} from './'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -14,17 +14,18 @@ import {animated, useSpring} from 'react-spring'
 import AnimatedNumber from './springs/AnimatedNumber'
 import {useRouter} from 'next/router'
 import toast from 'react-hot-toast'
+import ConfirmModal from './ConfirmModal'
 
 const BookContainer = styled.section`
   width: 100%;
   background-color: ${COLORS.WHITE};
   border-radius: ${SPACING.MD};
-  max-width: 1050px;
+  max-width: 1200px;
   box-shadow: 0 5px 20px ${COLORS.GRAY_DARK};
   display: flex;
   flex-direction: column;
   margin: 20px 0;
-  padding: ${SPACING.LG};
+  padding: ${SPACING['4X']};
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -173,13 +174,6 @@ const ButtonWrapper = styled.section`
   }
 `
 
-const RoundBoxContainer = styled.div`
-  display: flex;
-  gap: ${SPACING.MD};
-  flex-wrap: wrap;
-  margin: ${SPACING.SM} 0;
-`
-
 const RoundContent = styled.div`
   width: max-content;
   margin: ${SPACING.MD} 0;
@@ -199,6 +193,12 @@ const RoundContent = styled.div`
   }
 `
 
+const ConfirmReminder = styled.span`
+  color: ${COLORS.RED_2};
+  font-size: 14px;
+  font-weight: 600;
+`
+
 const BookInfo = ({bookInfo}) => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
@@ -207,6 +207,7 @@ const BookInfo = ({bookInfo}) => {
     from: {opacity: 0, y: -50},
     to: {opacity: 1, y: 0},
   })
+  const [showBorrowModal, setShowBorrowModal] = useState(false)
 
   const isOwner = user?.donationHistory?.some(
     (info) =>
@@ -214,110 +215,156 @@ const BookInfo = ({bookInfo}) => {
       info?.book?.currentHolder === user?._id
   )
 
+  const borrowHandler = () => {
+    if (!isAuth) {
+      return toast.error('กรุณาเข้าสู่ระบบก่อนยืมหนังสือ')
+    }
+    setShowBorrowModal(true)
+  }
+
+  const borrow = () => {
+    setShowBorrowModal(false)
+    toast.error('ระบบนี้ยังไม่เปิดให้บริการ')
+  }
+
   return (
-    <BookContainer>
-      <BookImageContainer>
-        <Swiper
-          effect={'flip'}
-          grabCursor={true}
-          modules={[EffectFlip]}
-          className="mySwiper"
-          loop={true}
+    <>
+      <ConfirmModal
+        onShow={showBorrowModal}
+        icon={ICONS.faHandHoldingHand}
+        onClose={() => setShowBorrowModal(false)}
+      >
+        <div>
+          ยืนยันการยืม <b style={{fontWeight: '600'}}>{bookInfo?.bookName}</b>
+        </div>
+        <ConfirmReminder>
+          **หลังจากกดปุ่มยืนยัน
+          จะส่งข้อมูลที่อยู่การจัดส่งให้ผู้ที่ถือหนังสือทราบ
+        </ConfirmReminder>
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            width: '70%',
+          }}
         >
-          <SwiperSlide>
-            <BookImage
-              src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BookImage
-              src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
-            />
-          </SwiperSlide>
-        </Swiper>
-      </BookImageContainer>
-      <BookInfoContainer style={slideIn}>
-        <BookName style={slideIn}>{bookInfo?.bookName}</BookName>
-        <ISBN>{bookInfo?.ISBN}</ISBN>
-        <SectionContent padding={`${SPACING.SM} 0`}>
-          <HeadText>
-            <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
-          </HeadText>
-        </SectionContent>
-
-        <NumberGroup>
-          <ContentBox>
-            <NumberTitle>ยอดการยืม</NumberTitle>
-            <NumberBox>
-              <AnimatedNumber maxNumber={bookInfo?.totalBorrow} />
-              <Unit>ครั้ง</Unit>
-            </NumberBox>
-          </ContentBox>
-
-          <ContentBox>
-            <NumberTitle>จำนวนที่ว่างให้ยืม</NumberTitle>
-            <NumberBox>
-              <AnimatedNumber maxNumber={bookInfo?.totalAvailable} />
-              <Unit>เล่ม</Unit>
-            </NumberBox>
-          </ContentBox>
-        </NumberGroup>
-
-        <RoundContent>
-          <span>สำนักพิมพ์</span>
-          <span>{bookInfo?.publisherId?.publisherName}</span>
-        </RoundContent>
-
-        <HeadText> ประเภทของหนังสือ</HeadText>
-        <TypeContainer>
-          {bookInfo?.types?.map((type) => (
-            <TypeBox
-              key={`bookType-${type._id}`}
-              bgColor={
-                TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
-                  ?.color
-              }
-            >
-              <Icon
-                name={
-                  TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
-                    ?.icon ?? TYPES_STYLE['default'].icon
-                }
+          <Button
+            btnSize="sm"
+            bgColor={COLORS.RED_1}
+            onClick={() => setShowBorrowModal(false)}
+            fullWidth
+            borderRadius="4px"
+          >
+            ยกเลิก
+          </Button>
+          <Button btnSize="sm" onClick={borrow} fullWidth borderRadius="4px">
+            ยืนยัน
+          </Button>
+        </div>{' '}
+      </ConfirmModal>
+      <BookContainer>
+        <BookImageContainer>
+          <Swiper
+            effect={'flip'}
+            grabCursor={true}
+            modules={[EffectFlip]}
+            className="mySwiper"
+            loop={true}
+          >
+            <SwiperSlide>
+              <BookImage
+                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
               />
+            </SwiperSlide>
+            <SwiperSlide>
+              <BookImage
+                src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.imageCover}`}
+              />
+            </SwiperSlide>
+          </Swiper>
+        </BookImageContainer>
+        <BookInfoContainer style={slideIn}>
+          <BookName style={slideIn}>{bookInfo?.bookName}</BookName>
+          <ISBN>{bookInfo?.ISBN}</ISBN>
+          <SectionContent padding={`${SPACING.SM} 0`}>
+            <HeadText>
+              <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
+            </HeadText>
+          </SectionContent>
 
-              {type?.typeName}
-            </TypeBox>
-          ))}
-        </TypeContainer>
+          <NumberGroup>
+            <ContentBox>
+              <NumberTitle>ยอดการยืม</NumberTitle>
+              <NumberBox>
+                <AnimatedNumber maxNumber={bookInfo?.totalBorrow} />
+                <Unit>ครั้ง</Unit>
+              </NumberBox>
+            </ContentBox>
 
-        <ButtonWrapper>
-          {isOwner && (
-            <Button
-              btnType="whiteBorder"
-              withIcon
-              fullWidth
-              iconName={ICONS.faBook}
-              onClick={() => router.push('/profile/mydonation')}
-            >
-              ดูข้อมูลการบริจาคของคุณ
-            </Button>
-          )}
+            <ContentBox>
+              <NumberTitle>จำนวนที่ว่างให้ยืม</NumberTitle>
+              <NumberBox>
+                <AnimatedNumber maxNumber={bookInfo?.totalAvailable} />
+                <Unit>เล่ม</Unit>
+              </NumberBox>
+            </ContentBox>
+          </NumberGroup>
 
-          {(!isAuth || !isOwner) && (
-            <Button
-              withIcon
-              fullWidth
-              iconName={ICONS.faBook}
-              onClick={() => {
-                toast.error('ระบบยืมหนังสือยังไม่เปิดให้บริการในตอนนี้')
-              }}
-            >
-              ยืมหนังสือ
-            </Button>
-          )}
-        </ButtonWrapper>
-      </BookInfoContainer>
-    </BookContainer>
+          <RoundContent>
+            <span>สำนักพิมพ์</span>
+            <span>{bookInfo?.publisherId?.publisherName}</span>
+          </RoundContent>
+
+          <HeadText> ประเภทของหนังสือ</HeadText>
+          <TypeContainer>
+            {bookInfo?.types?.map((type) => (
+              <TypeBox
+                key={`bookType-${type._id}`}
+                bgColor={
+                  TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
+                    ?.color
+                }
+              >
+                <Icon
+                  name={
+                    TYPES_STYLE[type?.typeName?.replace(' ', '')?.toLowerCase()]
+                      ?.icon ?? TYPES_STYLE['default'].icon
+                  }
+                />
+
+                {type?.typeName}
+              </TypeBox>
+            ))}
+          </TypeContainer>
+
+          <ButtonWrapper>
+            {isOwner && (
+              <Button
+                btnType="whiteBorder"
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
+                onClick={() => router.push('/profile/mydonation')}
+              >
+                ดูข้อมูลการบริจาคของคุณ
+              </Button>
+            )}
+
+            {(!isAuth || !isOwner) && (
+              <Button
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
+                onClick={borrowHandler}
+              >
+                ยืมหนังสือ
+              </Button>
+            )}
+          </ButtonWrapper>
+        </BookInfoContainer>
+      </BookContainer>
+    </>
   )
 }
 

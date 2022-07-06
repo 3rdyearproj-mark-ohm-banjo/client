@@ -15,6 +15,7 @@ const ModalLayout = styled.div`
 `
 
 const ModalContent = styled.div`
+  width: 100%;
   background-color: ${COLORS.GRAY_LIGHT_2};
   padding: ${SPACING['2X']};
   display: flex;

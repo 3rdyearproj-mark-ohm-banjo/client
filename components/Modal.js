@@ -11,6 +11,7 @@ export const ModalBackground = styled.div`
   height: 100%;
   z-index: 10000;
   top: 0;
+  left: 0;
   overflow-y: auto;
 `
 

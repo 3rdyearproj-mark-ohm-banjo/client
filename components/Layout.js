@@ -3,7 +3,7 @@ import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 
 export const ContentWrapper = styled.section`
-  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  max-width: ${(props) => props.maxWidth ?? '1200px'};
   width: ${(props) => props.width ?? '100%'};
   margin: ${(props) => props.margin ?? '30px auto'};
   display: flex;
@@ -18,7 +18,7 @@ export const ContentWrapper = styled.section`
 `
 
 export const BoxLayout = styled.div`
-  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  max-width: ${(props) => props.maxWidth ?? '1200px'};
   width: ${(props) => props.width ?? '100%'};
 `
 

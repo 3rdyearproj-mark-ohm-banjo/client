@@ -32,9 +32,10 @@ const Table = styled.table`
 
 const Thead = styled.thead`
   > tr > td {
+    max-width: 300px;
     padding: ${SPACING.MD};
     border: 1px solid ${COLORS.GRAY_LIGHT};
-    border-width: 0 0 1px 0;
+    border-width: 0 0 1px;
     background-color: ${COLORS.GRAY_LIGHT_2};
     font-weight: 600;
   }
@@ -43,9 +44,10 @@ const Thead = styled.thead`
 const Tbody = styled.tbody`
   > tr {
     > td {
-      padding: ${SPACING.SM} 0;
+      max-width: 300px;
+      padding: ${SPACING.SM};
       border: 1px solid ${COLORS.GRAY_LIGHT};
-      border-width: 0 0 1px 0;
+      border-width: 0 0 1px;
     }
 
     &:last-of-type > td {

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import {COLORS} from '../styles/colors'
-import {SPACING} from '../styles/spacing'
+import {COLORS} from '../../styles/colors'
+import {SPACING} from '../../styles/spacing'
 import {
   CircularProgressbarWithChildren,
   buildStyles,

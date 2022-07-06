@@ -27,10 +27,6 @@ const Card = styled.div`
   &:hover {
     box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
   }
-
-  @media (min-width: 680px) {
-    max-width: 330px;
-  }
 `
 
 const BookImageContainer = styled.div`

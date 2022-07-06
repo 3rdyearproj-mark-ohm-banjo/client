@@ -43,10 +43,10 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     email: '',
     password: '',
     username: '',
-    address: '',
-    firstname: '',
-    lastname: '',
-    tel: '',
+    // address: '',
+    // firstname: '',
+    // lastname: '',
+    // tel: '',
   })
   const [errors, setErrors] = useState([])
 
@@ -132,7 +132,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('username') !== -1}
           errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
         />
-
+{/* 
         <InputWithIcon
           label="ชื่อจริง*"
           type="text"
@@ -153,7 +153,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           placeholder="กรอกนามสกุล"
           error={errors.indexOf('lastname') !== -1}
           errorMessage="คุณยังไม่ได้กรอกนามสกุล"
-        />
+        /> */}
 
         <InputWithIcon
           label="รหัสผ่าน*"
@@ -166,7 +166,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           errorMessage="คุณยังไม่ได้กรอกรหัสผ่าน"
         />
 
-        <InputWithIcon
+        {/* <InputWithIcon
           label="ที่อยู่สำหรับจัดส่ง*"
           iconName={ICONS.faLocationDot}
           inputType="textarea"
@@ -187,7 +187,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('tel') !== -1}
           errorMessage="กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข"
           value={userData.tel}
-        />
+        /> */}
 
         <ButtonWrapper>
           <Button fullWidth btnSize="sm" bgColor={COLORS.RED_2} type="submit">
