@@ -49,6 +49,7 @@ const NavActive = css`
 
 const NavMenu = styled.ul`
   display: flex;
+  flex-direction: column;
   background-color: ${COLORS.GRAY_LIGHT_2};
   width: 100%;
   border-radius: ${SPACING.MD};
@@ -79,6 +80,7 @@ const NavItem = styled.li`
   ${(props) => props.isActive && NavActive}
   padding: ${SPACING.SM} ${SPACING.LG};
   border-radius: ${SPACING.MD};
+  font-size: 14px;
   cursor: pointer;
   transition: 0.2s;
 

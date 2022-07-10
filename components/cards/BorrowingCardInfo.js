@@ -7,6 +7,7 @@ import {
   buildStyles,
 } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
+import Button from '../Button'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -65,6 +66,8 @@ const TimeLeft = styled.div`
   }
 `
 
+const GetBookDate = styled.span``
+
 const BorrowingCardInfo = () => {
   return (
     <CardContainer>
@@ -72,6 +75,15 @@ const BorrowingCardInfo = () => {
 
       <ContentWrapper>
         <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
+        <GetBookDate>
+          <b>วันที่ได้รับหนังสือ</b> วันที่ 7 ก.ย. 2022
+        </GetBookDate>
+        <GetBookDate>
+          <b>วันที่หมดอายุการยืม</b> วันที่ 7 ก.ย. 2022
+        </GetBookDate>
+        <Button btnSize="sm" btnType="secondary">
+          ยืนยันว่าอ่านจบแล้ว
+        </Button>
       </ContentWrapper>
       <CircleProgress>
         <CircularProgressbarWithChildren

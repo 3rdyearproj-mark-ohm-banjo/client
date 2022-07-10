@@ -49,10 +49,15 @@ const BookName = styled.p`
   ${(props) => props.cardType === 'secondary' && SecondaryBookName}
 `
 
-const DonationDate = styled.span`
+const Description = styled.span`
   font-size: 13px;
   flex-grow: 1;
 `
+
+const BookStatus = styled.span`
+  font-weight: 600;
+`
+
 const Isbn = styled.span`
   font-size: 14px;
 `
@@ -82,7 +87,7 @@ const BookOwnerCard = ({
   canCancel,
   bookInfo,
   donationTime,
-  onCancel,
+  onReceive,
   cardType,
 }) => {
   const router = useRouter()
@@ -101,20 +106,26 @@ const BookOwnerCard = ({
       <BookInfoWrapper cardType={cardType}>
         <BookName cardType={cardType}>{bookInfo?.bookName}</BookName>
         {cardType === 'secondary' && <Isbn>ISBN {bookInfo?.ISBN}</Isbn>}
-        <DonationDate>บริจาควันที่ {donationTime}</DonationDate>
+        <Description>
+          <span>วันที่ขอยืม {donationTime}</span> <br />
+          <span>
+            สถานะ <BookStatus>จัดส่งแล้ว</BookStatus>
+          </span>
+        </Description>
+
         {canCancel ? (
           <Button
             btnSize="sm"
-            btnType="orangeGradient"
+            btnType="secondary"
             onClick={() =>
-              onCancel(true, {bookId, bookName: bookInfo?.bookName})
+              onReceive(true, {bookId, bookName: bookInfo?.bookName})
             }
           >
-            ยกเลิกการบริจาค
+            ยืนยันการรับหนังสือ
           </Button>
         ) : (
           <Button btnSize="sm" btnType="whiteBorder" isDisabled>
-            หนังสือเล่มนี้ถูกส่งต่อแล้ว
+            ได้รับหนังสือแล้ว
           </Button>
         )}
       </BookInfoWrapper>

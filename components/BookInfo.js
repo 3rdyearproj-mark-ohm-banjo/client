@@ -238,8 +238,8 @@ const BookInfo = ({bookInfo}) => {
           ยืนยันการยืม <b style={{fontWeight: '600'}}>{bookInfo?.bookName}</b>
         </div>
         <ConfirmReminder>
-          **หลังจากกดปุ่มยืนยัน
-          จะส่งข้อมูลที่อยู่การจัดส่งให้ผู้ที่ถือหนังสือทราบ
+          **หลังจากกดปุ่มยืนยัน เมื่อถึงคิวของคุณในการยืม
+          ระบบจะส่งข้อมูลที่อยู่การจัดส่งให้ผู้ที่ถือหนังสือทราบ
         </ConfirmReminder>
         <div
           style={{
@@ -261,7 +261,7 @@ const BookInfo = ({bookInfo}) => {
           <Button btnSize="sm" onClick={borrow} fullWidth borderRadius="4px">
             ยืนยัน
           </Button>
-        </div>{' '}
+        </div>
       </ConfirmModal>
       <BookContainer>
         <BookImageContainer>

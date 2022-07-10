@@ -37,6 +37,11 @@ const SubTitle = styled.span`
   color: ${COLORS.GRAY_DARK_1};
 `
 
+const Red = styled.span`
+  color: ${COLORS.RED_1};
+  font-weight: 600;
+`
+
 const BookWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -54,10 +59,15 @@ const BookBorrowingPage = () => {
       <TitleWrapper>
         <Title>หนังสือที่คุณกำลังยืมอยู่ (1 / 5 เล่ม) </Title>
         <SubTitle>
-          เมื่ออ่านเสร็จแล้ว คุณสามารถกด อ่านจบแล้วได้
+          เมื่ออ่านเสร็จแล้ว คุณสามารถกด<Red>ยืนยันว่าอ่านจบแล้วได้</Red>
           เพื่อให้ผู้ที่สนใจหนังสือเล่มนี้เหมือนกันมาขอยืมต่อได้
         </SubTitle>
-        <SubTitle>**คุณสามารถยืมหนังสือได้พร้อมกันสูงสุด 5 เล่ม</SubTitle>
+        <SubTitle>
+          <Red>
+            ***หากหมดเวลาการยืมและคุณยังไม่ได้กดยืนยันว่าอ่านจบแล้ว
+            ระบบจะทำการกดปุ่มให้อัตโนมัติ
+          </Red>
+        </SubTitle>
       </TitleWrapper>
       <BookWrapper>
         <BorrowingCardInfo />
