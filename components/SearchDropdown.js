@@ -204,7 +204,7 @@ const SearchDropdown = ({
             />
             <IconContainer
               onClick={() => !isDisabled && setIsToggle(!isToggle)}
-              rotate={isToggle}
+              rotate={isToggle ? 1 : 0}
             >
               <Icon name={ICONS.faChevronDown} />
             </IconContainer>
@@ -221,7 +221,7 @@ const SearchDropdown = ({
             </FakeInput>
             <IconContainer
               onClick={() => !isDisabled && setIsToggle(!isToggle)}
-              rotate={isToggle}
+              rotate={isToggle ? 1 : 0}
             >
               <Icon name={ICONS.faChevronDown} />
             </IconContainer>

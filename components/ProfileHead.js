@@ -7,7 +7,12 @@ import {useSelector} from 'react-redux'
 import Link from 'next/link'
 import {useRouter} from 'next/router'
 import BookWorm from '../public/static/images/bookworm.png'
+import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 import Image from 'next/image'
+import {ModalBackground} from './Modal'
+import {useState} from 'react'
+import Button from './Button'
+import {useRef} from 'react'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -15,6 +20,11 @@ const UserProfile = styled.div`
   gap: ${SPACING.MD};
   padding: ${SPACING.SM};
   border-radius: ${SPACING.MD};
+  color: ${COLORS.GRAY_LIGHT_2};
+
+  @media (min-width: 960px) {
+    color: ${COLORS.BLACK};
+  }
 `
 
 const Circle = styled.div`
@@ -89,63 +99,143 @@ const NavItem = styled.li`
   }
 `
 
+const ProfileHeadContainer = styled.div`
+  width: 100%;
+  padding: ${SPACING.MD};
+  border-radius: ${SPACING.MD} 0 ${SPACING.MD} ${SPACING.MD};
+  background-color: ${COLORS.PRIMARY};
+  box-shadow: 0 5px 20px ${COLORS.GRAY_DARK_1};
+
+  @media (min-width: 960px) {
+    border-radius: ${SPACING.MD};
+    background-color: ${COLORS.WHITE};
+  }
+`
+
+const ProfilePosition = css`
+  left: 0;
+  opacity: 1;
+`
+
+const ProfileWrapper = styled.div`
+  width: 100%;
+  left: -800px;
+  position: fixed;
+  z-index: 2000;
+  opacity: 0;
+  padding: ${SPACING.MD};
+  transition: 0.2s;
+
+  > *:first-child {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+  }
+
+  ${(props) => props.trigger && ProfilePosition}
+
+  @media (min-width: 960px) {
+    ${ProfilePosition}
+    padding: 0;
+    position: relative;
+  }
+`
+
+const HideDesktop = styled.span`
+  @media (min-width: 960px) {
+    display: none;
+  }
+`
+
 const ProfileHead = () => {
   const user = useSelector((state) => state.user.user)
   const router = useRouter()
+  const [isTriggerMenu, setIsTriggerMenu] = useState(false)
+  const MenuRef = useRef()
+  useOutsideAlerter(setIsTriggerMenu, MenuRef)
 
   return (
     <>
-      <UserProfile>
-        <Circle>
-          <Image
-            src={BookWorm.src}
-            alt="bookworm icon"
-            objectFit="contain"
-            layout="fill"
-          ></Image>
-        </Circle>
-        <UserNameContainer>
-          <span>สวัสดี, คุณ</span>
-          <UserName>{user?.username}</UserName>
-        </UserNameContainer>
-      </UserProfile>
-      <NavMenu>
-        <Link href="/profile" passHref>
-          <NavItem isActive={router.pathname === '/profile'}>
-            ข้อมูลโดยรวม
-          </NavItem>
-        </Link>
-        <Link href="/profile/bookrequest" passHref>
-          <NavItem isActive={router.pathname === '/profile/bookrequest'}>
-            หนังสือที่จะได้รับ
-          </NavItem>
-        </Link>
-        <Link href="/profile/borrowing" passHref>
-          <NavItem isActive={router.pathname === '/profile/borrowing'}>
-            หนังสือที่กำลังยืม
-          </NavItem>
-        </Link>
-        <Link href="/profile/forwarding" passHref>
-          <NavItem isActive={router.pathname === '/profile/forwarding'}>
-            หนังสือที่ต้องส่งต่อ
-          </NavItem>
-        </Link>
-        <Link href="/profile/mydonation" passHref>
-          <NavItem isActive={router.pathname === '/profile/mydonation'}>
-            ประวัติการบริจาค
-          </NavItem>
-        </Link>
-        <Link href="/profile/borrowhistory" passHref>
-          <NavItem isActive={router.pathname === '/profile/borrowhistory'}>
-            ประวัติการยืม
-          </NavItem>
-        </Link>
-        <Link href="/profile/info" passHref>
-          <NavItem isActive={router.pathname === '/profile/info'}>
-            แก้ไขข้อมูล
-          </NavItem>
-        </Link>
-      </NavMenu>
+      <HideDesktop>
+        <Button
+          btnSize="sm"
+          borderRadius="12px "
+          onClick={() => setIsTriggerMenu(true)}
+        >
+          เมนู
+        </Button>
+      </HideDesktop>
+      {isTriggerMenu && (
+        <HideDesktop>
+          <ModalBackground></ModalBackground>
+        </HideDesktop>
+      )}
+      <ProfileWrapper trigger={isTriggerMenu}>
+        <div>
+          <HideDesktop>
+            <Button
+              btnSize="sm"
+              borderRadius="12px 12px 0 0"
+              onClick={() => setIsTriggerMenu(false)}
+            >
+              ปิด
+            </Button>
+          </HideDesktop>
+        </div>
+        <ProfileHeadContainer ref={MenuRef}>
+          <UserProfile>
+            <Circle>
+              <Image
+                src={BookWorm.src}
+                alt="bookworm icon"
+                objectFit="contain"
+                layout="fill"
+              ></Image>
+            </Circle>
+            <UserNameContainer>
+              <span>สวัสดี, คุณ</span>
+              <UserName>{user?.username}</UserName>
+            </UserNameContainer>
+          </UserProfile>
+          <NavMenu>
+            <Link href="/profile" passHref>
+              <NavItem isActive={router.pathname === '/profile'}>
+                ข้อมูลโดยรวม
+              </NavItem>
+            </Link>
+            <Link href="/profile/bookrequest" passHref>
+              <NavItem isActive={router.pathname === '/profile/bookrequest'}>
+                หนังสือที่จะได้รับ
+              </NavItem>
+            </Link>
+            <Link href="/profile/borrowing" passHref>
+              <NavItem isActive={router.pathname === '/profile/borrowing'}>
+                หนังสือที่กำลังยืม
+              </NavItem>
+            </Link>
+            <Link href="/profile/forwarding" passHref>
+              <NavItem isActive={router.pathname === '/profile/forwarding'}>
+                หนังสือที่ต้องส่งต่อ
+              </NavItem>
+            </Link>
+            <Link href="/profile/mydonation" passHref>
+              <NavItem isActive={router.pathname === '/profile/mydonation'}>
+                ประวัติการบริจาค
+              </NavItem>
+            </Link>
+            <Link href="/profile/borrowhistory" passHref>
+              <NavItem isActive={router.pathname === '/profile/borrowhistory'}>
+                ประวัติการยืม
+              </NavItem>
+            </Link>
+            <Link href="/profile/info" passHref>
+              <NavItem isActive={router.pathname === '/profile/info'}>
+                แก้ไขข้อมูล
+              </NavItem>
+            </Link>
+          </NavMenu>
+        </ProfileHeadContainer>
+      </ProfileWrapper>
     </>
   )
 }

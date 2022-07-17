@@ -25,16 +25,27 @@ const CardContainer = styled.div`
 `
 
 const ImageWrapper = styled.div`
-  width: 130px;
+  width: 110px;
   height: 150px;
   background-color: ${COLORS.GRAY_LIGHT};
   border-radius: ${SPACING.MD};
+  flex-shrink: 0;
 `
 
 const ContentWrapper = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  gap: ${SPACING.SM};
+`
+
+const ButtonWrapper = styled.div`
   width: 100%;
+
+  @media (min-width: 768px) {
+    margin-top: auto;
+  }
 `
 
 const BookName = styled.div`
@@ -42,8 +53,8 @@ const BookName = styled.div`
   font-weight: 600;
 `
 const CircleProgress = styled.div`
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   flex-shrink: 0;
 `
 
@@ -66,7 +77,10 @@ const TimeLeft = styled.div`
   }
 `
 
-const GetBookDate = styled.span``
+const GetBookDate = styled.span`
+  font-size: 14px;
+  line-height: 18px;
+`
 
 const BorrowingCardInfo = () => {
   return (
@@ -74,16 +88,26 @@ const BorrowingCardInfo = () => {
       <ImageWrapper></ImageWrapper>
 
       <ContentWrapper>
-        <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
-        <GetBookDate>
-          <b>วันที่ได้รับหนังสือ</b> วันที่ 7 ก.ย. 2022
-        </GetBookDate>
-        <GetBookDate>
-          <b>วันที่หมดอายุการยืม</b> วันที่ 7 ก.ย. 2022
-        </GetBookDate>
-        <Button btnSize="sm" btnType="secondary">
-          ยืนยันว่าอ่านจบแล้ว
-        </Button>
+        <div>
+          <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
+          <GetBookDate>
+            <b>วันที่ได้รับหนังสือ</b> วันที่ 7 ก.ย. 2022
+          </GetBookDate>
+          <br />
+          <GetBookDate>
+            <b>วันที่หมดอายุการยืม</b> วันที่ 7 ก.ย. 2022
+          </GetBookDate>
+        </div>
+        <ButtonWrapper>
+          <Button
+            btnSize="sm"
+            borderRadius="4px"
+            btnType="orangeGradient"
+            fullWidth
+          >
+            คุณอ่านหนังสือเล่มนี้จบแล้ว
+          </Button>
+        </ButtonWrapper>
       </ContentWrapper>
       <CircleProgress>
         <CircularProgressbarWithChildren

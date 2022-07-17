@@ -45,6 +45,10 @@ const SwiperContainer = styled.div`
   .swiper-wrapper {
     max-width: 0;
   }
+
+  .swiper-pointer-events {
+    padding: ${SPACING.MD};
+  }
 `
 
 const EmptyState = styled.div`
@@ -58,19 +62,6 @@ const EmptyState = styled.div`
   text-align: center;
   background-color: ${COLORS.GRAY_LIGHT};
   border-radius: ${SPACING.MD};
-`
-
-const ViewAll = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.9;
-  }
 `
 
 const StatContainer = styled.div`
@@ -130,7 +121,6 @@ const ButtonModalWrapper = styled.div`
 `
 
 const ProfilePage = () => {
-  const router = useRouter()
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [receiveItem, setReceiveItem] = useState({})
   const user = useSelector((state) => state.user.user)
@@ -318,7 +308,7 @@ const ProfilePage = () => {
       </SwiperContainer> */}
 
       <TopicHead>
-        <h3> ประวัติการยืม</h3>{' '}
+        <h3> หนังสือที่ต้องส่งต่อ</h3>{' '}
         {/* <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
               <span> ดูทั้งหมด </span>
               <Icon name={ICONS.faChevronRight} />

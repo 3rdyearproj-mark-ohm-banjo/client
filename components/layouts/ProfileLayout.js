@@ -6,12 +6,25 @@ import ProfileHead from '../ProfileHead'
 import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
-import {ContentWrapper} from '../Layout'
+
+const ProfileLayoutWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING['2X']};
+  max-width: 1440px;
+  width: 100%;
+  margin-top: 30px;
+  padding: ${SPACING.MD};
+
+  @media (min-width: 960px) {
+    flex-direction: row;
+  }
+`
 
 const ProfileWrapper = styled.section`
   max-width: 1200px;
   width: 100%;
-  margin: 30px auto;
+  margin: 0 auto;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -21,12 +34,14 @@ const ProfileWrapper = styled.section`
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
   gap: ${SPACING['3X']};
 `
-const ProfileHeadWrapper = styled.section`
-  display: flex;
-  max-width: 200px;
-  width: 100%;
-  flex-direction: column;
-  flex-shrink: 0;
+
+const ProfileHeadWrapper = styled.div`
+  @media (min-width: 960px) {
+    display: flex;
+    position: relative;
+    max-width: 250px;
+    width: 100%;
+  }
 `
 
 const ChildrenWrapper = styled.section`
@@ -39,12 +54,14 @@ const ProfileLayout = ({children}) => {
   return (
     <UserLayout>
       <BackgroundContainer link={Background.src}>
-        <ProfileWrapper>
+        <ProfileLayoutWrapper>
           <ProfileHeadWrapper>
             <ProfileHead />
           </ProfileHeadWrapper>
-          <ChildrenWrapper>{children}</ChildrenWrapper>
-        </ProfileWrapper>
+          <ProfileWrapper>
+            <ChildrenWrapper>{children}</ChildrenWrapper>
+          </ProfileWrapper>
+        </ProfileLayoutWrapper>
       </BackgroundContainer>
     </UserLayout>
   )
