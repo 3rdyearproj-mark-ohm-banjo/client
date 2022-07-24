@@ -5,7 +5,7 @@ import {SPACING} from '../../styles/spacing'
 import {useDispatch} from 'react-redux'
 import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 
-const FlexLayout = styled.div`
+const AdminPageLayout = styled.div`
   display: flex;
   justify-content: stretch;
   gap: ${SPACING.MD};
@@ -26,10 +26,10 @@ const AdminLayout = ({children}) => {
   }, [dispatch])
 
   return (
-    <FlexLayout>
+    <AdminPageLayout>
       <SideBar />
       <ContentLayout>{children}</ContentLayout>
-    </FlexLayout>
+    </AdminPageLayout>
   )
 }
 

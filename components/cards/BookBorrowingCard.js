@@ -70,7 +70,7 @@ const TimeLeft = styled.div`
 const BookBorrowingCard = ({bookInfo}) => {
   const router = useRouter()
   return (
-    <CardLayout onClick={() => router.push(`/profile/borrow/${1}`)}>
+    <CardLayout onClick={() => router.push(`/profile/borrowing`)}>
       <ContentWrapper>
         <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
         <BorrowDate>ได้รับวันที่ 12 ส.ค. 2022</BorrowDate>

@@ -136,8 +136,9 @@ const ProfileWrapper = styled.div`
 
   @media (min-width: 960px) {
     ${ProfilePosition}
-    padding: 0;
     position: relative;
+    padding: 0;
+    z-index: 0;
   }
 `
 
@@ -205,7 +206,7 @@ const ProfileHead = () => {
             </Link>
             <Link href="/profile/bookrequest" passHref>
               <NavItem isActive={router.pathname === '/profile/bookrequest'}>
-                หนังสือที่จะได้รับ
+                คำขอยืมหนังสือของคุณ
               </NavItem>
             </Link>
             <Link href="/profile/borrowing" passHref>

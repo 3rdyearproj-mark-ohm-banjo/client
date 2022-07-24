@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../axios'
 
 const getShelfById = async (id) => {
   const res = await axios.get(`/bookShelf/${id}`)

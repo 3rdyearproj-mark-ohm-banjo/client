@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import React from 'react'
 import styled from 'styled-components'
-import BookRequestCard from '../../components/BookRequestCard'
+import BookRequestCard from '../../components/cards/BookRequestCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
@@ -56,6 +56,13 @@ const BookRequest = () => {
       <BookWrapper>
         <BookRequestCard />
         <BookRequestCard />
+      </BookWrapper>
+      <TitleWrapper>
+        <Title>หนังสือที่คุณได้เข้าคิวเพื่อขอยืม</Title>
+      </TitleWrapper>
+      <BookWrapper>
+        <BookRequestCard cardType="queue" />
+        <BookRequestCard cardType="queue" />
       </BookWrapper>
     </>
   )

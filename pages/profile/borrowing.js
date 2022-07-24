@@ -5,6 +5,10 @@ import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import Head from 'next/head'
 import BorrowingCardInfo from '../../components/cards/BorrowingCardInfo'
+import {Swiper, SwiperSlide} from 'swiper/react'
+import {Scrollbar} from 'swiper'
+import 'swiper/css'
+import 'swiper/css/scrollbar'
 
 const EmptyState = styled.div`
   width: 100%;
@@ -42,12 +46,24 @@ const Red = styled.span`
   font-weight: 600;
 `
 
-const BookWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: ${SPACING.LG};
-  padding: ${SPACING.MD};
+const SwiperContainer = styled.div`
+  padding-bottom: ${SPACING.MD};
+  .swiper-wrapper {
+    max-width: 0;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+  }
+
+  .swiper-pointer-events {
+    padding: ${SPACING.MD};
+  }
+
+  .swiper-scrollbar {
+    bottom: 0px;
+  }
 `
 
 const BookBorrowingPage = () => {
@@ -69,9 +85,42 @@ const BookBorrowingPage = () => {
           </Red>
         </SubTitle>
       </TitleWrapper>
-      <BookWrapper>
-        <BorrowingCardInfo />
-      </BookWrapper>
+
+      <SwiperContainer>
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={10}
+          breakpoints={{
+            700: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            1024: {
+              slidesPerView: 3,
+              spaceBetween: 20,
+            },
+          }}
+          modules={[Scrollbar]}
+          scrollbar
+          className="mySwiper"
+        >
+          <SwiperSlide>
+            <BorrowingCardInfo />
+          </SwiperSlide>
+          <SwiperSlide>
+            <BorrowingCardInfo />
+          </SwiperSlide>
+          <SwiperSlide>
+            <BorrowingCardInfo />
+          </SwiperSlide>
+          <SwiperSlide>
+            <BorrowingCardInfo />
+          </SwiperSlide>
+          <SwiperSlide>
+            <BorrowingCardInfo />
+          </SwiperSlide>
+        </Swiper>
+      </SwiperContainer>
     </>
   )
 }

@@ -1,7 +1,8 @@
-import axios from 'axios'
+import axios, {axiosPrivate} from '../axios'
+import Cookies from 'universal-cookie'
 
 export const login = (email, password) => {
-  const res = axios.post(`/login`, {
+  const res = axiosPrivate.post(`/login`, {
     email,
     password,
   })
@@ -10,12 +11,14 @@ export const login = (email, password) => {
 }
 
 export const logout = () => {
-  const res = axios.get('/logout')
+  const cookies = new Cookies()
+  console.log(cookies.get('jwt'))
+  const res = axiosPrivate.get('/logout')
   return res
 }
 
 export const getCurrentUser = () => {
-  const res = axios.get('user/profile')
+  const res = axiosPrivate.get('user/profile')
   return res
 }
 
@@ -25,7 +28,7 @@ export const register = (userData) => {
 }
 
 export const cancelDonation = (bookId) => {
-  const res = axios.delete(`user/canceldonation/${bookId}`)
+  const res = axiosPrivate.delete(`user/canceldonation/${bookId}`)
   return res
 }
 

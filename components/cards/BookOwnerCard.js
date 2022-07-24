@@ -1,12 +1,11 @@
 import Image from 'next/image'
 import React from 'react'
-import styled from 'styled-components'
-import {SPACING} from '../styles/spacing'
-import Button from './Button'
+import styled, {css} from 'styled-components'
+import {SPACING} from '../../styles/spacing'
+import Button from '../Button'
 import PropTypes from 'prop-types'
 import {useRouter} from 'next/router'
-import {css} from 'styled-components'
-import {COLORS} from '../styles/colors'
+import {COLORS} from '../../styles/colors'
 
 const SecondaryLayout = css`
   width: 100%;
