@@ -21,10 +21,12 @@ const ImageWrapper = styled.div`
   border-radius: ${SPACING.SM};
   background-color: ${COLORS.GRAY_DARK};
   flex-shrink: 0;
+  margin: 0 auto;
 `
 
 const BookHeader = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
 `
 
@@ -75,14 +77,23 @@ const AddressContainer = styled.div`
 `
 
 const AddressWrapper = styled.div`
-  flex: 0 0 75%;
+  @media (min-width: 768px) {
+    flex: 0 0 75%;
+  }
 `
 
 const ButtonWrapper = styled.div`
-  display: flex;
+  width: 100%;
   flex: 0 0 25%;
-  justify-content: end;
-  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.SM};
+
+  @media (min-width: 768px) {
+    justify-content: space-between;
+    align-items: center;
+    align-items: flex-end;
+  }
 `
 
 const AddressHead = styled.div`
@@ -93,6 +104,10 @@ const Receiver = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${SPACING.MD};
+`
+
+const SendDate = styled.div`
+  color: ${COLORS.GREEN_1};
 `
 
 const BookForwardingCard = () => {
@@ -129,6 +144,7 @@ const BookForwardingCard = () => {
           </p>
         </AddressWrapper>
         <ButtonWrapper>
+          <SendDate>ส่งวันที่ 12 ส.ค. 2022</SendDate>
           <Button btnSize="sm">คุณได้ส่งหนังสือแล้ว</Button>
         </ButtonWrapper>
       </AddressContainer>

@@ -214,7 +214,7 @@ const Button = ({
       type={type}
       btnType={btnType}
       btnSize={btnSize}
-      onClick={() => type !== 'submit' && !isDisabled && onClick()}
+      onClick={(e) => type !== 'submit' && !isDisabled && onClick(e)}
       withIcon={withIcon}
       fullWidth={fullWidth}
       bgColor={bgColor}

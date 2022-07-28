@@ -229,8 +229,8 @@ const ProfileHead = () => {
                 ประวัติการยืม
               </NavItem>
             </Link>
-            <Link href="/profile/info" passHref>
-              <NavItem isActive={router.pathname === '/profile/info'}>
+            <Link href="/profile/edit" passHref>
+              <NavItem isActive={router.pathname === '/profile/edit'}>
                 แก้ไขข้อมูล
               </NavItem>
             </Link>

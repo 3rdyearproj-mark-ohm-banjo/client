@@ -48,6 +48,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     // lastname: '',
     // tel: '',
   })
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [errors, setErrors] = useState([])
 
   const validate = () => {
@@ -62,6 +63,11 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         errorArr.push(key)
       }
     })
+
+    if (passwordConfirm !== userData['password']) {
+      errorArr.push('confirmpassword')
+    }
+
     if (errorArr.length > 0) {
       setErrors(errorArr)
       return 0
@@ -132,7 +138,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('username') !== -1}
           errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
         />
-{/* 
+        {/* 
         <InputWithIcon
           label="ชื่อจริง*"
           type="text"
@@ -164,6 +170,17 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           placeholder="กรอกรหัสผ่าน"
           error={errors.indexOf('password') !== -1}
           errorMessage="คุณยังไม่ได้กรอกรหัสผ่าน"
+        />
+
+        <InputWithIcon
+          label="กรอกรหัสผ่านอีกครั้ง*"
+          iconName={ICONS.faLock}
+          inputType="password"
+          maxLength={30}
+          onChange={(data) => setPasswordConfirm(data)}
+          placeholder="กรอกรหัสผ่านอีกครั้ง"
+          error={errors.indexOf('comfirmpassword') !== -1}
+          errorMessage="กรุณากรอกรหัสผ่านอีกครั้ง"
         />
 
         {/* <InputWithIcon
