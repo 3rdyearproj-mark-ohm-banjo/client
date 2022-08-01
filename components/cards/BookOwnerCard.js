@@ -53,10 +53,6 @@ const Description = styled.span`
   flex-grow: 1;
 `
 
-const BookStatus = styled.span`
-  font-weight: 600;
-`
-
 const Isbn = styled.span`
   font-size: 14px;
 `
@@ -106,25 +102,22 @@ const BookOwnerCard = ({
         <BookName cardType={cardType}>{bookInfo?.bookName}</BookName>
         {cardType === 'secondary' && <Isbn>ISBN {bookInfo?.ISBN}</Isbn>}
         <Description>
-          <span>วันที่ขอยืม {donationTime}</span> <br />
-          <span>
-            สถานะ <BookStatus>จัดส่งแล้ว</BookStatus>
-          </span>
+          <span>วันที่บริจาค {donationTime}</span> <br />
         </Description>
 
         {canCancel ? (
           <Button
             btnSize="sm"
-            btnType="secondary"
+            btnType="orangeGradient"
             onClick={() =>
               onReceive(true, {bookId, bookName: bookInfo?.bookName})
             }
           >
-            ยืนยันการรับหนังสือ
+            ยกเลิกการบริจาค
           </Button>
         ) : (
           <Button btnSize="sm" btnType="whiteBorder" isDisabled>
-            ได้รับหนังสือแล้ว
+            หนังสือถูกส่งต่อแล้ว
           </Button>
         )}
       </BookInfoWrapper>

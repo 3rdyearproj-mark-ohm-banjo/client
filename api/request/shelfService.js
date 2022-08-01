@@ -1,4 +1,4 @@
-import axios from '../axios'
+import axios, {axiosPrivate} from '../axios'
 
 const getShelfById = async (id) => {
   const res = await axios.get(`/bookShelf/${id}`)
@@ -38,7 +38,7 @@ const addShelf = async (data, file) => {
   }
   formData.append('book', JSON.stringify(data))
 
-  const res = await axios
+  const res = await axiosPrivate
     .post(`/user/bookShelf`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -55,7 +55,7 @@ const editShelf = async (data, file) => {
     formData.append('imgfile', file[0])
   }
   formData.append('book', JSON.stringify(data))
-  const res = await axios
+  const res = await axiosPrivate
     .put(`/admin/bookShelf/${data._id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

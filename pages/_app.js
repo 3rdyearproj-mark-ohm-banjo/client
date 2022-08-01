@@ -6,6 +6,7 @@ import {queryClientConfig} from '../config/query-client'
 import UserLayout from '../components/layouts/UserLayout'
 import {Provider} from 'react-redux'
 import {store} from '../redux/store'
+import {Toaster} from 'react-hot-toast'
 
 fontAwesomeConfig.autoAddCss = false
 const GlobalStyle = getGlobalStyle()
@@ -17,6 +18,7 @@ function MyApp({Component, pageProps}) {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <GlobalStyle />
+        <Toaster />
         <Layout>
           <Component {...pageProps} />
         </Layout>

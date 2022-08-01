@@ -1,4 +1,4 @@
-const thaiMonths = {
+export const thaiMonths = {
   short: [
     'ม.ค.',
     'ก.พ.',

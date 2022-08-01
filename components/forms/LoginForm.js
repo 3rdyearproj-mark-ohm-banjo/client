@@ -13,7 +13,7 @@ import {validateEmail} from '../../utils/validate'
 import {useRouter} from 'next/router'
 import {useDispatch} from 'react-redux'
 import {updateUser} from '../../redux/feature/UserSlice'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 const Header = styled.div`
   text-align: center;
@@ -141,7 +141,6 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
 
   return (
     <AuthFormWrapper>
-      <Toaster />
       <NavWrap>
         <div onClick={() => onShow(false)}>
           <span>ปิด</span>

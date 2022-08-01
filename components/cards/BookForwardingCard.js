@@ -107,6 +107,7 @@ const Receiver = styled.div`
 `
 
 const SendDate = styled.div`
+  font-weight: 600;
   color: ${COLORS.GREEN_1};
 `
 

@@ -87,8 +87,9 @@ const ChangePasswordForm = ({onSubmit}) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    validate()
-    //  onSubmit(passwordData)
+    if (validate()) {
+      //  onSubmit(passwordData)
+    }
   }
 
   return (
@@ -132,7 +133,9 @@ const ChangePasswordForm = ({onSubmit}) => {
         )}
       </InputControl>
       <ButtonWrapper>
-        <Button onClick={submitHandler} borderRadius="4px">เปลี่ยนรหัสผ่าน</Button>
+        <Button onClick={submitHandler} borderRadius="4px">
+          เปลี่ยนรหัสผ่าน
+        </Button>
       </ButtonWrapper>
     </Form>
   )

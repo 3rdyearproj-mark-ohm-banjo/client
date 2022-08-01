@@ -13,6 +13,8 @@ import {ModalBackground} from './Modal'
 import {useState} from 'react'
 import Button from './Button'
 import {useRef} from 'react'
+import Icon from './Icon'
+import {ICONS} from '../config/icon'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -53,7 +55,7 @@ const UserName = styled.h2`
 `
 
 const NavActive = css`
-  background-color: ${COLORS.PURPLE_2};
+  background-color: ${COLORS.GRAY_DARK_5};
   color: ${COLORS.WHITE};
 `
 
@@ -102,8 +104,8 @@ const NavItem = styled.li`
 const ProfileHeadContainer = styled.div`
   width: 100%;
   padding: ${SPACING.MD};
-  border-radius: ${SPACING.MD} 0 ${SPACING.MD} ${SPACING.MD};
-  background-color: ${COLORS.PRIMARY};
+  border-radius: ${SPACING.MD};
+  background-color: ${COLORS.GRAY_DARK_6};
   box-shadow: 0 5px 20px ${COLORS.GRAY_DARK_1};
 
   @media (min-width: 960px) {
@@ -126,12 +128,6 @@ const ProfileWrapper = styled.div`
   padding: ${SPACING.MD};
   transition: 0.2s;
 
-  > *:first-child {
-    width: 100%;
-    display: flex;
-    justify-content: end;
-  }
-
   ${(props) => props.trigger && ProfilePosition}
 
   @media (min-width: 960px) {
@@ -146,6 +142,25 @@ const HideDesktop = styled.span`
   @media (min-width: 960px) {
     display: none;
   }
+`
+
+const ButtonWrapper = styled.div`
+  padding-top: ${SPACING.MD};
+`
+
+const CloseButton = styled.button`
+  padding: ${SPACING.XS} ${SPACING.MD};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: ${SPACING.SM};
+  background-color: ${COLORS.GRAY_DARK_5};
+  color: ${COLORS.WHITE};
+  font-family: ${FONTS.SARABUN};
+  font-size: 16px;
+  border: none;
+  border-radius: ${SPACING.XS};
+  box-shadow: 0 5px 5px ${COLORS.GRAY_DARK_4};
 `
 
 const ProfileHead = () => {
@@ -172,17 +187,6 @@ const ProfileHead = () => {
         </HideDesktop>
       )}
       <ProfileWrapper trigger={isTriggerMenu}>
-        <div>
-          <HideDesktop>
-            <Button
-              btnSize="sm"
-              borderRadius="12px 12px 0 0"
-              onClick={() => setIsTriggerMenu(false)}
-            >
-              ปิด
-            </Button>
-          </HideDesktop>
-        </div>
         <ProfileHeadContainer ref={MenuRef}>
           <UserProfile>
             <Circle>
@@ -202,6 +206,11 @@ const ProfileHead = () => {
             <Link href="/profile" passHref>
               <NavItem isActive={router.pathname === '/profile'}>
                 ข้อมูลโดยรวม
+              </NavItem>
+            </Link>
+            <Link href="/profile/notification" passHref>
+              <NavItem isActive={router.pathname === '/profile/notification'}>
+                การแจ้งเตือนทั้งหมด
               </NavItem>
             </Link>
             <Link href="/profile/bookrequest" passHref>
@@ -235,6 +244,14 @@ const ProfileHead = () => {
               </NavItem>
             </Link>
           </NavMenu>
+
+          <HideDesktop>
+            <ButtonWrapper>
+              <CloseButton onClick={() => setIsTriggerMenu(false)}>
+                <span>ปิดเมนู</span> <Icon name={ICONS.faXmark} />
+              </CloseButton>
+            </ButtonWrapper>
+          </HideDesktop>
         </ProfileHeadContainer>
       </ProfileWrapper>
     </>

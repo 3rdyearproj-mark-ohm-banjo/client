@@ -145,7 +145,6 @@ const MyDonationPage = ({currentPage}) => {
       <Head>
         <title>ประวัติการบริจาคของคุณ</title>
       </Head>
-      <Toaster />
       <ConfirmModal
         onSubmit={handleDeleteSubmit}
         onClose={handleShowModal}
