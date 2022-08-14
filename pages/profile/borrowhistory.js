@@ -3,6 +3,7 @@ import React from 'react'
 import {useState} from 'react'
 import styled from 'styled-components'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
+import {years} from '../../config/years'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
 import {thaiMonths} from '../../utils/format'
@@ -40,7 +41,6 @@ const HeadWrapper = styled.div`
 const ContentWrapper = styled.div``
 
 const BorrowHistoryPage = () => {
-  const yearsBorrow = ['2022', '2023']
   const [filterMonth, setFilterMonth] = useState('')
   const [filterYear, setFilterYear] = useState('')
 
@@ -69,7 +69,7 @@ const BorrowHistoryPage = () => {
           <option value="all" defaultValue>
             ทั้งหมด
           </option>
-          {yearsBorrow.map((year, index) => (
+          {years.map((year, index) => (
             <option value={year} key={`year-${index}`}>
               {year}
             </option>

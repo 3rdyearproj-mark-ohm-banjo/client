@@ -7,6 +7,9 @@ import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import {useSelector} from 'react-redux'
 import ChangePasswordForm from '../../components/forms/ChangePasswordForm'
+import userService from '../../api/request/userService'
+import toast from 'react-hot-toast'
+import {useEffect} from 'react'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -53,6 +56,13 @@ const SwitchButton = styled.button`
 const EditProfilePage = () => {
   const [currentView, setCurrentView] = useState('info')
   const userInfo = useSelector((state) => state?.user?.user)
+  const [passwordErr, setPasswordErr] = useState('')
+  const [infoErr, setInfoErr] = useState('')
+
+  useEffect(() => {
+    setPasswordErr('')
+    setInfoErr('')
+  }, [currentView])
 
   if (Object.keys(userInfo).length < 1) {
     return <div>Loading...</div>
@@ -62,7 +72,14 @@ const EditProfilePage = () => {
     console.log(info)
   }
 
-  const submitChangePassword = (password) => {}
+  const submitChangePassword = (passwordData) => {
+    userService
+      .changePassword(passwordData)
+      .then(() => {
+        toast.success('เปลี่ยนรหัสผ่านสำเร็จ')
+      })
+      .catch((err) => setPasswordErr(err))
+  }
 
   return (
     <>
@@ -90,11 +107,17 @@ const EditProfilePage = () => {
       </SwitchButtonWrapper>
 
       {currentView === 'info' && (
-        <EditUserInfoForm onSubmit={submitEdit} userInfo={userInfo} />
+        <>
+          {infoErr && <div>{infoErr}</div>}
+          <EditUserInfoForm onSubmit={submitEdit} userInfo={userInfo} />
+        </>
       )}
 
       {currentView === 'password' && (
-        <ChangePasswordForm onSubmit={submitChangePassword} />
+        <>
+          {passwordErr && <div>{passwordErr}</div>}
+          <ChangePasswordForm onSubmit={submitChangePassword} />
+        </>
       )}
     </>
   )

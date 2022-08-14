@@ -15,6 +15,7 @@ import AnimatedNumber from './springs/AnimatedNumber'
 import {useRouter} from 'next/router'
 import toast from 'react-hot-toast'
 import ConfirmModal from './ConfirmModal'
+import userService from '../api/request/userService'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -219,12 +220,21 @@ const BookInfo = ({bookInfo}) => {
     if (!isAuth) {
       return toast.error('กรุณาเข้าสู่ระบบก่อนยืมหนังสือ')
     }
+
+    // if (isHolding) {
+    //   return toast.error('คุณถือหนังสือเล่มนี้อยู่')
+    // }
+
     setShowBorrowModal(true)
   }
 
   const borrow = () => {
+    userService
+      .sendBorrowRequest(bookInfo?._id)
+      .then(() => toast.success('ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'))
+      .catch((err) => toast.error(err))
+
     setShowBorrowModal(false)
-    toast.error('ระบบนี้ยังไม่เปิดให้บริการ')
   }
 
   return (

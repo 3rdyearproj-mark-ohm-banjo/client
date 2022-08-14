@@ -58,7 +58,8 @@ const RegisterForm = ({onShowRegister, onShow}) => {
       if (
         userData[key].length < 1 ||
         (key === 'email' && !validateEmail(userData.email)) ||
-        (key === 'tel' && !validateTel(userData.tel))
+        (key === 'tel' && !validateTel(userData.tel)) ||
+        (key === 'password' && !regex.passwordRegex.test(userData.password))
       ) {
         errorArr.push(key)
       }
@@ -169,7 +170,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('password', data)}
           placeholder="กรอกรหัสผ่าน"
           error={errors.indexOf('password') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกรหัสผ่าน"
+          errorMessage="กรุณากรอกรหัสผ่านที่ประกอบด้วย ตัวพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และตัวอักษรพิเศษ ความยาว 10 - 30 ตัว"
         />
 
         <InputWithIcon

@@ -1,11 +1,13 @@
 import Head from 'next/head'
-import React from 'react'
+import React, {useEffect} from 'react'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import styled, {css} from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import {COLORS} from '../../styles/colors'
 import {useState} from 'react'
 import BookForwardingCard from '../../components/cards/BookForwardingCard'
+import userService from '../../api/request/userService'
+import {useSelector} from 'react-redux'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -59,6 +61,21 @@ const BookWrapper = styled.div`
 
 const Forwarding = () => {
   const [currentView, setCurrentView] = useState('all')
+  const [forwardingItem, setForwardingItem] = useState([])
+
+  const isAuth = useSelector((state) => state.user.isAuth)
+
+  useEffect(() => {
+    if (isAuth) {
+      userService.forwardingRequest().then((res) => {
+        setForwardingItem(res.data?.data)
+      })
+
+      setInterval(() => {
+        userService.forwardingRequest()
+      }, 60000)
+    }
+  }, [isAuth])
 
   return (
     <>
@@ -84,9 +101,17 @@ const Forwarding = () => {
         </SwitchButtonWrapper>
       </TitleWrapper>
       <BookWrapper>
-        <BookForwardingCard />
-        <BookForwardingCard />
-        <BookForwardingCard />
+        {forwardingItem
+          .filter((item) => {
+            if (currentView === 'all') {
+              return item
+            } else if (currentView === 'sent') {
+              return item.sendingTime
+            }
+          })
+          .map((info) => (
+            <BookForwardingCard key={info._id} bookInfo={info} />
+          ))}
       </BookWrapper>
     </>
   )

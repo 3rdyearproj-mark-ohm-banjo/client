@@ -8,6 +8,7 @@ import Divider from '../Divider'
 import {useState} from 'react'
 import ConfirmModal from '../ConfirmModal'
 import {ICONS} from '../../config/icon'
+import userService from '../../api/request/userService'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -102,7 +103,13 @@ const BookRequestCard = ({bookInfo, cardType}) => {
   const handleSubmit = () => {
     switch (cardType) {
       case 'receive':
+        // userService
+        //   .confirmReceive(bookInfo._id)
+        //   .then(() => toast.success('ยืนยันการรับหนังสือสำเร็จแล้ว'))
+        //   .catch((err) => toast.error(err))
+
         setConfirmModal(defaultConfirmModal)
+
       case 'queue':
         setConfirmModal(defaultConfirmModal)
       default:

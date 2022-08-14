@@ -1,9 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import userService from '../../api/request/userService'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import Button from '../Button'
 import Divider from '../Divider'
+import toast from 'react-hot-toast'
+import Image from 'next/image'
+import {formatDate} from '../../utils/format'
+import {useSelector} from 'react-redux'
 
 const CardLayout = styled.div`
   padding: ${SPACING.MD};
@@ -16,18 +21,24 @@ const CardLayout = styled.div`
 `
 
 const ImageWrapper = styled.div`
+  position: relative;
   width: 140px;
   height: 170px;
   border-radius: ${SPACING.SM};
-  background-color: ${COLORS.GRAY_DARK};
+  background-color: ${COLORS.GRAY_LIGHT};
   flex-shrink: 0;
   margin: 0 auto;
 `
 
 const BookHeader = styled.div`
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 `
 
 const BookName = styled.span`
@@ -107,29 +118,75 @@ const Receiver = styled.div`
 `
 
 const SendDate = styled.div`
+  font-size: 14px;
   font-weight: 600;
   color: ${COLORS.GREEN_1};
 `
 
-const BookForwardingCard = () => {
+const BookForwardingCard = ({bookInfo}) => {
+  const donationHistory = useSelector(
+    (state) => state?.user?.user?.donationHistory
+  )
+
+  const donationInfo = donationHistory?.find((history) => {
+    if (history.book._id === bookInfo?.book?._id) {
+      return history
+    }
+  })
+
+  const statusDictionary = {
+    inProcess: 'กำลังดำเนินการ',
+    sending: 'จัดส่งแล้ว',
+  }
+
+  const submitForwarding = () => {
+    userService.confirmForwarding(bookInfo.book._id).then(() => {
+      toast.success('ยืนยันการส่งหนังสือสำเร็จ')
+    })
+
+    toast.success('ยืนยันการส่งหนังสือสำเร็จ')
+  }
+
+  const statusCase = () => {
+    let status = bookInfo.status
+    if (bookInfo.sendingTime) {
+      status = 'sending'
+    }
+
+    return statusDictionary[status]
+  }
+
   return (
     <CardLayout>
       <BookContainer>
-        <ImageWrapper></ImageWrapper>
+        <ImageWrapper>
+          <Image
+            src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${bookInfo?.book?.bookShelf?.imageCover}`}
+            layout="fill"
+            objectFit="contain"
+            alt={bookInfo?.book?.bookShelf?.bookName}
+          ></Image>
+        </ImageWrapper>
         <BookInfoWrapper>
           <BookHeader>
-            <BookName>
-              ขอให้โชคดีมีชัยในโลกแฟนตาซี! โอ๊ย ยัยเทพธิดาไม่ได้เรื่อง เล่ม 1
-            </BookName>
-            <Status>จัดส่งแล้ว</Status>
+            <BookName>{bookInfo?.book?.bookShelf?.bookName}</BookName>
+            <Status>{statusCase()}</Status>
           </BookHeader>
           <Divider
             lineColor={COLORS.GRAY_LIGHT}
             lineMargin={`${SPACING.SM} 0`}
           />
-          <ISBN>ISBN 123-123-123-123</ISBN>
-          <BorrowDate>ได้รับวันที่ 12 ส.ค. 2022</BorrowDate> <br />
-          <BorrowDate>อ่านจบเมื่อวันที่ 12 ส.ค. 2022</BorrowDate>
+          <ISBN>ISBN {bookInfo?.book?.bookShelf?.ISBN}</ISBN>
+          <BorrowDate>
+            {donationInfo
+              ? `บริจาคเมื่อวันที่ ${formatDate(
+                  donationInfo.donationTime,
+                  true,
+                  true,
+                  true
+                )}`
+              : `อ่านจบเมื่อวันที่ XX/XX/XXXX`}
+          </BorrowDate>
         </BookInfoWrapper>
       </BookContainer>
       <Divider lineColor={COLORS.GRAY_LIGHT} lineMargin={`${SPACING.SM} 0`} />
@@ -137,16 +194,30 @@ const BookForwardingCard = () => {
         <AddressWrapper>
           <AddressHead>ข้อมูลที่เกี่ยวข้องในการนำหนังสือไปส่งต่อ</AddressHead>
           <Receiver>
-            <span>ชื่อผู้รับ Thanasit Eksolagul</span>
-            <span>โทร 012-345-6789</span>
+            <span>
+              ชื่อผู้รับ {bookInfo?.receiverInfo?.firstname}{' '}
+              {bookInfo?.receiverInfo?.lastname}
+            </span>
+            <span>โทร {bookInfo?.receiverInfo?.tel}</span>
           </Receiver>
-          <p>
-            ที่อยู่ 126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140
-          </p>
+          <p>ที่อยู่ {bookInfo?.receiverInfo?.address}</p>
         </AddressWrapper>
         <ButtonWrapper>
-          <SendDate>ส่งวันที่ 12 ส.ค. 2022</SendDate>
-          <Button btnSize="sm">คุณได้ส่งหนังสือแล้ว</Button>
+          {bookInfo.sendingTime && (
+            <SendDate>
+              ส่งวันที่ {formatDate(bookInfo.sendingTime, true, true, true)}
+            </SendDate>
+          )}
+
+          {!bookInfo.sendingTime ? (
+            <Button btnSize="sm" onClick={submitForwarding}>
+              ยืนยันการส่งหนังสือ
+            </Button>
+          ) : (
+            <Button btnSize="sm" btnType="orangeGradient">
+              คุณส่งหนังสือเล่มนี้แล้ว
+            </Button>
+          )}
         </ButtonWrapper>
       </AddressContainer>
     </CardLayout>

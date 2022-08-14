@@ -169,9 +169,13 @@ const NavigationBar = () => {
   const notificationIconRef = useRef()
 
   const notificationHandler = (bool, event) => {
+    if (!isAuth) {
+      return
+    }
+
     if (
       showNotificationMenu &&
-      notificationIconRef.current.contains(event.target)
+      notificationIconRef?.current?.contains(event.target)
     ) {
       return setShowNotificationMenu(false)
     }
@@ -233,7 +237,7 @@ const NavigationBar = () => {
                       <div>
                         <Icon name={ICONS.faHandHoldingHand} />
                         <span>
-                          มีคำขอยืมหนังสือเรื่อง ติวเข้ม PAT1 พิชิตข้อสอบเต็ม
+                          มีคำขอยืมหนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม
                           100% ภายใน 5 วัน ที่คุณถืออยู่ จากคุณ thanasit
                         </span>
                       </div>

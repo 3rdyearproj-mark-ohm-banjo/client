@@ -10,7 +10,6 @@ import 'react-circular-progressbar/dist/styles.css'
 import Button from '../Button'
 
 const CardContainer = styled.div`
-  width: 300px;
   height: 400px;
   padding: ${SPACING.MD};
   border-radius: ${SPACING.SM};
@@ -20,6 +19,11 @@ const CardContainer = styled.div`
   align-items: center;
   gap: ${SPACING.MD};
   box-shadow: 0 1px 5px ${COLORS.GRAY_LIGHT};
+
+  @media (min-width: 1300px) {
+    height: 270px;
+    flex-direction: row;
+  }
 `
 
 const ImageWrapper = styled.div`
@@ -36,6 +40,10 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
+`
+
+const Description = styled.div`
+  flex-grow: 1;
 `
 
 const BookName = styled.div`
@@ -86,7 +94,7 @@ const BorrowingCardInfo = () => {
         </CircularProgressbarWithChildren>
       </CircleProgress>
       <ContentWrapper>
-        <div>
+        <Description>
           <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
           <BookDateInfo>
             <GetBookDate>
@@ -99,7 +107,7 @@ const BorrowingCardInfo = () => {
               <b>วันที่หมดอายุการยืม</b>
             </GetBookDate>
           </BookDateInfo>
-        </div>
+        </Description>
 
         <Button btnSize="sm" borderRadius="4px" btnType="orangeGradient">
           คุณอ่านหนังสือเล่มนี้จบแล้ว

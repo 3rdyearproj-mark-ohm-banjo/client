@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
+import regex from '../../utils/regex'
 import Button from '../Button'
 
 const Form = styled.form`
@@ -66,10 +67,11 @@ const ChangePasswordForm = ({onSubmit}) => {
       }
     })
 
-    console.log(passwordData['newPassword'], confirmPassword)
-
+    if (!regex.passwordRegex.test(passwordData['newPassword'])) {
+      errArr.push('newPassword')
+    }
     if (
-      passwordData['newPassword'].length > 0 &&
+      regex.passwordRegex.test(passwordData['newPassword']) &&
       passwordData['newPassword'] !== confirmPassword
     ) {
       errArr.push('confirmPassword')
@@ -88,7 +90,7 @@ const ChangePasswordForm = ({onSubmit}) => {
   const submitHandler = (e) => {
     e.preventDefault()
     if (validate()) {
-      //  onSubmit(passwordData)
+      onSubmit(passwordData)
     }
   }
 
@@ -117,7 +119,10 @@ const ChangePasswordForm = ({onSubmit}) => {
           onChange={(e) => onChange('newPassword', e.target.value)}
         ></Input>
         {errors.indexOf('newPassword') !== -1 && (
-          <ErrorMessage>กรุณากรอกรหัสผ่านใหม่ที่ต้องการเปลี่ยน</ErrorMessage>
+          <ErrorMessage>
+            กรุณากรอกรหัสผ่านที่ประกอบด้วย ตัวพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข
+            และตัวอักษรพิเศษ ความยาว 10 - 30 ตัว
+          </ErrorMessage>
         )}
       </InputControl>
 

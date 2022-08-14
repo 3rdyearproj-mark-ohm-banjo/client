@@ -95,6 +95,20 @@ const PaginationWrapper = styled.div`
   justify-content: center;
 `
 
+const EmptyRow = styled.td`
+  padding: ${SPACING['5X']} 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+`
+
+const EmptyDonation = styled.div`
+  padding: ${SPACING['5X']} 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+`
+
 const MyDonationPage = ({currentPage}) => {
   const pageSize = 5
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -199,76 +213,93 @@ const MyDonationPage = ({currentPage}) => {
           </tr>
         </Thead>
 
-        <Tbody>
-          {donationFormat
-            ?.slice(
-              (currentPage - 1) * pageSize,
-              (currentPage - 1) * pageSize + pageSize
-            )
-            ?.map((row, i) => (
-              <tr key={`row${i}`}>
-                <td>
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
-                    alt={row.bookName}
-                    width={120}
-                    height={150}
-                    objectFit="contain"
-                  />
-                </td>
-                <td>{row.ISBN}</td>
-                <td>{row.bookName}</td>
-                <td>{formatDate(row.donationTime, true, true, true)}</td>
-                <td>
-                  {row.bookHistorys.length < 2 &&
-                  row.currentHolder === userId ? (
-                    <Button
-                      btnSize="sm"
-                      btnType="orangeGradient"
-                      onClick={() => {
-                        setShowCancelModal(true)
-                        setDeleteItem({
-                          bookId: row.bookId,
-                          bookName: row?.bookName,
-                        })
-                      }}
-                    >
-                      ยกเลิกการบริจาค
-                    </Button>
-                  ) : (
-                    <Button isDisabled>หนังสือถูกส่งต่อแล้ว</Button>
-                  )}
-                </td>
-              </tr>
-            ))}
-        </Tbody>
+        {donationFormat.length > 0 ? (
+          <Tbody>
+            {donationFormat
+              ?.slice(
+                (currentPage - 1) * pageSize,
+                (currentPage - 1) * pageSize + pageSize
+              )
+              ?.map((row, i) => (
+                <tr key={`row${i}`}>
+                  <td>
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
+                      alt={row.bookName}
+                      width={120}
+                      height={150}
+                      objectFit="contain"
+                    />
+                  </td>
+                  <td>{row.ISBN}</td>
+                  <td>{row.bookName}</td>
+                  <td>{formatDate(row.donationTime, true, true, true)}</td>
+                  <td>
+                    {row.bookHistorys.length < 2 &&
+                    row.currentHolder === userId ? (
+                      <Button
+                        btnSize="sm"
+                        btnType="orangeGradient"
+                        onClick={() => {
+                          setShowCancelModal(true)
+                          setDeleteItem({
+                            bookId: row.bookId,
+                            bookName: row?.bookName,
+                          })
+                        }}
+                      >
+                        ยกเลิกการบริจาค
+                      </Button>
+                    ) : (
+                      <Button btnSize="sm" isDisabled>
+                        หนังสือมีคำขอยืมแล้ว
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+          </Tbody>
+        ) : (
+          <tbody>
+            <tr>
+              <EmptyRow colSpan="5">คุณยังไม่เคยบริจาคหนังสือ</EmptyRow>
+            </tr>
+          </tbody>
+        )}
       </Table>
 
       <MobileDonationWrapper>
-        {donationFormat
-          ?.slice(
-            (currentPage - 1) * pageSize,
-            (currentPage - 1) * pageSize + pageSize
-          )
-          ?.map((item) => (
-            <BookOwnerCard
-              key={item._id}
-              bookId={item.bookId}
-              bookInfo={item}
-              donationTime={formatDate(item.donationTime, true, true, true)}
-              canCancel={
-                item.bookHistorys.length < 2 && item.currentHolder === userId
-              }
-              onCancel={() => {
-                setShowCancelModal(true)
-                setDeleteItem({
-                  bookId: item.bookId,
-                  bookName: item?.bookName,
-                })
-              }}
-              cardType="secondary"
-            />
-          ))}
+        {donationFormat.length > 0 ? (
+          <>
+            {donationFormat
+              ?.slice(
+                (currentPage - 1) * pageSize,
+                (currentPage - 1) * pageSize + pageSize
+              )
+              ?.map((item) => (
+                <BookOwnerCard
+                  key={item._id}
+                  bookId={item.bookId}
+                  bookInfo={item}
+                  donationTime={formatDate(item.donationTime, true, true, true)}
+                  canCancel={
+                    item.bookHistorys.length < 2 &&
+                    item.currentHolder === userId
+                  }
+                  onCancel={() => {
+                    setShowCancelModal(true)
+                    setDeleteItem({
+                      bookId: item.bookId,
+                      bookName: item?.bookName,
+                    })
+                  }}
+                  cardType="secondary"
+                />
+              ))}
+          </>
+        ) : (
+          <EmptyDonation>คุณยังไม่เคยบริจาคหนังสือ</EmptyDonation>
+        )}
       </MobileDonationWrapper>
 
       {Math.ceil(donationHistory?.length / pageSize) > 1 && (

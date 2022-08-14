@@ -32,6 +32,49 @@ export const cancelDonation = (bookId) => {
   return res
 }
 
+export const changePassword = (oldPassword, newPassword) => {
+  const res = axiosPrivate.put(`user/changepassword`, {
+    oldPassword,
+    newPassword,
+  })
+  return res
+}
+
+export const sendBorrowRequest = (bookshelfId) => {
+  const res = axiosPrivate.post(`user/addqueue/${bookshelfId}`)
+  return res
+}
+
+export const confirmReceive = (bookId) => {
+  const res = axiosPrivate.put(`user/confirmreceive/${bookId}`)
+  return res
+}
+
+export const cancelBorrow = (bookshelfId) => {
+  const res = axiosPrivate.put(`user/cancelborrow/${bookshelfId}`)
+  return res
+}
+
+export const borrowRequest = () => {
+  const res = axiosPrivate.get(`user/borrowRequest`)
+  return res
+}
+
+export const forwardingRequest = () => {
+  const res = axiosPrivate.get(`user/forwardingrequest`)
+  return res
+}
+
+export const confirmReadingSuccess = (bookId) => {
+  const res = axiosPrivate.put(`user/readingsuccess/${bookId}`)
+  return res
+}
+
+export const confirmForwarding = (bookId) => {
+  const res = axiosPrivate.put(`user/booksending/${bookId}`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -39,4 +82,12 @@ export default {
   register,
   getCurrentUser,
   cancelDonation,
+  changePassword,
+  sendBorrowRequest,
+  confirmReceive,
+  cancelBorrow,
+  borrowRequest,
+  forwardingRequest,
+  confirmReadingSuccess,
+  confirmForwarding,
 }

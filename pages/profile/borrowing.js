@@ -66,6 +66,16 @@ const SwiperContainer = styled.div`
   }
 `
 
+const BookContainer = styled.div`
+  display: grid;
+  grid-template-columns: auto;
+  gap: ${SPACING['2X']};
+
+  @media (min-width: 768px) {
+    grid-template-columns: auto auto;
+  }
+`
+
 const BookBorrowingPage = () => {
   return (
     <>
@@ -86,7 +96,15 @@ const BookBorrowingPage = () => {
         </SubTitle>
       </TitleWrapper>
 
-      <SwiperContainer>
+      <BookContainer>
+        <BorrowingCardInfo />
+        <BorrowingCardInfo />
+        <BorrowingCardInfo />
+        <BorrowingCardInfo />
+        <BorrowingCardInfo />
+      </BookContainer>
+
+      {/* <SwiperContainer>
         <Swiper
           slidesPerView={1}
           spaceBetween={10}
@@ -120,7 +138,7 @@ const BookBorrowingPage = () => {
             <BorrowingCardInfo />
           </SwiperSlide>
         </Swiper>
-      </SwiperContainer>
+      </SwiperContainer> */}
     </>
   )
 }
