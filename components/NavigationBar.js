@@ -7,13 +7,14 @@ import {SPACING} from '../styles/spacing'
 import {useRouter} from 'next/router'
 import AuthModal from './AuthModal'
 import {useDispatch, useSelector} from 'react-redux'
-import {logout} from '../api/request/userService'
+import userService from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
 import {Hidden} from './Layout'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 import toast from 'react-hot-toast'
 import {FONTS} from '../styles/fonts'
 import Link from 'next/link'
+import Drawer from './Drawer'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -29,11 +30,12 @@ const NavigationBarStyled = styled.nav`
 const ContentWrapper = styled.ul`
   margin: 10px auto;
   max-width: 900px;
-  display: flex;
-  justify-content: space-between;
+  display: none;
 
-  @media (min-width: 450px) {
+  @media (min-width: 768px) {
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
   }
 `
 
@@ -156,6 +158,14 @@ const NotiIconControl = styled.div`
   justify-content: space-between;
 `
 
+const DrawerWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`
+
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
@@ -167,6 +177,8 @@ const NavigationBar = () => {
   useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
   const notificationRef = useRef()
   const notificationIconRef = useRef()
+
+  const menuList = [{icon: ICONS.faHome, text: 'หน้าแรก', link: '/'}]
 
   const notificationHandler = (bool, event) => {
     if (!isAuth) {
@@ -186,7 +198,7 @@ const NavigationBar = () => {
   useOutsideAlerter(notificationHandler, notificationRef)
 
   const logoutHandler = async () => {
-    const getResult = async () => await logout()
+    const getResult = async () => await userService.logout()
     setShowProfileMenu(false)
     return getResult()
       .then(() => {
@@ -213,7 +225,7 @@ const NavigationBar = () => {
             isActive={router.pathname === '/'}
           >
             <Icon name={ICONS.faHome} size={ICON_SIZE.lg} />
-            <Hidden breakPoint="450px">หน้าหลัก</Hidden>
+            หน้าหลัก
           </MenuIcon>
 
           {isAuth ? (
@@ -223,13 +235,13 @@ const NavigationBar = () => {
                 isActive={router.pathname === '/profile/donatebook'}
               >
                 <Icon name={ICONS.faHandHoldingHand} size={ICON_SIZE.lg} />
-                <Hidden breakPoint="450px">บริจาคหนังสือ</Hidden>
+                บริจาคหนังสือ
               </MenuIcon>
 
               <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
                 <NotiIconControl ref={notificationIconRef}>
                   <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
-                  <Hidden breakPoint="450px">การแจ้งเตือน</Hidden>
+                  การแจ้งเตือน
                 </NotiIconControl>
                 {showNotificationMenu && (
                   <NotificationDropdown>
@@ -237,8 +249,8 @@ const NavigationBar = () => {
                       <div>
                         <Icon name={ICONS.faHandHoldingHand} />
                         <span>
-                          มีคำขอยืมหนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม
-                          100% ภายใน 5 วัน ที่คุณถืออยู่ จากคุณ thanasit
+                          มีคำขอยืมหนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100%
+                          ภายใน 5 วัน ที่คุณถืออยู่ จากคุณ thanasit
                         </span>
                       </div>
                       <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
@@ -304,6 +316,10 @@ const NavigationBar = () => {
             </MenuIcon>
           )}
         </ContentWrapper>
+
+        <DrawerWrapper>
+          <Drawer itemList={menuList}></Drawer>
+        </DrawerWrapper>
       </NavigationBarStyled>
     </>
   )

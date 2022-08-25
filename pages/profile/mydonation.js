@@ -213,7 +213,7 @@ const MyDonationPage = ({currentPage}) => {
           </tr>
         </Thead>
 
-        {donationFormat.length > 0 ? (
+        {donationFormat?.length > 0 ? (
           <Tbody>
             {donationFormat
               ?.slice(
@@ -269,7 +269,7 @@ const MyDonationPage = ({currentPage}) => {
       </Table>
 
       <MobileDonationWrapper>
-        {donationFormat.length > 0 ? (
+        {donationFormat?.length > 0 ? (
           <>
             {donationFormat
               ?.slice(

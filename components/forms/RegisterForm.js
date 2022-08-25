@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {register} from '../../api/request/userService'
+import userService from '../../api/request/userService'
 import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import Button from '../Button'
@@ -8,7 +8,11 @@ import InputWithIcon from './InputWithIcon'
 import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import Icon from '../Icon'
-import {validateEmail, validateTel} from '../../utils/validate'
+import {
+  validateEmail,
+  validatePassword,
+  validateTel,
+} from '../../utils/validate'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
@@ -59,7 +63,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         userData[key].length < 1 ||
         (key === 'email' && !validateEmail(userData.email)) ||
         (key === 'tel' && !validateTel(userData.tel)) ||
-        (key === 'password' && !regex.passwordRegex.test(userData.password))
+        (key === 'password' && !validatePassword(userData.password))
       ) {
         errorArr.push(key)
       }
@@ -80,7 +84,8 @@ const RegisterForm = ({onShowRegister, onShow}) => {
   const registerHandle = (e) => {
     e.preventDefault()
     if (validate()) {
-      return register(userData)
+      return userService
+        .register(userData)
         .then((res) => {
           onShowRegister(false)
         })

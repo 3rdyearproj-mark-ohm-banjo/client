@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
+import {validateTel} from '../../utils/validate'
 import Button from '../Button'
 
 const Form = styled.form`
@@ -56,13 +57,53 @@ const ButtonWrapper = styled.div`
   justify-content: center;
 `
 
+const Error = styled.div`
+  color: ${COLORS.RED_1};
+`
+
 const EditUserInfoForm = ({onSubmit, userInfo}) => {
   const [userData, setUserData] = useState(userInfo)
   const [errors, setErrors] = useState([])
+  const [isChange, setIsChange] = useState(false)
 
   const onChange = (key, value) => {
     setUserData({...userData, [key]: value})
     setErrors(errors.filter((err) => err !== key))
+    setIsChange(true)
+  }
+
+  const validate = () => {
+    let err = []
+
+    if (userData.tel.length > 10 || !validateTel(userData.tel)) {
+      err.push('tel')
+    }
+
+    if (userData.firstname.length > 50) {
+      err.push('firstname')
+    }
+
+    if (userData.lastname.length > 50) {
+      err.push('lastname')
+    }
+
+    if (userData.address.length > 300) {
+      err.push('address')
+    }
+
+    if (err.length > 0) {
+      setErrors(err)
+      return false
+    }
+    return true
+  }
+
+  const submit = (e) => {
+    e.preventDefault()
+    if (validate()) {
+      onSubmit(userData)
+      setIsChange(false)
+    }
   }
 
   return (
@@ -97,6 +138,9 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
             onChange={(data) => onChange('firstname', data.target.value)}
             value={userData?.firstname}
           ></Input>
+          {errors.indexOf('firstname') !== -1 && (
+            <Error>กรุณากรอกชื่อจริงไม่เกิน 50 ตัวอักษร</Error>
+          )}
         </InputControl>
         <InputControl>
           <label>นามสกุล</label>
@@ -106,6 +150,9 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
             onChange={(data) => onChange('lastname', data.target.value)}
             value={userData?.lastname}
           ></Input>
+          {errors.indexOf('lastname') !== -1 && (
+            <Error>กรุณากรอกนามสกุลไม่เกิน 50 ตัวอักษร</Error>
+          )}
         </InputControl>
       </InputGroup>
 
@@ -117,6 +164,9 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
           onChange={(data) => onChange('address', data.target.value)}
           value={userData?.address}
         ></TextArea>
+        {errors.indexOf('address') !== -1 && (
+          <Error>กรุณากรอกที่อยู่ไม่เกิน 500 ตัวอักษร</Error>
+        )}
       </InputControl>
 
       <InputControl>
@@ -127,9 +177,14 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
           onChange={(data) => onChange('tel', data.target.value)}
           value={userData?.tel}
         ></Input>
+        {errors.indexOf('tel') !== -1 && (
+          <Error>กรุณากรอกเบอร์ไม่เกิน 10 ตัวอักษร</Error>
+        )}
       </InputControl>
       <ButtonWrapper>
-        <Button borderRadius="4px">อัปเดตข้อมูล</Button>
+        <Button borderRadius="4px" onClick={submit} isDisabled={!isChange}>
+          อัปเดตข้อมูล
+        </Button>
       </ButtonWrapper>
     </Form>
   )

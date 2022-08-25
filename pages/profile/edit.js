@@ -5,11 +5,12 @@ import EditUserInfoForm from '../../components/forms/EditUserInfoForm'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import ChangePasswordForm from '../../components/forms/ChangePasswordForm'
 import userService from '../../api/request/userService'
 import toast from 'react-hot-toast'
 import {useEffect} from 'react'
+import {fetchCurrentUser, updateUser} from '../../redux/feature/UserSlice'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -58,6 +59,7 @@ const EditProfilePage = () => {
   const userInfo = useSelector((state) => state?.user?.user)
   const [passwordErr, setPasswordErr] = useState('')
   const [infoErr, setInfoErr] = useState('')
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setPasswordErr('')
@@ -69,7 +71,13 @@ const EditProfilePage = () => {
   }
 
   const submitEdit = (info) => {
-    console.log(info)
+    userService
+      .updateInfo(info)
+      .then(() => {
+        toast.success('อัปเดทข้อมูลสำเร็จ')
+        dispatch(fetchCurrentUser())
+      })
+      .catch((err) => setInfoErr(err.message))
   }
 
   const submitChangePassword = (passwordData) => {

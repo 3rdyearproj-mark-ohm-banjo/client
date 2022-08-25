@@ -186,7 +186,7 @@ const ButtonStyled = styled.button`
   ${(props) => props.padding && `padding:${props.padding};`}
   ${(props) => props.borderRadius && `border-radius:${props.borderRadius};`}
 
-
+  ${(props) => props.isDisabled && 'opacity:0.5;pointer-events: none;'}
 
   &:hover > span:last-child:before,
   &:hover > span:last-child:after {
@@ -214,13 +214,20 @@ const Button = ({
       type={type}
       btnType={btnType}
       btnSize={btnSize}
-      onClick={(e) => type !== 'submit' && !isDisabled && onClick(e)}
+      onClick={(e) => {
+        if (type !== 'submit' && !isDisabled) {
+          onClick(e)
+        } else {
+          e.preventDefault()
+        }
+      }}
       withIcon={withIcon}
       fullWidth={fullWidth}
       bgColor={bgColor}
       txtColor={txtColor}
       padding={padding}
       borderRadius={borderRadius}
+      isDisabled={isDisabled}
     >
       {children ?? 'click me'}
       {withIcon && (

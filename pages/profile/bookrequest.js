@@ -1,6 +1,8 @@
 import Head from 'next/head'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import toast from 'react-hot-toast'
 import styled from 'styled-components'
+import userService from '../../api/request/userService'
 import BookRequestCard from '../../components/cards/BookRequestCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
@@ -38,6 +40,18 @@ const BookWrapper = styled.div`
 `
 
 const BookRequest = () => {
+  const [borrowRequestList, setBorrowRequestList] = useState([])
+
+  useEffect(() => {
+    userService
+      .borrowRequest()
+      .then((res) => {
+        console.log(res)
+        setBorrowRequestList(res?.data?.data)
+      })
+      .catch((err) => toast.error(err))
+  }, [])
+
   return (
     <>
       <Head>
@@ -53,17 +67,26 @@ const BookRequest = () => {
           ผู้ใช้สามารถติดต่อผู้ดูแลระบบเพื่อขอหนังสือใหม่ได้
         </AlertText>
       </TitleWrapper>
-      <BookWrapper>
-        <BookRequestCard />
-        <BookRequestCard />
-      </BookWrapper>
-      <TitleWrapper>
+
+      {borrowRequestList.length > 0 && (
+        <BookWrapper>
+          {borrowRequestList.map((item) => (
+            <BookRequestCard
+              key={item._id}
+              bookInfo={item.bookShelf}
+              requestTime={item.requestTime}
+            />
+          ))}
+        </BookWrapper>
+      )}
+
+      {/* <TitleWrapper>
         <Title>หนังสือที่คุณได้เข้าคิวเพื่อขอยืม</Title>
       </TitleWrapper>
       <BookWrapper>
         <BookRequestCard cardType="queue" />
         <BookRequestCard cardType="queue" />
-      </BookWrapper>
+      </BookWrapper> */}
     </>
   )
 }

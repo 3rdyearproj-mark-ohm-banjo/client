@@ -71,12 +71,11 @@ const LabelWrapper = styled.div`
   gap: 0 ${SPACING.MD};
 `
 
-const ErrMessage = styled.div`
+const ErrMessage = styled.span`
   background-color: ${COLORS.RED_2};
   color: ${COLORS.WHITE};
   padding: 2px ${SPACING.MD};
   border-radius: ${SPACING.MD};
-  width: max-content;
   margin: ${SPACING.SM} 0;
   font-size: 14px;
   font-weight: 600;
@@ -97,7 +96,6 @@ const InputWithIcon = ({
     <InputControl>
       <LabelWrapper>
         <label>{label}</label>
-        {error && <ErrMessage>{errorMessage}</ErrMessage>}
       </LabelWrapper>
       <InputWrapper isTextArea={inputType === 'textarea'}>
         <InputIcon>
@@ -128,6 +126,7 @@ const InputWithIcon = ({
           />
         )}
       </InputWrapper>
+      {error && <ErrMessage>{errorMessage}</ErrMessage>}
     </InputControl>
   )
 }

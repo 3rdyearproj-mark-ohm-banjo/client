@@ -1,7 +1,7 @@
 import axios, {axiosPrivate} from '../axios'
 import Cookies from 'universal-cookie'
 
-export const login = (email, password) => {
+const login = (email, password) => {
   const res = axiosPrivate.post(`/login`, {
     email,
     password,
@@ -10,29 +10,29 @@ export const login = (email, password) => {
   return res
 }
 
-export const logout = () => {
+const logout = () => {
   const cookies = new Cookies()
   console.log(cookies.get('jwt'))
   const res = axiosPrivate.get('/logout')
   return res
 }
 
-export const getCurrentUser = () => {
+const getCurrentUser = () => {
   const res = axiosPrivate.get('user/profile')
   return res
 }
 
-export const register = (userData) => {
+const register = (userData) => {
   const res = axios.post(`/register`, userData)
   return res
 }
 
-export const cancelDonation = (bookId) => {
+const cancelDonation = (bookId) => {
   const res = axiosPrivate.delete(`user/canceldonation/${bookId}`)
   return res
 }
 
-export const changePassword = (oldPassword, newPassword) => {
+const changePassword = (oldPassword, newPassword) => {
   const res = axiosPrivate.put(`user/changepassword`, {
     oldPassword,
     newPassword,
@@ -40,38 +40,48 @@ export const changePassword = (oldPassword, newPassword) => {
   return res
 }
 
-export const sendBorrowRequest = (bookshelfId) => {
+const updateInfo = (info) => {
+  const res = axiosPrivate.put(`user/editInfo`, info)
+  return res
+}
+
+const sendBorrowRequest = (bookshelfId) => {
   const res = axiosPrivate.post(`user/addqueue/${bookshelfId}`)
   return res
 }
 
-export const confirmReceive = (bookId) => {
+const confirmReceive = (bookId) => {
   const res = axiosPrivate.put(`user/confirmreceive/${bookId}`)
   return res
 }
 
-export const cancelBorrow = (bookshelfId) => {
+const cancelBorrow = (bookshelfId) => {
   const res = axiosPrivate.put(`user/cancelborrow/${bookshelfId}`)
   return res
 }
 
-export const borrowRequest = () => {
+const borrowRequest = () => {
   const res = axiosPrivate.get(`user/borrowRequest`)
   return res
 }
 
-export const forwardingRequest = () => {
+const forwardingRequest = () => {
   const res = axiosPrivate.get(`user/forwardingrequest`)
   return res
 }
 
-export const confirmReadingSuccess = (bookId) => {
+const confirmReadingSuccess = (bookId) => {
   const res = axiosPrivate.put(`user/readingsuccess/${bookId}`)
   return res
 }
 
-export const confirmForwarding = (bookId) => {
+const confirmForwarding = (bookId) => {
   const res = axiosPrivate.put(`user/booksending/${bookId}`)
+  return res
+}
+
+const currentHoldingBook = () => {
+  const res = axiosPrivate.get(`user/currentholding`)
   return res
 }
 
@@ -82,6 +92,7 @@ export default {
   register,
   getCurrentUser,
   cancelDonation,
+  updateInfo,
   changePassword,
   sendBorrowRequest,
   confirmReceive,
@@ -90,4 +101,5 @@ export default {
   forwardingRequest,
   confirmReadingSuccess,
   confirmForwarding,
+  currentHoldingBook,
 }

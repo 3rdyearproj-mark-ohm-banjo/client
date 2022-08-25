@@ -9,6 +9,7 @@ import {useState} from 'react'
 import ConfirmModal from '../ConfirmModal'
 import {ICONS} from '../../config/icon'
 import userService from '../../api/request/userService'
+import {formatDate} from '../../utils/format'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -92,7 +93,7 @@ const Status = styled.span`
   ${(props) => props.type === 'waiting' && `color: ${COLORS.BLUE_LIGHT_3}`}
 `
 
-const BookRequestCard = ({bookInfo, cardType}) => {
+const BookRequestCard = ({bookInfo, cardType, requestTime}) => {
   const defaultConfirmModal = {
     show: false,
     type: '',
@@ -103,10 +104,10 @@ const BookRequestCard = ({bookInfo, cardType}) => {
   const handleSubmit = () => {
     switch (cardType) {
       case 'receive':
-        // userService
-        //   .confirmReceive(bookInfo._id)
-        //   .then(() => toast.success('ยืนยันการรับหนังสือสำเร็จแล้ว'))
-        //   .catch((err) => toast.error(err))
+        userService
+          .confirmReceive(bookInfo.book._id)
+          .then(() => toast.success('ยืนยันการรับหนังสือสำเร็จแล้ว'))
+          .catch((err) => toast.error(err))
 
         setConfirmModal(defaultConfirmModal)
 
@@ -160,13 +161,11 @@ const BookRequestCard = ({bookInfo, cardType}) => {
       <CardContainer>
         <ImageWrapper>
           <ImageContainer></ImageContainer>
-          <ISBN>ISBN 132-13-21231-32</ISBN>
+          <ISBN>ISBN {bookInfo?.ISBN}</ISBN>
         </ImageWrapper>
         <ContentWrapper>
           <BookHeader>
-            <BookName>
-              ขอให้โชคดีมีชัยในโลกแฟนตาซี! โอ๊ย ยัยเทพธิดาไม่ได้เรื่อง เล่ม 1
-            </BookName>
+            <BookName>{bookInfo?.bookName}</BookName>
             {cardType === 'queue' ? (
               <Status type="waiting">อยู่ในคิว</Status>
             ) : (
@@ -186,8 +185,13 @@ const BookRequestCard = ({bookInfo, cardType}) => {
             </>
           ) : (
             <>
-              <BorrowDate>วันที่ขอยืม : 15/12/2022 เวลา 13:20 น.</BorrowDate>
-              <LimitReceive>จะได้รับภายในวันที่ 20/12/2022</LimitReceive>
+              <BorrowDate>
+                วันที่ขอยืม : {formatDate(requestTime, true, true, true)}
+              </BorrowDate>
+              <LimitReceive>
+                จะได้รับภายในวันที่ :{' '}
+                {formatDate(new Date(requestTime).setHours(72))}
+              </LimitReceive>
             </>
           )}
 
