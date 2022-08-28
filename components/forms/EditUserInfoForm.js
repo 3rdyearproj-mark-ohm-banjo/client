@@ -136,7 +136,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
             type="text"
             placeholder="ชื่อจริง"
             onChange={(data) => onChange('firstname', data.target.value)}
-            value={userData?.firstname}
+            value={userData?.firstname ?? ''}
           ></Input>
           {errors.indexOf('firstname') !== -1 && (
             <Error>กรุณากรอกชื่อจริงไม่เกิน 50 ตัวอักษร</Error>
@@ -148,7 +148,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
             type="text"
             placeholder="นามสกุล"
             onChange={(data) => onChange('lastname', data.target.value)}
-            value={userData?.lastname}
+            value={userData?.lastname ?? ''}
           ></Input>
           {errors.indexOf('lastname') !== -1 && (
             <Error>กรุณากรอกนามสกุลไม่เกิน 50 ตัวอักษร</Error>
@@ -162,7 +162,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
           type="text"
           placeholder="ที่อยู่สำหรับจัดส่ง"
           onChange={(data) => onChange('address', data.target.value)}
-          value={userData?.address}
+          value={userData?.address ?? ''}
         ></TextArea>
         {errors.indexOf('address') !== -1 && (
           <Error>กรุณากรอกที่อยู่ไม่เกิน 500 ตัวอักษร</Error>
@@ -175,7 +175,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
           type="tel"
           placeholder="เบอร์ติดต่อ"
           onChange={(data) => onChange('tel', data.target.value)}
-          value={userData?.tel}
+          value={userData?.tel ?? ''}
         ></Input>
         {errors.indexOf('tel') !== -1 && (
           <Error>กรุณากรอกเบอร์ไม่เกิน 10 ตัวอักษร</Error>

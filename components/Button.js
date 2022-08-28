@@ -215,10 +215,12 @@ const Button = ({
       btnType={btnType}
       btnSize={btnSize}
       onClick={(e) => {
+        if (isDisabled) {
+          return e.preventDefault()
+        }
+
         if (type !== 'submit' && !isDisabled) {
-          onClick(e)
-        } else {
-          e.preventDefault()
+          return onClick(e)
         }
       }}
       withIcon={withIcon}

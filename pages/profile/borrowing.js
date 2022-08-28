@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
@@ -9,6 +9,9 @@ import {Swiper, SwiperSlide} from 'swiper/react'
 import {Scrollbar} from 'swiper'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
+import userService from '../../api/request/userService'
+import {useSelector} from 'react-redux'
+import useBorrowing from '../../api/query/useBorrowing'
 
 const EmptyState = styled.div`
   width: 100%;
@@ -68,22 +71,27 @@ const SwiperContainer = styled.div`
 
 const BookContainer = styled.div`
   display: grid;
-  grid-template-columns: auto;
+  grid-template-columns: 100%;
   gap: ${SPACING['2X']};
 
   @media (min-width: 768px) {
-    grid-template-columns: auto auto;
+    grid-template-columns: 50% 50%;
   }
 `
 
 const BookBorrowingPage = () => {
+  const user = useSelector((state) => state.user.user)
+  const {data, error} = useBorrowing()
+
   return (
     <>
       <Head>
         <title>หนังสือที่คุณยืมอยู่</title>
       </Head>
       <TitleWrapper>
-        <Title>หนังสือที่คุณกำลังยืมอยู่ (1 / 5 เล่ม) </Title>
+        <Title>
+          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data.length} / 5 เล่ม){' '}
+        </Title>
         <SubTitle>
           เมื่ออ่านเสร็จแล้ว คุณสามารถกด<Red>ยืนยันว่าอ่านจบแล้วได้</Red>
           เพื่อให้ผู้ที่สนใจหนังสือเล่มนี้เหมือนกันมาขอยืมต่อได้
@@ -97,11 +105,17 @@ const BookBorrowingPage = () => {
       </TitleWrapper>
 
       <BookContainer>
-        <BorrowingCardInfo />
-        <BorrowingCardInfo />
-        <BorrowingCardInfo />
-        <BorrowingCardInfo />
-        <BorrowingCardInfo />
+        {data?.data?.data
+          ?.filter((book) => {
+            return (
+              book.bookHistorys.length > 1 &&
+              book.currentHolder === user._id &&
+              book.status !== 'inProcess'
+            )
+          })
+          .map((book) => (
+            <BorrowingCardInfo key={book._id} info={book} />
+          ))}
       </BookContainer>
 
       {/* <SwiperContainer>

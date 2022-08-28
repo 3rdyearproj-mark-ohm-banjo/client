@@ -16,6 +16,9 @@ import {useRouter} from 'next/router'
 import toast from 'react-hot-toast'
 import ConfirmModal from './ConfirmModal'
 import userService from '../api/request/userService'
+import useBorrowing from '../api/query/useBorrowing'
+import {useEffect} from 'react'
+import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -61,7 +64,6 @@ const BookImage = styled.img`
 
 const BookName = styled.h1`
   font-size: 40px;
-  font-weight: 650;
   margin-top: ${SPACING.LG};
   color: ${COLORS.PRIMARY};
   line-height: 1.1em;
@@ -209,6 +211,35 @@ const BookInfo = ({bookInfo}) => {
     to: {opacity: 1, y: 0},
   })
   const [showBorrowModal, setShowBorrowModal] = useState(false)
+  const {data: borrowing, refetch: getBorrowing} = useBorrowing(false)
+  const {data: myRequest, refetch: getMyRequest} = useMyBorrowRequest(false)
+  const [isBorrowing, setIsBorrowing] = useState(false)
+  const [isQueue, setIsQueue] = useState(false)
+
+  useEffect(() => {
+    if (isAuth) {
+      getBorrowing()
+      getMyRequest()
+    }
+  }, [isAuth, getBorrowing, getMyRequest])
+
+  useEffect(() => {
+    if (borrowing) {
+      setIsBorrowing(
+        borrowing?.data?.data.some(
+          (book) => book?.bookShelf?._id === bookInfo._id
+        )
+      )
+    }
+  }, [bookInfo._id, borrowing])
+
+  useEffect(() => {
+    if (myRequest) {
+      setIsQueue(
+        myRequest?.some((book) => book?.bookShelf?._id === bookInfo._id)
+      )
+    }
+  }, [bookInfo._id, myRequest])
 
   const isOwner = user?.donationHistory?.some(
     (info) =>
@@ -221,18 +252,31 @@ const BookInfo = ({bookInfo}) => {
       return toast.error('กรุณาเข้าสู่ระบบก่อนยืมหนังสือ')
     }
 
-    // if (isHolding) {
-    //   return toast.error('คุณถือหนังสือเล่มนี้อยู่')
-    // }
+    if (isBorrowing) {
+      return toast.error('คุณถือหนังสือเล่มนี้อยู่')
+    }
 
     setShowBorrowModal(true)
   }
 
   const borrow = () => {
-    userService
-      .sendBorrowRequest(bookInfo?._id)
-      .then(() => toast.success('ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'))
-      .catch((err) => toast.error(err))
+    if ((isAuth && !user.address) || user.address.length < 1) {
+      router.push('/profile/edit')
+      return toast.error('กรุณากรอกข้อมูลที่อยู่บัญชีของคุณก่อน')
+    }
+    toast.promise(userService.sendBorrowRequest(bookInfo?._id), {
+      loading: 'กำลังส่งคำขอยืม...',
+      success: () => {
+        getBorrowing()
+        getMyRequest()
+        return 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
+      },
+      error: (err) => () => {
+        getBorrowing()
+        getMyRequest()
+        return `${err.toString()}`
+      },
+    })
 
     setShowBorrowModal(false)
   }
@@ -361,7 +405,7 @@ const BookInfo = ({bookInfo}) => {
               </Button>
             )}
 
-            {(!isAuth || !isOwner) && (
+            {(!isAuth || (!isOwner && !isBorrowing && !isQueue)) && (
               <Button
                 withIcon
                 fullWidth
@@ -369,6 +413,30 @@ const BookInfo = ({bookInfo}) => {
                 onClick={borrowHandler}
               >
                 ยืมหนังสือ
+              </Button>
+            )}
+
+            {isQueue && (
+              <Button
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
+                btnType="whiteBorder"
+                onClick={() => router.push('/profile/bookrequest')}
+              >
+                คุณอยู่ในคิวของหนังสือนี้แล้ว
+              </Button>
+            )}
+
+            {isBorrowing && !isOwner && (
+              <Button
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
+                btnType="whiteBorder"
+                onClick={() => router.push('/profile/borrowing')}
+              >
+                คุณกำลังยืมหนังสือเล่มนี้อยู่
               </Button>
             )}
           </ButtonWrapper>

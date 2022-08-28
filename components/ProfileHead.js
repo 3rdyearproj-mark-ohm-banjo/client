@@ -208,11 +208,6 @@ const ProfileHead = () => {
                 ข้อมูลโดยรวม
               </NavItem>
             </Link>
-            <Link href="/profile/notification" passHref>
-              <NavItem isActive={router.pathname === '/profile/notification'}>
-                การแจ้งเตือนทั้งหมด
-              </NavItem>
-            </Link>
             <Link href="/profile/bookrequest" passHref>
               <NavItem isActive={router.pathname === '/profile/bookrequest'}>
                 คำขอยืมหนังสือของคุณ

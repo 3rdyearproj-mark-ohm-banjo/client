@@ -71,7 +71,13 @@ const Drawer = ({showAt, head, itemList}) => {
   const [isTrigger, setIsTrigger] = useState(false)
   const drawerRef = useRef()
 
-  useOutsideAlerter(setIsTrigger, drawerRef)
+  const triggerHandler = (trig) => {
+    if (isTrigger) {
+      setIsTrigger(trig)
+    }
+  }
+
+  useOutsideAlerter(triggerHandler, drawerRef)
 
   const slideIn = useTransition(isTrigger, {
     from: {opacity: 0, x: 100},

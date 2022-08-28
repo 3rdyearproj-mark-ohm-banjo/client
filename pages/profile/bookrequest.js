@@ -2,9 +2,12 @@ import Head from 'next/head'
 import React, {useState, useEffect} from 'react'
 import toast from 'react-hot-toast'
 import styled from 'styled-components'
+import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import userService from '../../api/request/userService'
+import {Icon} from '../../components'
 import BookRequestCard from '../../components/cards/BookRequestCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
+import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 
@@ -39,18 +42,42 @@ const BookWrapper = styled.div`
   padding: ${SPACING.MD};
 `
 
-const BookRequest = () => {
-  const [borrowRequestList, setBorrowRequestList] = useState([])
+const EmptyState = styled.div`
+  height: 100%;
+  padding: ${SPACING.MD};
+  background-color: ${COLORS.GRAY_LIGHT};
+  border-radius: ${SPACING.MD};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 
-  useEffect(() => {
-    userService
-      .borrowRequest()
-      .then((res) => {
-        console.log(res)
-        setBorrowRequestList(res?.data?.data)
-      })
-      .catch((err) => toast.error(err))
-  }, [])
+  > svg {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    opacity: 0.7;
+
+    height: 70%;
+  }
+
+  > div {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2;
+  }
+
+  > p {
+    text-align: center;
+    z-index: 2;
+  }
+`
+
+const BookRequest = () => {
+  const {data, error} = useMyBorrowRequest()
 
   return (
     <>
@@ -68,25 +95,23 @@ const BookRequest = () => {
         </AlertText>
       </TitleWrapper>
 
-      {borrowRequestList.length > 0 && (
+      {data?.length > 0 ? (
         <BookWrapper>
-          {borrowRequestList.map((item) => (
+          {data?.map((item) => (
             <BookRequestCard
+              book={item}
               key={item._id}
-              bookInfo={item.bookShelf}
-              requestTime={item.requestTime}
+              cardType={!item.book ? 'queue' : ''}
             />
           ))}
         </BookWrapper>
+      ) : (
+        <EmptyState>
+          <Icon name={ICONS.faBook} size="lg" color={COLORS.GRAY_LIGHT_3} />
+          <div>ไม่มีคำขอยืมหนังสือของคุณในขณะนี้</div>
+          <p>คุณได้รับหนังสือทั้งหมดที่คุณส่งคำขอแล้ว</p>
+        </EmptyState>
       )}
-
-      {/* <TitleWrapper>
-        <Title>หนังสือที่คุณได้เข้าคิวเพื่อขอยืม</Title>
-      </TitleWrapper>
-      <BookWrapper>
-        <BookRequestCard cardType="queue" />
-        <BookRequestCard cardType="queue" />
-      </BookWrapper> */}
     </>
   )
 }

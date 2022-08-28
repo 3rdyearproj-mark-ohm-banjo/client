@@ -8,6 +8,9 @@ import {useState} from 'react'
 import BookForwardingCard from '../../components/cards/BookForwardingCard'
 import userService from '../../api/request/userService'
 import {useSelector} from 'react-redux'
+import useMyForwardRequest from '../../api/query/useMyForwardRequest'
+import {Icon} from '../../components'
+import {ICONS} from '../../config/icon'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -53,29 +56,49 @@ const SwitchButton = styled.button`
 
 const BookWrapper = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.LG};
   padding: ${SPACING.MD};
 `
 
+const EmptyState = styled.div`
+  height: 100%;
+  padding: ${SPACING.MD};
+  background-color: ${COLORS.GRAY_LIGHT};
+  border-radius: ${SPACING.MD};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  > svg {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    opacity: 0.7;
+
+    height: 70%;
+  }
+
+  > div {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2;
+  }
+
+  > p {
+    text-align: center;
+    z-index: 2;
+  }
+`
+
 const Forwarding = () => {
-  const [currentView, setCurrentView] = useState('all')
-  const [forwardingItem, setForwardingItem] = useState([])
-
-  const isAuth = useSelector((state) => state.user.isAuth)
-
-  useEffect(() => {
-    if (isAuth) {
-      userService.forwardingRequest().then((res) => {
-        setForwardingItem(res.data?.data)
-      })
-
-      setInterval(() => {
-        userService.forwardingRequest()
-      }, 60000)
-    }
-  }, [isAuth])
+  const {data, error} = useMyForwardRequest()
 
   return (
     <>
@@ -84,34 +107,26 @@ const Forwarding = () => {
       </Head>
       <TitleWrapper>
         <Title>หนังสือที่ต้องส่งต่อ</Title>
-
-        <SwitchButtonWrapper>
-          <SwitchButton
-            isActive={currentView === 'all' ? true : false}
-            onClick={() => setCurrentView('all')}
-          >
-            หนังสือทั้งหมด
-          </SwitchButton>
-          <SwitchButton
-            isActive={currentView === 'sent' ? true : false}
-            onClick={() => setCurrentView('sent')}
-          >
-            ส่งเรียบร้อยแล้ว
-          </SwitchButton>
-        </SwitchButtonWrapper>
       </TitleWrapper>
+
       <BookWrapper>
-        {forwardingItem
-          .filter((item) => {
-            if (currentView === 'all') {
-              return item
-            } else if (currentView === 'sent') {
-              return item.sendingTime
-            }
-          })
-          .map((info) => (
-            <BookForwardingCard key={info._id} bookInfo={info} />
-          ))}
+        {data?.data?.data?.length > 0 ? (
+          <>
+            {data?.data?.data?.map((info) => (
+              <BookForwardingCard key={info._id} bookInfo={info} />
+            ))}
+          </>
+        ) : (
+          <EmptyState>
+            <Icon
+              name={ICONS.faPaperPlane}
+              size="lg"
+              color={COLORS.GRAY_LIGHT_3}
+            />
+            <div>ไม่มีหนังสือที่คุณต้องจัดส่ง </div>
+            <p>หรือคุณได้จัดส่งหนังสือทั้งหมดแล้ว</p>
+          </EmptyState>
+        )}
       </BookWrapper>
     </>
   )

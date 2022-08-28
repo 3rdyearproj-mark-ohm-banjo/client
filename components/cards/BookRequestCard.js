@@ -10,6 +10,10 @@ import ConfirmModal from '../ConfirmModal'
 import {ICONS} from '../../config/icon'
 import userService from '../../api/request/userService'
 import {formatDate} from '../../utils/format'
+import Image from 'next/image'
+import toast from 'react-hot-toast'
+import {useEffect} from 'react'
+import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -36,8 +40,9 @@ const ImageWrapper = styled.div`
 const ImageContainer = styled.div`
   width: 140px;
   height: 170px;
-  background-color: ${COLORS.GRAY_DARK};
+  background-color: ${COLORS.GRAY_LIGHT_2};
   border-radius: ${SPACING.SM};
+  position: relative;
 `
 
 const ContentWrapper = styled.div`
@@ -93,41 +98,55 @@ const Status = styled.span`
   ${(props) => props.type === 'waiting' && `color: ${COLORS.BLUE_LIGHT_3}`}
 `
 
-const BookRequestCard = ({bookInfo, cardType, requestTime}) => {
-  const defaultConfirmModal = {
-    show: false,
-    type: '',
+const BookRequestCard = ({book, cardType}) => {
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [cancelModal, setCancelModal] = useState(false)
+  const {refetch: refetchBorrow} = useMyBorrowRequest(false)
+
+  const mapStatus = {
+    pending: 'กำลังดำเนินการ',
+    sending: 'ผู้ส่งจัดส่งแล้ว',
+    holding: 'ได้รับหนังสือแล้ว',
   }
 
-  const [confirmModal, setConfirmModal] = useState(defaultConfirmModal)
-
   const handleSubmit = () => {
-    switch (cardType) {
-      case 'receive':
-        userService
-          .confirmReceive(bookInfo.book._id)
-          .then(() => toast.success('ยืนยันการรับหนังสือสำเร็จแล้ว'))
-          .catch((err) => toast.error(err))
+    toast.promise(userService.confirmReceive(book?.book?._id), {
+      loading: 'กำลังดำเนินการ...',
+      success: () => {
+        setConfirmModal(false)
+        refetchBorrow()
+        return 'ยืนยันการรับหนังสือสำเร็จแล้ว'
+      },
+      error: () => {
+        setConfirmModal(false)
+        refetchBorrow()
+        return 'เกิดข้อผิดพลาด'
+      },
+    })
+  }
 
-        setConfirmModal(defaultConfirmModal)
-
-      case 'queue':
-        setConfirmModal(defaultConfirmModal)
-      default:
-        setConfirmModal(defaultConfirmModal)
-    }
+  const cancelBorrowHandler = () => {
+    toast.promise(userService.cancelBorrow(book.bookShelf._id), {
+      loading: 'กำลังดำเนินการ...',
+      success: () => {
+        setCancelModal(false)
+        refetchBorrow()
+        return cardType === 'queue' ? 'ออกจากคิวสำเร็จ' : 'ยกเลิกการยืมสำเร็จ'
+      },
+      error: () => {
+        setCancelModal(false)
+        refetchBorrow()
+        return 'เกิดข้อผิดพลาด'
+      },
+    })
   }
 
   return (
     <>
       <ConfirmModal
         onClose={setConfirmModal}
-        onShow={confirmModal?.show}
-        header={
-          confirmModal?.type === 'queue'
-            ? `ยืนยันการออกจากคิว?`
-            : 'ยืนยันการได้รับหนังสือ'
-        }
+        onShow={confirmModal}
+        header={'ยืนยันการได้รับหนังสือ'}
         icon={ICONS.faBook}
         iconBg={COLORS.GREEN_1}
       >
@@ -158,18 +177,65 @@ const BookRequestCard = ({bookInfo, cardType, requestTime}) => {
           </Button>
         </div>
       </ConfirmModal>
+
+      <ConfirmModal
+        onClose={setCancelModal}
+        onShow={cancelModal}
+        header={
+          cardType === 'queue'
+            ? `ต้องการออกจากคิวของ ${book.bookShelf?.bookName} จริงๆ หรอ`
+            : `ยกเลิกการยืม ${book.bookShelf?.bookName} จริงๆ หรอ`
+        }
+        icon={ICONS.faBook}
+        iconBg={COLORS.GREEN_1}
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            width: '70%',
+          }}
+        >
+          <Button
+            btnSize="sm"
+            bgColor={COLORS.RED_1}
+            onClick={() => setCancelModal(false)}
+            fullWidth
+            borderRadius="4px"
+          >
+            ยกเลิก
+          </Button>
+          <Button
+            btnSize="sm"
+            onClick={cancelBorrowHandler}
+            fullWidth
+            borderRadius="4px"
+          >
+            ยืนยัน
+          </Button>
+        </div>
+      </ConfirmModal>
+
       <CardContainer>
         <ImageWrapper>
-          <ImageContainer></ImageContainer>
-          <ISBN>ISBN {bookInfo?.ISBN}</ISBN>
+          <ImageContainer>
+            <Image
+              src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${book.bookShelf?.imageCover}`}
+              layout="fill"
+              objectFit="contain"
+              alt={book?.bookShelf?.bookName}
+            ></Image>
+          </ImageContainer>
+          <ISBN>ISBN {book?.bookShelf?.ISBN}</ISBN>
         </ImageWrapper>
         <ContentWrapper>
           <BookHeader>
-            <BookName>{bookInfo?.bookName}</BookName>
+            <BookName>{book?.bookShelf?.bookName}</BookName>
             {cardType === 'queue' ? (
               <Status type="waiting">อยู่ในคิว</Status>
             ) : (
-              <Status>จัดส่งแล้ว</Status>
+              <Status type="waiting">{mapStatus[book?.book?.status]}</Status>
             )}
           </BookHeader>
 
@@ -186,51 +252,67 @@ const BookRequestCard = ({bookInfo, cardType, requestTime}) => {
           ) : (
             <>
               <BorrowDate>
-                วันที่ขอยืม : {formatDate(requestTime, true, true, true)}
+                วันที่ขอยืม : {formatDate(book?.requestTime, true, true, true)}
               </BorrowDate>
               <LimitReceive>
                 จะได้รับภายในวันที่ :{' '}
-                {formatDate(new Date(requestTime).setHours(72))}
+                {formatDate(new Date(book?.requestTime).setHours(72))}
               </LimitReceive>
             </>
           )}
 
           <ButtonWrapper>
-            {/* <Button btnSize="sm" btnType="whiteBorder">
-            ยกเลิกรายการ
-          </Button> */}
-
             {cardType === 'queue' ? (
               <>
                 <Button
                   btnSize="sm"
                   btnType="orangeGradient"
-                  onClick={() =>
-                    setConfirmModal({
-                      type: 'queue',
-                      show: true,
-                    })
-                  }
+                  onClick={() => setCancelModal(true)}
                 >
                   ออกจากคิว
                 </Button>
               </>
             ) : (
               <>
-                <Button
-                  btnSize="sm"
-                  onClick={() =>
-                    setConfirmModal({
-                      type: 'receive',
-                      show: true,
-                    })
-                  }
-                >
-                  ยืนยันการรับหนังสือ
-                </Button>
-                <Button btnSize="sm" btnType="orangeGradient">
-                  ติดต่อผู้ดูแลระบบ
-                </Button>
+                {book?.status === 'waiting' && (
+                  <Button
+                    btnSize="sm"
+                    btnType="orangeGradient"
+                    onClick={() => setCancelModal(true)}
+                  >
+                    ยกเลิกการยืม
+                  </Button>
+                )}
+
+                {book?.status === 'pending' &&
+                  book?.book?.status !== 'sending' && (
+                    <Button
+                      btnSize="sm"
+                      btnType="orangeGradient"
+                      isDisabled={true}
+                    >
+                      รอการจัดส่ง
+                    </Button>
+                  )}
+
+                {book?.book?.status === 'sending' && (
+                  <>
+                    <Button
+                      btnSize="sm"
+                      onClick={() =>
+                        setConfirmModal({
+                          type: 'receive',
+                          show: true,
+                        })
+                      }
+                    >
+                      ยืนยันการรับหนังสือ
+                    </Button>
+                    <Button btnSize="sm" btnType="orangeGradient">
+                      ติดต่อผู้ดูแลระบบ
+                    </Button>
+                  </>
+                )}
               </>
             )}
           </ButtonWrapper>

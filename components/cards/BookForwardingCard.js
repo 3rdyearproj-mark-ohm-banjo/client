@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import Image from 'next/image'
 import {formatDate} from '../../utils/format'
 import {useSelector} from 'react-redux'
+import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 
 const CardLayout = styled.div`
   padding: ${SPACING.MD};
@@ -124,6 +125,7 @@ const SendDate = styled.div`
 `
 
 const BookForwardingCard = ({bookInfo}) => {
+  const {refetch: getMyForward} = useMyForwardRequest(false)
   const donationHistory = useSelector(
     (state) => state?.user?.user?.donationHistory
   )
@@ -140,11 +142,17 @@ const BookForwardingCard = ({bookInfo}) => {
   }
 
   const submitForwarding = () => {
-    userService.confirmForwarding(bookInfo.book._id).then(() => {
-      toast.success('ยืนยันการส่งหนังสือสำเร็จ')
+    toast.promise(userService.confirmForwarding(bookInfo.book._id), {
+      loading: 'กำลังดำเนินการ...',
+      success: () => {
+        getMyForward()
+        return 'ยืนยันการส่งหนังสือสำเร็จ'
+      },
+      error: () => {
+        getMyForward()
+        return 'เกิดข้อผิดพลาด'
+      },
     })
-
-    toast.success('ยืนยันการส่งหนังสือสำเร็จ')
   }
 
   const statusCase = () => {
@@ -214,7 +222,7 @@ const BookForwardingCard = ({bookInfo}) => {
               ยืนยันการส่งหนังสือ
             </Button>
           ) : (
-            <Button btnSize="sm" btnType="orangeGradient">
+            <Button btnSize="sm" btnType="orangeGradient" isDisabled={true}>
               คุณส่งหนังสือเล่มนี้แล้ว
             </Button>
           )}

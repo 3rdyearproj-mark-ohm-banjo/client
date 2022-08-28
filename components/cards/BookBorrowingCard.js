@@ -72,8 +72,8 @@ const BookBorrowingCard = ({bookInfo}) => {
   return (
     <CardLayout onClick={() => router.push(`/profile/borrowing`)}>
       <ContentWrapper>
-        <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
-        <BorrowDate>ได้รับวันที่ 12 ส.ค. 2022</BorrowDate>
+        <BookName>{bookInfo?.bookShelf?.bookName}</BookName>
+        <BorrowDate>หมดอายุ 12 ส.ค. 2022</BorrowDate>
       </ContentWrapper>
       <CircleProgress>
         <CircularProgressbarWithChildren

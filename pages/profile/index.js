@@ -19,6 +19,7 @@ import {fetchCurrentUser, updateUser} from '../../redux/feature/UserSlice'
 import Head from 'next/head'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import toast from 'react-hot-toast'
+import useBorrowing from '../../api/query/useBorrowing'
 
 const TopicHead = styled.section`
   width: 100%;
@@ -125,6 +126,7 @@ const ProfilePage = () => {
   const [receiveItem, setReceiveItem] = useState({})
   const user = useSelector((state) => state.user.user)
   const totalBookDonation = useSelector((state) => state.user.totalBookDonation)
+  const {data: borrowing, error} = useBorrowing()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -209,7 +211,7 @@ const ProfilePage = () => {
         <StatItem>
           <Icon name={ICONS.faBook} />
           <p>ถือหนังสืออยู่</p>
-          <span>0 / 5 เล่ม</span>
+          <span>{borrowing?.data?.data.length} / 5 เล่ม</span>
         </StatItem>
       </StatContainer>
 
@@ -239,15 +241,11 @@ const ProfilePage = () => {
           modules={[Scrollbar]}
           className="mySwiper"
         >
-          <SwiperSlide>
-            <BookBorrowingCard />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BookBorrowingCard />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BookBorrowingCard />
-          </SwiperSlide>
+          {borrowing?.data?.data.map((info) => (
+            <SwiperSlide key={info._id}>
+              <BookBorrowingCard bookInfo={info} />
+            </SwiperSlide>
+          ))}
         </Swiper>
       </SwiperContainer>
 
