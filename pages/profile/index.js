@@ -9,9 +9,6 @@ import {SPACING} from '../../styles/spacing'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
 import {Scrollbar} from 'swiper'
-import BookOwnerCard from '../../components/cards/BookOwnerCard'
-import {useRouter} from 'next/router'
-import {formatDate} from '../../utils/format'
 import ConfirmModal from '../../components/ConfirmModal'
 import userService from '../../api/request/userService'
 import {useDispatch, useSelector} from 'react-redux'
@@ -20,6 +17,10 @@ import Head from 'next/head'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import toast from 'react-hot-toast'
 import useBorrowing from '../../api/query/useBorrowing'
+import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
+import useMyForwardRequest from '../../api/query/useMyForwardRequest'
+import BookRequestVerticalCard from '../../components/cards/BookRequestVerticalCard'
+import BookForwardVerticalCard from '../../components/cards/BookForwardVerticalCard'
 
 const TopicHead = styled.section`
   width: 100%;
@@ -127,6 +128,8 @@ const ProfilePage = () => {
   const user = useSelector((state) => state.user.user)
   const totalBookDonation = useSelector((state) => state.user.totalBookDonation)
   const {data: borrowing, error} = useBorrowing()
+  const {data: bookRequest} = useMyBorrowRequest()
+  const {data: bookForwarding} = useMyForwardRequest()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -215,61 +218,59 @@ const ProfilePage = () => {
         </StatItem>
       </StatContainer>
 
+      {borrowing?.data?.data.length > 0 && (
+        <>
+          <TopicHead>
+            <h3>หนังสือที่กำลังยืมอยู่</h3>
+          </TopicHead>
+          <SwiperContainer>
+            <Swiper
+              slidesPerView={1}
+              spaceBetween={10}
+              breakpoints={{
+                700: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                },
+              }}
+              scrollbar={{
+                hide: true,
+              }}
+              loopFillGroupWithBlank={true}
+              modules={[Scrollbar]}
+              className="mySwiper"
+            >
+              {borrowing?.data?.data.map((info) => (
+                <SwiperSlide key={info._id}>
+                  <BookBorrowingCard bookInfo={info} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </SwiperContainer>
+        </>
+      )}
+
       <TopicHead>
-        <h3>หนังสือที่กำลังยืมอยู่</h3>
+        <h3>หนังสือที่คุณขอยืม</h3>
       </TopicHead>
 
-      {/* <EmptyState>ไม่พบหนังสือที่กำลังยืมอยู่</EmptyState> */}
-      <SwiperContainer>
-        <Swiper
-          slidesPerView={1}
-          spaceBetween={10}
-          breakpoints={{
-            700: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-            1024: {
-              slidesPerView: 3,
-              spaceBetween: 20,
-            },
-          }}
-          scrollbar={{
-            hide: true,
-          }}
-          loopFillGroupWithBlank={true}
-          modules={[Scrollbar]}
-          className="mySwiper"
-        >
-          {borrowing?.data?.data.map((info) => (
-            <SwiperSlide key={info._id}>
-              <BookBorrowingCard bookInfo={info} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </SwiperContainer>
-
-      <TopicHead>
-        <h3>หนังสือที่จะได้รับ</h3>
-      </TopicHead>
-      <EmptyState>ไม่มีหนังสือที่คุณได้จะรับ</EmptyState>
-      {/* <SwiperContainer>
-        {user?.donationHistory?.length > 0 ? (
+      {bookRequest?.length > 0 ? (
+        <SwiperContainer>
           <Swiper
-            slidesPerView={2}
+            slidesPerView={1}
             spaceBetween={10}
             breakpoints={{
-              520: {
+              700: {
                 slidesPerView: 2,
                 spaceBetween: 20,
               },
-              700: {
+              1024: {
                 slidesPerView: 3,
                 spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 0,
               },
             }}
             scrollbar={{
@@ -279,39 +280,52 @@ const ProfilePage = () => {
             modules={[Scrollbar]}
             className="mySwiper"
           >
-            {user?.donationHistory?.map((history) => (
-              <SwiperSlide key={`donation-book-${history._id}`}>
-                <BookOwnerCard
-                  bookId={history.book?._id}
-                  bookInfo={history.book?.bookShelf}
-                  donationTime={formatDate(
-                    history?.donationTime,
-                    true,
-                    true,
-                    true
-                  )}
-                  canCancel={history.book?.currentHolder === user._id}
-                  onReceive={(showModal, bookId) => {
-                    setShowCancelModal(showModal)
-                    setReceiveItem(bookId)
-                  }}
-                ></BookOwnerCard>
+            {bookRequest.map((item) => (
+              <SwiperSlide key={item._id}>
+                <BookRequestVerticalCard bookInfo={item} />
               </SwiperSlide>
             ))}
           </Swiper>
-        ) : (
-          <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
-        )}
-      </SwiperContainer> */}
+        </SwiperContainer>
+      ) : (
+        <EmptyState>ไม่มีหนังสือที่คุณได้จะรับ</EmptyState>
+      )}
 
       <TopicHead>
-        <h3> หนังสือที่ต้องส่งต่อ</h3>{' '}
-        {/* <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
-              <span> ดูทั้งหมด </span>
-              <Icon name={ICONS.faChevronRight} />
-            </ViewAll> */}
+        <h3>หนังสือที่ต้องส่งต่อ</h3>
       </TopicHead>
-      <EmptyState>คุณยังไม่เคยยืมหนังสือ</EmptyState>
+      {bookForwarding?.data?.data?.length > 0 ? (
+        <SwiperContainer>
+          <Swiper
+            slidesPerView={1}
+            spaceBetween={10}
+            breakpoints={{
+              700: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+            }}
+            scrollbar={{
+              hide: true,
+            }}
+            loopFillGroupWithBlank={true}
+            modules={[Scrollbar]}
+            className="mySwiper"
+          >
+            {bookForwarding?.data?.data.map((item) => (
+              <SwiperSlide key={item._id}>
+                <BookForwardVerticalCard bookInfo={item} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </SwiperContainer>
+      ) : (
+        <EmptyState>ไม่มีหนังสือที่ต้องส่งต่อ</EmptyState>
+      )}
     </>
   )
 }

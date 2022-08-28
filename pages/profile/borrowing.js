@@ -12,18 +12,41 @@ import 'swiper/css/scrollbar'
 import userService from '../../api/request/userService'
 import {useSelector} from 'react-redux'
 import useBorrowing from '../../api/query/useBorrowing'
+import {Icon} from '../../components'
+import {ICONS} from '../../config/icon'
 
 const EmptyState = styled.div`
-  width: 100%;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  font-weight: 600;
-  text-align: center;
+  height: 100%;
+  padding: ${SPACING.MD};
   background-color: ${COLORS.GRAY_LIGHT};
   border-radius: ${SPACING.MD};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  > svg {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    opacity: 0.7;
+
+    height: 70%;
+  }
+
+  > div {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2;
+  }
+
+  > p {
+    text-align: center;
+    z-index: 2;
+  }
 `
 
 const TitleWrapper = styled.div`
@@ -104,55 +127,27 @@ const BookBorrowingPage = () => {
         </SubTitle>
       </TitleWrapper>
 
-      <BookContainer>
-        {data?.data?.data
-          ?.filter((book) => {
-            return (
-              book.bookHistorys.length > 1 &&
-              book.currentHolder === user._id &&
-              book.status !== 'inProcess'
-            )
-          })
-          .map((book) => (
-            <BorrowingCardInfo key={book._id} info={book} />
-          ))}
-      </BookContainer>
-
-      {/* <SwiperContainer>
-        <Swiper
-          slidesPerView={1}
-          spaceBetween={10}
-          breakpoints={{
-            700: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-            1024: {
-              slidesPerView: 3,
-              spaceBetween: 20,
-            },
-          }}
-          modules={[Scrollbar]}
-          scrollbar
-          className="mySwiper"
-        >
-          <SwiperSlide>
-            <BorrowingCardInfo />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BorrowingCardInfo />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BorrowingCardInfo />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BorrowingCardInfo />
-          </SwiperSlide>
-          <SwiperSlide>
-            <BorrowingCardInfo />
-          </SwiperSlide>
-        </Swiper>
-      </SwiperContainer> */}
+      {data?.data?.data?.length > 0 ? (
+        <BookContainer>
+          {data?.data?.data
+            ?.filter((book) => {
+              return (
+                book.bookHistorys.length > 1 &&
+                book.currentHolder === user._id &&
+                book.status !== 'inProcess'
+              )
+            })
+            .map((book) => (
+              <BorrowingCardInfo key={book._id} info={book} />
+            ))}
+        </BookContainer>
+      ) : (
+        <EmptyState>
+          <Icon name={ICONS.faBook} size="lg" color={COLORS.GRAY_LIGHT_3} />
+          <div>ไม่มีหนังสือที่คุณยืมในขณะนี้</div>
+          <p>ไม่มีการยืม หรือคุณได้ส่งต่อหนังสือทั้งหมดเรียบร้อยแล้ว</p>
+        </EmptyState>
+      )}
     </>
   )
 }
