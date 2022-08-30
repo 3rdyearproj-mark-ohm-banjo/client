@@ -3,7 +3,7 @@ import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import {useDispatch, useSelector} from 'react-redux'
 import {clearUser} from '../redux/feature/UserSlice'
-import {logout} from '../api/request/userService'
+import userService from '../api/request/userService'
 import {useRouter} from 'next/router'
 import Icon from './Icon'
 import {ICONS} from '../config/icon'
@@ -52,7 +52,7 @@ const SideBar = () => {
   const user = useSelector((state) => state.user.user)
 
   const logoutHandler = async () => {
-    const getResult = async () => await logout()
+    const getResult = async () => await userService.logout()
     return getResult()
       .then(() => {
         dispatch(clearUser())

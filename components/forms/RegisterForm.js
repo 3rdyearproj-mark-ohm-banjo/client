@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {register} from '../../api/request/userService'
+import userService from '../../api/request/userService'
 import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import Button from '../Button'
@@ -8,7 +8,11 @@ import InputWithIcon from './InputWithIcon'
 import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import Icon from '../Icon'
-import {validateEmail, validateTel} from '../../utils/validate'
+import {
+  validateEmail,
+  validatePassword,
+  validateTel,
+} from '../../utils/validate'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
@@ -48,6 +52,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     // lastname: '',
     // tel: '',
   })
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [errors, setErrors] = useState([])
 
   const validate = () => {
@@ -57,11 +62,17 @@ const RegisterForm = ({onShowRegister, onShow}) => {
       if (
         userData[key].length < 1 ||
         (key === 'email' && !validateEmail(userData.email)) ||
-        (key === 'tel' && !validateTel(userData.tel))
+        (key === 'tel' && !validateTel(userData.tel)) ||
+        (key === 'password' && !validatePassword(userData.password))
       ) {
         errorArr.push(key)
       }
     })
+
+    if (passwordConfirm !== userData['password']) {
+      errorArr.push('confirmpassword')
+    }
+
     if (errorArr.length > 0) {
       setErrors(errorArr)
       return 0
@@ -73,7 +84,8 @@ const RegisterForm = ({onShowRegister, onShow}) => {
   const registerHandle = (e) => {
     e.preventDefault()
     if (validate()) {
-      return register(userData)
+      return userService
+        .register(userData)
         .then((res) => {
           onShowRegister(false)
         })
@@ -132,7 +144,7 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('username') !== -1}
           errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
         />
-{/* 
+        {/* 
         <InputWithIcon
           label="ชื่อจริง*"
           type="text"
@@ -163,7 +175,18 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('password', data)}
           placeholder="กรอกรหัสผ่าน"
           error={errors.indexOf('password') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกรหัสผ่าน"
+          errorMessage="กรุณากรอกรหัสผ่านที่ประกอบด้วย ตัวพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และตัวอักษรพิเศษ ความยาว 10 - 30 ตัว"
+        />
+
+        <InputWithIcon
+          label="กรอกรหัสผ่านอีกครั้ง*"
+          iconName={ICONS.faLock}
+          inputType="password"
+          maxLength={30}
+          onChange={(data) => setPasswordConfirm(data)}
+          placeholder="กรอกรหัสผ่านอีกครั้ง"
+          error={errors.indexOf('comfirmpassword') !== -1}
+          errorMessage="กรุณากรอกรหัสผ่านอีกครั้ง"
         />
 
         {/* <InputWithIcon

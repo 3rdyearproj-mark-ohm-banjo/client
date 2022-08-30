@@ -10,7 +10,6 @@ import Image from 'next/image'
 import PropTypes from 'prop-types'
 import {useSelector} from 'react-redux'
 import {useSpring, animated} from 'react-spring'
-import {Flex} from './Layout'
 import Link from 'next/link'
 
 const Card = styled.div`
@@ -84,6 +83,11 @@ const Type = styled.div`
   ${(props) => props.size === 'sm' && TypeSmStyle}
 `
 
+const BorrowCountWrapper = styled.div`
+  display: flex;
+  gap: ${SPACING.MD};
+`
+
 const BorrowCount = styled.span`
   font-size: 12px;
   color: ${(props) => props.color ?? COLORS.GRAY_DARK_1};
@@ -152,7 +156,7 @@ const BookCard = ({bookInfo}) => {
           ))}
         </Types>
 
-        <Flex gap={SPACING.MD}>
+        <BorrowCountWrapper>
           <BorrowCount>
             <span>การยืม</span> {bookInfo?.totalBorrow.toLocaleString('en-US')}{' '}
             ครั้ง
@@ -163,7 +167,7 @@ const BookCard = ({bookInfo}) => {
               เล่ม
             </span>
           </BorrowCount>
-        </Flex>
+        </BorrowCountWrapper>
 
         <BottomZone style={slideIn}>
           {isOwner && (

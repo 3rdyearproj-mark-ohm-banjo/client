@@ -1,12 +1,11 @@
 import Image from 'next/image'
 import React from 'react'
-import styled from 'styled-components'
-import {SPACING} from '../styles/spacing'
-import Button from './Button'
+import styled, {css} from 'styled-components'
+import {SPACING} from '../../styles/spacing'
+import Button from '../Button'
 import PropTypes from 'prop-types'
 import {useRouter} from 'next/router'
-import {css} from 'styled-components'
-import {COLORS} from '../styles/colors'
+import {COLORS} from '../../styles/colors'
 
 const SecondaryLayout = css`
   width: 100%;
@@ -49,10 +48,11 @@ const BookName = styled.p`
   ${(props) => props.cardType === 'secondary' && SecondaryBookName}
 `
 
-const DonationDate = styled.span`
+const Description = styled.span`
   font-size: 13px;
   flex-grow: 1;
 `
+
 const Isbn = styled.span`
   font-size: 14px;
 `
@@ -82,7 +82,7 @@ const BookOwnerCard = ({
   canCancel,
   bookInfo,
   donationTime,
-  onCancel,
+  onReceive,
   cardType,
 }) => {
   const router = useRouter()
@@ -101,20 +101,23 @@ const BookOwnerCard = ({
       <BookInfoWrapper cardType={cardType}>
         <BookName cardType={cardType}>{bookInfo?.bookName}</BookName>
         {cardType === 'secondary' && <Isbn>ISBN {bookInfo?.ISBN}</Isbn>}
-        <DonationDate>บริจาควันที่ {donationTime}</DonationDate>
+        <Description>
+          <span>วันที่บริจาค {donationTime}</span> <br />
+        </Description>
+
         {canCancel ? (
           <Button
             btnSize="sm"
             btnType="orangeGradient"
             onClick={() =>
-              onCancel(true, {bookId, bookName: bookInfo?.bookName})
+              onReceive(true, {bookId, bookName: bookInfo?.bookName})
             }
           >
             ยกเลิกการบริจาค
           </Button>
         ) : (
           <Button btnSize="sm" btnType="whiteBorder" isDisabled>
-            หนังสือเล่มนี้ถูกส่งต่อแล้ว
+            หนังสือถูกส่งต่อแล้ว
           </Button>
         )}
       </BookInfoWrapper>

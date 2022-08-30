@@ -264,6 +264,13 @@ const AddBookForm = ({
               preview: `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`,
             },
           ])
+
+          Object.keys(res.data[0]).forEach(
+            (k) =>
+              (!res.data[0][k] || res.data[0][k].length === 0) &&
+              delete res.data[0][k]
+          )
+
           setBookData(res.data[0])
           if (!isbnBookToEdit) {
             setDisabledAll(true)

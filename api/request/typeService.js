@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../axios'
 
 const getAllTypes = async () => {
   const res = await axios.get(`/type`)

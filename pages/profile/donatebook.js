@@ -62,7 +62,6 @@ const DonateBookPage = () => {
         setShowResModal(true)
         setIsbn(res?.data?.ISBN)
         setClearForm(true)
-        dispatch(fetchCurrentUser())
       } else {
         alert(res.error)
       }
@@ -77,7 +76,10 @@ const DonateBookPage = () => {
 
       {showResModal && (
         <BookDonateModal
-          onSubmit={() => router.push(`/book/${isbn}`)}
+          onSubmit={() => {
+            dispatch(fetchCurrentUser())
+            router.push(`/book/${isbn}`)
+          }}
           onClose={setShowResModal}
         />
       )}

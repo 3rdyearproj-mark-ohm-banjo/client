@@ -170,7 +170,7 @@ const SearchPage = ({isEmptyQuery, total, bookData, pageSize}) => {
 export default SearchPage
 
 export const getServerSideProps = async (context) => {
-  const pageSize = 6
+  const pageSize = 9
   let total = 0
   let bookData = []
 

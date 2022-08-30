@@ -4,7 +4,6 @@ import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
 import Icon from '../Icon'
-import {Flex} from '../Layout'
 
 const InputControl = styled.div`
   display: flex;
@@ -66,12 +65,17 @@ const TextArea = styled.textarea`
   }
 `
 
-const ErrMessage = styled.div`
+const LabelWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0 ${SPACING.MD};
+`
+
+const ErrMessage = styled.span`
   background-color: ${COLORS.RED_2};
   color: ${COLORS.WHITE};
   padding: 2px ${SPACING.MD};
   border-radius: ${SPACING.MD};
-  width: max-content;
   margin: ${SPACING.SM} 0;
   font-size: 14px;
   font-weight: 600;
@@ -90,10 +94,9 @@ const InputWithIcon = ({
 }) => {
   return (
     <InputControl>
-      <Flex alignItems="center" gap={`0 ${SPACING.MD}`}>
+      <LabelWrapper>
         <label>{label}</label>
-        {error && <ErrMessage>{errorMessage}</ErrMessage>}
-      </Flex>
+      </LabelWrapper>
       <InputWrapper isTextArea={inputType === 'textarea'}>
         <InputIcon>
           <Icon name={iconName} />
@@ -123,6 +126,7 @@ const InputWithIcon = ({
           />
         )}
       </InputWrapper>
+      {error && <ErrMessage>{errorMessage}</ErrMessage>}
     </InputControl>
   )
 }
