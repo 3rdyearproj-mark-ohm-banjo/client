@@ -100,6 +100,8 @@ const EmptyState = styled.div`
 const Forwarding = () => {
   const {data, error} = useMyForwardRequest()
 
+  console.log(data?.data?.data)
+
   return (
     <>
       <Head>

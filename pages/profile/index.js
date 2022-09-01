@@ -21,6 +21,7 @@ import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import BookRequestVerticalCard from '../../components/cards/BookRequestVerticalCard'
 import BookForwardVerticalCard from '../../components/cards/BookForwardVerticalCard'
+import useBorrowHistory from '../../api/query/useBorrowHistory'
 
 const TopicHead = styled.section`
   width: 100%;
@@ -41,7 +42,6 @@ const SwiperContainer = styled.div`
   width: 100%;
   > div div.swiper-slide > div {
     margin: 0;
-    max-width: 90%;
   }
 
   .swiper-wrapper {
@@ -58,7 +58,7 @@ const EmptyState = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 200px;
+  height: 250px;
   font-size: 20px;
   font-weight: 600;
   text-align: center;
@@ -122,6 +122,20 @@ const ButtonModalWrapper = styled.div`
   width: 70%;
 `
 
+const BookActionContainer = styled.div`
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 2%;
+  @media (min-width: 768px) {
+    grid-template-columns: 49% 49%;
+  }
+`
+
+const ActionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const ProfilePage = () => {
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [receiveItem, setReceiveItem] = useState({})
@@ -130,6 +144,7 @@ const ProfilePage = () => {
   const {data: borrowing, error} = useBorrowing()
   const {data: bookRequest} = useMyBorrowRequest()
   const {data: bookForwarding} = useMyForwardRequest()
+  const {data: borrowHistory} = useBorrowHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -204,7 +219,7 @@ const ProfilePage = () => {
         <StatItem>
           <Icon name={ICONS.faBookBookmark} />
           <p>ยืมไปแล้ว</p>
-          <span>0 ครั้ง</span>
+          <span>{borrowHistory?.data?.data?.length} ครั้ง</span>
         </StatItem>
         <StatItem>
           <Icon name={ICONS.faHandHoldingHand} />
@@ -214,7 +229,7 @@ const ProfilePage = () => {
         <StatItem>
           <Icon name={ICONS.faBook} />
           <p>ถือหนังสืออยู่</p>
-          <span>{borrowing?.data?.data.length} / 5 เล่ม</span>
+          <span>{borrowing?.data?.data?.borrowBooks?.length} / 5 เล่ม</span>
         </StatItem>
       </StatContainer>
 
@@ -233,7 +248,7 @@ const ProfilePage = () => {
                   spaceBetween: 20,
                 },
                 1024: {
-                  slidesPerView: 3,
+                  slidesPerView: 2,
                   spaceBetween: 20,
                 },
               }}
@@ -254,78 +269,83 @@ const ProfilePage = () => {
         </>
       )}
 
-      <TopicHead>
-        <h3>หนังสือที่คุณขอยืม</h3>
-      </TopicHead>
+      <BookActionContainer>
+        <ActionGroup>
+          <TopicHead>
+            <h3>หนังสือที่คุณขอยืม</h3>
+          </TopicHead>
 
-      {bookRequest?.length > 0 ? (
-        <SwiperContainer>
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={10}
-            breakpoints={{
-              700: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-            }}
-            scrollbar={{
-              hide: true,
-            }}
-            loopFillGroupWithBlank={true}
-            modules={[Scrollbar]}
-            className="mySwiper"
-          >
-            {bookRequest.map((item) => (
-              <SwiperSlide key={item._id}>
-                <BookRequestVerticalCard bookInfo={item} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </SwiperContainer>
-      ) : (
-        <EmptyState>ไม่มีหนังสือที่คุณได้จะรับ</EmptyState>
-      )}
-
-      <TopicHead>
-        <h3>หนังสือที่ต้องส่งต่อ</h3>
-      </TopicHead>
-      {bookForwarding?.data?.data?.length > 0 ? (
-        <SwiperContainer>
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={10}
-            breakpoints={{
-              700: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-            }}
-            scrollbar={{
-              hide: true,
-            }}
-            loopFillGroupWithBlank={true}
-            modules={[Scrollbar]}
-            className="mySwiper"
-          >
-            {bookForwarding?.data?.data.map((item) => (
-              <SwiperSlide key={item._id}>
-                <BookForwardVerticalCard bookInfo={item} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </SwiperContainer>
-      ) : (
-        <EmptyState>ไม่มีหนังสือที่ต้องส่งต่อ</EmptyState>
-      )}
+          {bookRequest?.length > 0 ? (
+            <SwiperContainer>
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                breakpoints={{
+                  700: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                  1024: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                loopFillGroupWithBlank={true}
+                modules={[Scrollbar]}
+                className="mySwiper"
+              >
+                {bookRequest.map((item) => (
+                  <SwiperSlide key={item._id}>
+                    <BookRequestVerticalCard bookInfo={item} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </SwiperContainer>
+          ) : (
+            <EmptyState>ไม่มีหนังสือที่คุณได้จะรับ</EmptyState>
+          )}
+        </ActionGroup>
+        <ActionGroup>
+          <TopicHead>
+            <h3>หนังสือที่ต้องส่งต่อ</h3>
+          </TopicHead>
+          {bookForwarding?.data?.data?.length > 0 ? (
+            <SwiperContainer>
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                breakpoints={{
+                  700: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                loopFillGroupWithBlank={true}
+                modules={[Scrollbar]}
+                className="mySwiper"
+              >
+                {bookForwarding?.data?.data.map((item) => (
+                  <SwiperSlide key={item._id}>
+                    <BookForwardVerticalCard bookInfo={item} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </SwiperContainer>
+          ) : (
+            <EmptyState>ไม่มีหนังสือที่ต้องส่งต่อ</EmptyState>
+          )}
+        </ActionGroup>
+      </BookActionContainer>
     </>
   )
 }

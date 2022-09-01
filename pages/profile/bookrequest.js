@@ -79,6 +79,8 @@ const EmptyState = styled.div`
 const BookRequest = () => {
   const {data, error} = useMyBorrowRequest()
 
+  console.log(data)
+
   return (
     <>
       <Head>
@@ -101,7 +103,7 @@ const BookRequest = () => {
             <BookRequestCard
               book={item}
               key={item._id}
-              cardType={!item.book ? 'queue' : ''}
+              cardType={!item.book ? 'queue' : 'receive'}
             />
           ))}
         </BookWrapper>

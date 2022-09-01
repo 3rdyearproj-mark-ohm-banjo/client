@@ -75,19 +75,23 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
   const validate = () => {
     let err = []
 
-    if (userData.tel.length > 10 || !validateTel(userData.tel)) {
+    if (
+      userData.tel &&
+      userData.tel.length > 10 &&
+      !validateTel(userData.tel)
+    ) {
       err.push('tel')
     }
 
-    if (userData.firstname.length > 50) {
+    if (userData.firstname && userData.firstname.length > 50) {
       err.push('firstname')
     }
 
-    if (userData.lastname.length > 50) {
+    if (userData.lastname && userData.lastname.length > 50) {
       err.push('lastname')
     }
 
-    if (userData.address.length > 300) {
+    if (userData.address && userData.address.length > 300) {
       err.push('address')
     }
 

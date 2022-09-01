@@ -117,24 +117,28 @@ const ProfileHeadContainer = styled.div`
 const ProfilePosition = css`
   left: 0;
   opacity: 1;
+  pointer-events: auto;
 `
 
 const ProfileWrapper = styled.div`
   width: 100%;
+  top: 80px;
   left: -800px;
   position: fixed;
   z-index: 2000;
   opacity: 0;
   padding: ${SPACING.MD};
   transition: 0.2s;
+  pointer-events: none;
 
   ${(props) => props.trigger && ProfilePosition}
-
-  @media (min-width: 960px) {
+  @media
+    (min-width: 960px) {
     ${ProfilePosition}
     position: relative;
     padding: 0;
     z-index: 0;
+    top: 0;
   }
 `
 
@@ -146,21 +150,7 @@ const HideDesktop = styled.span`
 
 const ButtonWrapper = styled.div`
   padding-top: ${SPACING.MD};
-`
-
-const CloseButton = styled.button`
-  padding: ${SPACING.XS} ${SPACING.MD};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: ${SPACING.SM};
-  background-color: ${COLORS.GRAY_DARK_5};
-  color: ${COLORS.WHITE};
-  font-family: ${FONTS.SARABUN};
-  font-size: 16px;
-  border: none;
-  border-radius: ${SPACING.XS};
-  box-shadow: 0 5px 5px ${COLORS.GRAY_DARK_4};
+  margin-bottom: ${SPACING.MD};
 `
 
 const ProfileHead = () => {
@@ -186,7 +176,19 @@ const ProfileHead = () => {
           <ModalBackground></ModalBackground>
         </HideDesktop>
       )}
+
       <ProfileWrapper trigger={isTriggerMenu}>
+        <HideDesktop>
+          <ButtonWrapper>
+            <Button
+              btnSize="sm"
+              borderRadius="12px "
+              onClick={() => setIsTriggerMenu(true)}
+            >
+              <span>ปิดเมนู</span> <Icon name={ICONS.faXmark} />
+            </Button>
+          </ButtonWrapper>
+        </HideDesktop>
         <ProfileHeadContainer ref={MenuRef}>
           <UserProfile>
             <Circle>
@@ -239,14 +241,6 @@ const ProfileHead = () => {
               </NavItem>
             </Link>
           </NavMenu>
-
-          <HideDesktop>
-            <ButtonWrapper>
-              <CloseButton onClick={() => setIsTriggerMenu(false)}>
-                <span>ปิดเมนู</span> <Icon name={ICONS.faXmark} />
-              </CloseButton>
-            </ButtonWrapper>
-          </HideDesktop>
         </ProfileHeadContainer>
       </ProfileWrapper>
     </>

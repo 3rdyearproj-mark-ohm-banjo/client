@@ -85,6 +85,11 @@ const currentHoldingBook = () => {
   return res
 }
 
+const borrowHistory = () => {
+  const res = axiosPrivate.get(`user/successborrowrequest`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -102,4 +107,5 @@ export default {
   confirmReadingSuccess,
   confirmForwarding,
   currentHoldingBook,
+  borrowHistory,
 }

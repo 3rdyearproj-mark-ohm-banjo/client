@@ -48,7 +48,6 @@ const ContentWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${SPACING.SM};
 `
 
 const Description = styled.div`

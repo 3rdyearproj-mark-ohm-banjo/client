@@ -225,8 +225,9 @@ const BookInfo = ({bookInfo}) => {
 
   useEffect(() => {
     if (borrowing) {
+      console.log(borrowing?.data?.data?.borrowBooks)
       setIsBorrowing(
-        borrowing?.data?.data.some(
+        borrowing?.data?.data?.borrowBooks?.some(
           (book) => book?.bookShelf?._id === bookInfo._id
         )
       )
@@ -244,7 +245,8 @@ const BookInfo = ({bookInfo}) => {
   const isOwner = user?.donationHistory?.some(
     (info) =>
       info?.book?.bookShelf?._id === bookInfo?._id &&
-      info?.book?.currentHolder === user?._id
+      info?.book?.currentHolder === user?._id &&
+      info?.book?.bookHistorys?.length <= 2
   )
 
   const borrowHandler = () => {
@@ -406,14 +408,28 @@ const BookInfo = ({bookInfo}) => {
             )}
 
             {(!isAuth || (!isOwner && !isBorrowing && !isQueue)) && (
-              <Button
-                withIcon
-                fullWidth
-                iconName={ICONS.faBook}
-                onClick={borrowHandler}
-              >
-                ยืมหนังสือ
-              </Button>
+              <>
+                {bookInfo.totalAvailable > 0 ? (
+                  <Button
+                    withIcon
+                    fullWidth
+                    iconName={ICONS.faBook}
+                    onClick={borrowHandler}
+                  >
+                    ยืมหนังสือ
+                  </Button>
+                ) : (
+                  <Button
+                    withIcon
+                    fullWidth
+                    iconName={ICONS.faBook}
+                    onClick={borrowHandler}
+                  >
+                    เข้าคิวเพื่อขอยืม (ขณะนี้มีคิวทั้งหมด{' '}
+                    {bookInfo.queues.length} คิว)
+                  </Button>
+                )}
+              </>
             )}
 
             {isQueue && (

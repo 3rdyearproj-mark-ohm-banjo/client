@@ -103,7 +103,6 @@ const BookContainer = styled.div`
 `
 
 const BookBorrowingPage = () => {
-  const user = useSelector((state) => state.user.user)
   const {data, error} = useBorrowing()
 
   return (
@@ -113,7 +112,8 @@ const BookBorrowingPage = () => {
       </Head>
       <TitleWrapper>
         <Title>
-          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data.length} / 5 เล่ม){' '}
+          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data?.borrowBooks?.length} / 5
+          เล่ม){' '}
         </Title>
         <SubTitle>
           เมื่ออ่านเสร็จแล้ว คุณสามารถกด<Red>ยืนยันว่าอ่านจบแล้วได้</Red>
@@ -127,19 +127,11 @@ const BookBorrowingPage = () => {
         </SubTitle>
       </TitleWrapper>
 
-      {data?.data?.data?.length > 0 ? (
+      {data?.data?.data?.borrowBooks?.length > 0 ? (
         <BookContainer>
-          {data?.data?.data
-            ?.filter((book) => {
-              return (
-                book.bookHistorys.length > 1 &&
-                book.currentHolder === user._id &&
-                book.status !== 'inProcess'
-              )
-            })
-            .map((book) => (
-              <BorrowingCardInfo key={book._id} info={book} />
-            ))}
+          {data?.data?.data?.borrowBooks.map((book) => (
+            <BorrowingCardInfo key={book._id} info={book} />
+          ))}
         </BookContainer>
       ) : (
         <EmptyState>
