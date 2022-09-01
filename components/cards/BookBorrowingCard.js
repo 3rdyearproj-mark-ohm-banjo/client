@@ -69,6 +69,11 @@ const TimeLeft = styled.div`
 
 const BookBorrowingCard = ({bookInfo}) => {
   const router = useRouter()
+  const expireDay = Math.round(
+    (new Date(bookInfo.bookHistorys.expireTime).getTime() -
+      new Date().getTime()) /
+      (1000 * 3600 * 24)
+  )
   return (
     <CardLayout onClick={() => router.push(`/profile/borrowing`)}>
       <ContentWrapper>
@@ -77,14 +82,14 @@ const BookBorrowingCard = ({bookInfo}) => {
       </ContentWrapper>
       <CircleProgress>
         <CircularProgressbarWithChildren
-          value={70}
+          value={(14 - expireDay) * 7.14}
           styles={buildStyles({
             pathColor: COLORS.PRIMARY,
           })}
         >
           <TimeLeft>
             <span>เหลือ</span>
-            <span>5</span>
+            <span>{expireDay}</span>
             <span>วัน</span>
           </TimeLeft>
         </CircularProgressbarWithChildren>

@@ -98,7 +98,8 @@ const BookContainer = styled.div`
   gap: ${SPACING['2X']};
 
   @media (min-width: 768px) {
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 49% 49%;
+    gap: 2%;
   }
 `
 

@@ -16,6 +16,7 @@ import {ICONS} from '../../config/icon'
 import toast from 'react-hot-toast'
 import useBorrowing from '../../api/query/useBorrowing'
 import userService from '../../api/request/userService'
+import {formatDate} from '../../utils/format'
 
 const CardContainer = styled.div`
   height: 400px;
@@ -70,6 +71,7 @@ const CircleProgress = styled.div`
 const BookDateInfo = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: ${SPACING.XS};
 `
 
 const GetBookDate = styled.span`
@@ -77,7 +79,7 @@ const GetBookDate = styled.span`
   flex-direction: column;
   align-items: center;
   padding: ${SPACING.MD} 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
 
   > b {
@@ -88,6 +90,13 @@ const GetBookDate = styled.span`
 const BorrowingCardInfo = ({info}) => {
   const [showModal, setShowModal] = useState(false)
   const {refetch: getBorrowing} = useBorrowing(false)
+
+  const expireDay = Math.round(
+    (new Date(info.bookHistorys.expireTime).getTime() - new Date().getTime()) /
+      (1000 * 3600 * 24)
+  )
+
+  console.log(expireDay)
 
   const handleSubmit = () => {
     toast.promise(userService.confirmReadingSuccess(info._id), {
@@ -144,7 +153,7 @@ const BorrowingCardInfo = ({info}) => {
       <CardContainer>
         <CircleProgress>
           <CircularProgressbarWithChildren
-            value={70}
+            value={(14 - expireDay) * 7.14}
             strokeWidth={6}
             styles={buildStyles({
               pathColor: COLORS.PRIMARY,
@@ -167,12 +176,15 @@ const BorrowingCardInfo = ({info}) => {
             <BookName>{info.bookShelf.bookName}</BookName>
             <BookDateInfo>
               <GetBookDate>
-                <span>วันที่ 7 ก.ย. 2022</span>
+                <span>
+                  วันที่{' '}
+                  {formatDate(info.bookHistorys.receiveTime, true, true, true)}
+                </span>
                 <b>วันที่ได้รับหนังสือ</b>
               </GetBookDate>
               <br />
               <GetBookDate>
-                <span>วันที่ 7 ก.ย. 2022</span>
+                {formatDate(info.bookHistorys.expireTime, true, true, true)}
                 <b>วันที่หมดอายุการยืม</b>
               </GetBookDate>
             </BookDateInfo>

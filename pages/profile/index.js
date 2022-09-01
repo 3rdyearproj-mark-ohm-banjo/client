@@ -233,7 +233,7 @@ const ProfilePage = () => {
         </StatItem>
       </StatContainer>
 
-      {borrowing?.data?.data.length > 0 && (
+      {borrowing?.data?.data?.borrowBooks.length > 0 && (
         <>
           <TopicHead>
             <h3>หนังสือที่กำลังยืมอยู่</h3>
@@ -248,7 +248,7 @@ const ProfilePage = () => {
                   spaceBetween: 20,
                 },
                 1024: {
-                  slidesPerView: 2,
+                  slidesPerView: 3,
                   spaceBetween: 20,
                 },
               }}
@@ -259,7 +259,7 @@ const ProfilePage = () => {
               modules={[Scrollbar]}
               className="mySwiper"
             >
-              {borrowing?.data?.data.map((info) => (
+              {borrowing?.data?.data?.borrowBooks?.map((info) => (
                 <SwiperSlide key={info._id}>
                   <BookBorrowingCard bookInfo={info} />
                 </SwiperSlide>
