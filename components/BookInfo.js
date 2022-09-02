@@ -215,6 +215,7 @@ const BookInfo = ({bookInfo}) => {
   const {data: myRequest, refetch: getMyRequest} = useMyBorrowRequest(false)
   const [isBorrowing, setIsBorrowing] = useState(false)
   const [isQueue, setIsQueue] = useState(false)
+  const [isMaximum, setIsMaximum] = useState(false)
 
   useEffect(() => {
     if (isAuth) {
@@ -225,11 +226,14 @@ const BookInfo = ({bookInfo}) => {
 
   useEffect(() => {
     if (borrowing) {
-      console.log(borrowing?.data?.data?.borrowBooks)
       setIsBorrowing(
         borrowing?.data?.data?.borrowBooks?.some(
           (book) => book?.bookShelf?._id === bookInfo._id
         )
+      )
+
+      setIsMaximum(
+        borrowing?.data?.data?.borrowBooks?.length >= 5 ? true : false
       )
     }
   }, [bookInfo._id, borrowing])
@@ -407,7 +411,8 @@ const BookInfo = ({bookInfo}) => {
               </Button>
             )}
 
-            {(!isAuth || (!isOwner && !isBorrowing && !isQueue)) && (
+            {(!isAuth ||
+              (!isOwner && !isBorrowing && !isQueue && !isMaximum)) && (
               <>
                 {bookInfo.totalAvailable > 0 ? (
                   <Button
@@ -432,12 +437,22 @@ const BookInfo = ({bookInfo}) => {
               </>
             )}
 
-            {isQueue && (
+            {isMaximum && !isBorrowing && (
               <Button
                 withIcon
                 fullWidth
                 iconName={ICONS.faBook}
                 btnType="whiteBorder"
+              >
+                คุณถือหนังสือครบ 5 เล่มแล้ว
+              </Button>
+            )}
+
+            {isQueue && (
+              <Button
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
                 onClick={() => router.push('/profile/bookrequest')}
               >
                 คุณอยู่ในคิวของหนังสือนี้แล้ว
@@ -449,7 +464,6 @@ const BookInfo = ({bookInfo}) => {
                 withIcon
                 fullWidth
                 iconName={ICONS.faBook}
-                btnType="whiteBorder"
                 onClick={() => router.push('/profile/borrowing')}
               >
                 คุณกำลังยืมหนังสือเล่มนี้อยู่

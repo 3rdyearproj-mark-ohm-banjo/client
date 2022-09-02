@@ -151,7 +151,7 @@ const BorrowHistoryPage = () => {
             ทั้งหมด
           </option>
           {thaiMonths['full'].map((month, index) => (
-            <option value={month} key={`month-${index}`}>
+            <option value={index} key={`month-${index}`}>
               {month}
             </option>
           ))}
@@ -180,44 +180,66 @@ const BorrowHistoryPage = () => {
             </tr>
           </Thead>
 
-          {data?.data?.data?.length > 0 ? (
+          {data?.data?.data?.filter((item) => {
+            const receiveDate = new Date(item.receiveTime)
+            return (
+              (receiveDate.getMonth() === +filterMonth ||
+                isNaN(+filterMonth)) &&
+              (receiveDate.getFullYear() === +filterYear ||
+                isNaN(+filterYear)) &&
+              item
+            )
+          }).length > 0 ? (
             <Tbody>
-              {data?.data?.data?.map((row, i) => (
-                <tr key={`row${i}`}>
-                  <td>
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.book.bookShelf.imageCover}`}
-                      alt={row.bookName}
-                      width={80}
-                      height={100}
-                      objectFit="contain"
-                    />
-                  </td>
-                  <td>
-                    <span>ISBN</span>
-                    <span>{row.book.bookShelf.ISBN}</span>
-                  </td>
-                  <td>
-                    <span>ชื่อหนังสือ</span>
-                    <span>{row.book.bookShelf.bookName}</span>
-                  </td>
-                  <td>
-                    <span>วันที่ได้รับ</span>
-                    <span>
-                      {formatDate(row.receiveTime, true, true, true)}{' '}
-                    </span>
-                  </td>
-                  <td>
-                    <span>วันหมดอายุ</span>
-                    <span>{formatDate(row.expireTime, true, true, true)} </span>
-                  </td>
-                </tr>
-              ))}
+              {data?.data?.data
+                ?.filter((item) => {
+                  const receiveDate = new Date(item.receiveTime)
+                  return (
+                    (receiveDate.getMonth() === +filterMonth ||
+                      isNaN(+filterMonth)) &&
+                    (receiveDate.getFullYear() === +filterYear ||
+                      isNaN(+filterYear)) &&
+                    item
+                  )
+                })
+                ?.map((row, i) => (
+                  <tr key={`row${i}`}>
+                    <td>
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.book.bookShelf.imageCover}`}
+                        alt={row.bookName}
+                        width={80}
+                        height={100}
+                        objectFit="contain"
+                      />
+                    </td>
+                    <td>
+                      <span>ISBN</span>
+                      <span>{row.book.bookShelf.ISBN}</span>
+                    </td>
+                    <td>
+                      <span>ชื่อหนังสือ</span>
+                      <span>{row.book.bookShelf.bookName}</span>
+                    </td>
+                    <td>
+                      <span>วันที่ได้รับ</span>
+                      <span>
+                        {formatDate(row.receiveTime, true, true, true)}{' '}
+                      </span>
+                    </td>
+                    <td>
+                      <span>วันหมดอายุ</span>
+                      <span>
+                        {formatDate(row.expireTime, true, true, true)}{' '}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
             </Tbody>
           ) : (
             <tbody>
               <tr>
-                <EmptyRow colSpan="5">คุณยังไม่เคยยืมหนังสือ</EmptyRow>
+                <EmptyRow colSpan="5">ไม่พบประวัติการยืม</EmptyRow>
               </tr>
             </tbody>
           )}

@@ -79,8 +79,6 @@ const EmptyState = styled.div`
 const BookRequest = () => {
   const {data, error} = useMyBorrowRequest()
 
-  console.log(data)
-
   return (
     <>
       <Head>

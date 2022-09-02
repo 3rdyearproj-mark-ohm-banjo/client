@@ -175,6 +175,11 @@ const DrawerWrapper = styled.div`
 `
 const UserName = styled.div`
   font-size: 16px;
+  max-width: 100px;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
 const NavigationBar = () => {

@@ -7,6 +7,7 @@ import {
 } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import {useRouter} from 'next/router'
+import { formatDate } from '../../utils/format'
 
 const CardLayout = styled.div`
   max-width: 300px;
@@ -78,7 +79,9 @@ const BookBorrowingCard = ({bookInfo}) => {
     <CardLayout onClick={() => router.push(`/profile/borrowing`)}>
       <ContentWrapper>
         <BookName>{bookInfo?.bookShelf?.bookName}</BookName>
-        <BorrowDate>หมดอายุ 12 ส.ค. 2022</BorrowDate>
+        <BorrowDate>
+          หมดอายุ {formatDate(bookInfo.bookHistorys.expireTime)}
+        </BorrowDate>
       </ContentWrapper>
       <CircleProgress>
         <CircularProgressbarWithChildren

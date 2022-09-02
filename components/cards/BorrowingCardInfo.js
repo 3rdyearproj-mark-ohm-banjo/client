@@ -19,7 +19,7 @@ import userService from '../../api/request/userService'
 import {formatDate} from '../../utils/format'
 
 const CardContainer = styled.div`
-  height: 400px;
+  min-height: 400px;
   padding: ${SPACING.MD};
   border-radius: ${SPACING.SM};
   background-color: ${COLORS.GRAY_LIGHT_1};
@@ -30,9 +30,12 @@ const CardContainer = styled.div`
   box-shadow: 0 1px 5px ${COLORS.GRAY_LIGHT};
 
   @media (min-width: 1300px) {
+    min-height: auto;
     height: 270px;
     flex-direction: row;
   }
+
+  ${(props) => props.isExpired && `background-color: ${COLORS.GRAY_LIGHT_2}; `}
 `
 
 const ImageWrapper = styled.div`
@@ -85,6 +88,18 @@ const GetBookDate = styled.span`
   > b {
     font-weight: 600;
   }
+
+  > span {
+    ${(props) => props.isExpired && `color: ${COLORS.RED_2};font-weight: 600`}
+  }
+`
+
+const ExpireMessage = styled.div`
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  padding: 2px ${SPACING.SM};
+  text-align: center;
+  margin: 0 0 2px;
 `
 
 const BorrowingCardInfo = ({info}) => {
@@ -96,7 +111,9 @@ const BorrowingCardInfo = ({info}) => {
       (1000 * 3600 * 24)
   )
 
-  console.log(expireDay)
+  const isExpired =
+    new Date(Date.now()).getTime() >
+    new Date(info.bookHistorys.expireTime).getTime()
 
   const handleSubmit = () => {
     toast.promise(userService.confirmReadingSuccess(info._id), {
@@ -150,7 +167,7 @@ const BorrowingCardInfo = ({info}) => {
           </Button>
         </div>
       </ConfirmModal>
-      <CardContainer>
+      <CardContainer isExpired={isExpired}>
         <CircleProgress>
           <CircularProgressbarWithChildren
             value={(14 - expireDay) * 7.14}
@@ -174,6 +191,9 @@ const BorrowingCardInfo = ({info}) => {
         <ContentWrapper>
           <Description>
             <BookName>{info.bookShelf.bookName}</BookName>
+            {isExpired && (
+              <ExpireMessage>หมดเวลาการยืมหนังสือนี้แล้ว</ExpireMessage>
+            )}
             <BookDateInfo>
               <GetBookDate>
                 <span>
@@ -183,8 +203,10 @@ const BorrowingCardInfo = ({info}) => {
                 <b>วันที่ได้รับหนังสือ</b>
               </GetBookDate>
               <br />
-              <GetBookDate>
-                {formatDate(info.bookHistorys.expireTime, true, true, true)}
+              <GetBookDate isExpired={isExpired}>
+                <span>
+                  {formatDate(info.bookHistorys.expireTime, true, true, true)}
+                </span>
                 <b>วันที่หมดอายุการยืม</b>
               </GetBookDate>
             </BookDateInfo>
