@@ -314,9 +314,9 @@ const BookRequestCard = ({book, cardType}) => {
                     >
                       ยืนยันการรับหนังสือ
                     </Button>
-                    <Button btnSize="sm" btnType="orangeGradient">
+                    {/* <Button btnSize="sm" btnType="orangeGradient">
                       ติดต่อผู้ดูแลระบบ
-                    </Button>
+                    </Button> */}
                   </>
                 )}
               </>

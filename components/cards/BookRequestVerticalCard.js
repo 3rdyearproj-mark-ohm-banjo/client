@@ -120,7 +120,6 @@ const BookRequestVerticalCard = ({bookInfo}) => {
     return toast(
       (t) => (
         <span>
-          {' '}
           {!bookInfo.book
             ? `ต้องการออกจากคิวของ ${bookInfo.bookShelf?.bookName} จริงๆ หรอ`
             : `ยกเลิกการยืม ${bookInfo.bookShelf?.bookName} จริงๆ หรอ`}

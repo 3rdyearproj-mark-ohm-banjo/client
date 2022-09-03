@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import useBorrowHistory from '../../api/query/useBorrowHistory'
 import BookHistoryCard from '../../components/cards/BookHistoryCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
+import Pagination from '../../components/Pagination'
 import {years} from '../../config/years'
 import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
@@ -60,12 +61,16 @@ const Thead = styled.thead`
 
   > tr {
     > td {
-      max-width: 300px;
+      width: 220px;
       padding: ${SPACING.MD};
       border: 1px solid ${COLORS.GRAY_LIGHT};
       border-width: 0 0 1px;
       background-color: ${COLORS.GRAY_LIGHT_2};
       font-weight: 600;
+    }
+
+    > td:first-of-type {
+      width: 120px;
     }
   }
 `
@@ -122,6 +127,14 @@ const Tbody = styled.tbody`
   }
 `
 
+const PaginationWrapper = styled.div`
+  border-radius: 28px;
+  margin: 0 auto;
+  padding: ${SPACING.MD};
+  display: flex;
+  justify-content: center;
+`
+
 const EmptyRow = styled.td`
   padding: ${SPACING['5X']} 0;
   text-align: center;
@@ -132,9 +145,30 @@ const EmptyRow = styled.td`
 const ContentWrapper = styled.div``
 
 const BorrowHistoryPage = () => {
-  const [filterMonth, setFilterMonth] = useState('')
-  const [filterYear, setFilterYear] = useState('')
+  const [filterMonth, setFilterMonth] = useState('all')
+  const [filterYear, setFilterYear] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
   const {data} = useBorrowHistory()
+  const pageSize = 10
+
+  const filterLogic = (item) => {
+    const receiveDate = new Date(item.receiveTime)
+    return (
+      (receiveDate.getMonth() === +filterMonth || isNaN(+filterMonth)) &&
+      (receiveDate.getFullYear() === +filterYear || isNaN(+filterYear)) &&
+      item
+    )
+  }
+
+  const filterList = () => {
+    return data?.data?.data?.filter((item) => {
+      return filterLogic(item)
+    })
+  }
+
+  const onPageChange = (page) => {
+    setCurrentPage(page)
+  }
 
   return (
     <>
@@ -180,28 +214,14 @@ const BorrowHistoryPage = () => {
             </tr>
           </Thead>
 
-          {data?.data?.data?.filter((item) => {
-            const receiveDate = new Date(item.receiveTime)
-            return (
-              (receiveDate.getMonth() === +filterMonth ||
-                isNaN(+filterMonth)) &&
-              (receiveDate.getFullYear() === +filterYear ||
-                isNaN(+filterYear)) &&
-              item
-            )
-          }).length > 0 ? (
+          {filterList() &&
+          filterList().slice(
+            (currentPage - 1) * pageSize,
+            currentPage * pageSize
+          ).length > 0 ? (
             <Tbody>
-              {data?.data?.data
-                ?.filter((item) => {
-                  const receiveDate = new Date(item.receiveTime)
-                  return (
-                    (receiveDate.getMonth() === +filterMonth ||
-                      isNaN(+filterMonth)) &&
-                    (receiveDate.getFullYear() === +filterYear ||
-                      isNaN(+filterYear)) &&
-                    item
-                  )
-                })
+              {filterList()
+                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
                 ?.map((row, i) => (
                   <tr key={`row${i}`}>
                     <td>
@@ -244,6 +264,16 @@ const BorrowHistoryPage = () => {
             </tbody>
           )}
         </Table>
+
+        {filterList() && Math.ceil(filterList().length / pageSize) > 1 && (
+          <PaginationWrapper>
+            <Pagination
+              totalPage={Math.ceil(filterList().length / pageSize)}
+              currentPage={currentPage}
+              onPageChange={onPageChange}
+            />
+          </PaginationWrapper>
+        )}
       </ContentWrapper>
     </>
   )

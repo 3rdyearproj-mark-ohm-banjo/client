@@ -100,6 +100,8 @@ const ExpireMessage = styled.div`
   padding: 2px ${SPACING.SM};
   text-align: center;
   margin: 0 0 2px;
+
+  ${(props) => props.successRead && `background-color:${COLORS.GREEN_1};`}
 `
 
 const BorrowingCardInfo = ({info}) => {
@@ -192,12 +194,19 @@ const BorrowingCardInfo = ({info}) => {
           <Description>
             <BookName>{info.bookShelf.bookName}</BookName>
             {isExpired && (
-              <ExpireMessage>หมดเวลาการยืมหนังสือนี้แล้ว</ExpireMessage>
+              <>
+                {info.status === 'holding' ? (
+                  <ExpireMessage>หมดเวลาการยืมหนังสือนี้แล้ว</ExpireMessage>
+                ) : (
+                  <ExpireMessage successRead={true}>
+                    ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
+                  </ExpireMessage>
+                )}
+              </>
             )}
             <BookDateInfo>
               <GetBookDate>
                 <span>
-                  วันที่{' '}
                   {formatDate(info.bookHistorys.receiveTime, true, true, true)}
                 </span>
                 <b>วันที่ได้รับหนังสือ</b>
@@ -215,16 +224,15 @@ const BorrowingCardInfo = ({info}) => {
             <Button
               btnSize="sm"
               borderRadius="4px"
-              btnType="orangeGradient"
               onClick={() => setShowModal(true)}
             >
-              ยืนยันการอ่านหนังสือจบแล้ว
+              ยืนยันว่าคุณอ่านหนังสือจบแล้ว
             </Button>
           ) : (
             <Button
               btnSize="sm"
               borderRadius="4px"
-              btnType="orangeGradient"
+              btnType="whiteBorder"
               isDisabled={true}
             >
               คุณอ่านหนังสือเล่มนี้จบแล้ว

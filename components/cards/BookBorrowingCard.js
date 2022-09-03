@@ -7,7 +7,7 @@ import {
 } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import {useRouter} from 'next/router'
-import { formatDate } from '../../utils/format'
+import {formatDate} from '../../utils/format'
 
 const CardLayout = styled.div`
   max-width: 300px;
@@ -91,9 +91,15 @@ const BookBorrowingCard = ({bookInfo}) => {
           })}
         >
           <TimeLeft>
-            <span>เหลือ</span>
-            <span>{expireDay}</span>
-            <span>วัน</span>
+            {expireDay < 0 ? (
+              <span>หมดเวลา</span>
+            ) : (
+              <>
+                <span>เหลือ</span>
+                <span>{expireDay}</span>
+                <span>วัน</span>
+              </>
+            )}
           </TimeLeft>
         </CircularProgressbarWithChildren>
       </CircleProgress>
