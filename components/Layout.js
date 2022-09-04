@@ -20,6 +20,7 @@ export const ContentWrapper = styled.section`
 export const BoxLayout = styled.div`
   max-width: ${(props) => props.maxWidth ?? '1200px'};
   width: ${(props) => props.width ?? '100%'};
+  padding: ${SPACING.MD} ${SPACING.LG};
 `
 
 export const AddBookLayout = styled.section`

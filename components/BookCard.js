@@ -16,7 +16,6 @@ const Card = styled.div`
   display: flex;
   padding: ${SPACING.LG};
   gap: ${SPACING.SM};
-  width: 100%;
   overflow: hidden;
   border-radius: ${SPACING.SM};
   background-color: ${COLORS.WHITE};
@@ -25,6 +24,10 @@ const Card = styled.div`
 
   &:hover {
     box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+  }
+
+  @media (min-width: 1024px) {
+    width: 100%;
   }
 `
 
