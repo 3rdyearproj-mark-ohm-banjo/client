@@ -240,11 +240,11 @@ const Home = ({newBook, recommendBook}) => {
                   slidesPerView={1}
                   spaceBetween={10}
                   breakpoints={{
-                    600: {
+                    700: {
                       slidesPerView: 2,
                       spaceBetween: 40,
                     },
-                    800: {
+                    1024: {
                       slidesPerView: 3,
                       spaceBetween: 50,
                     },
@@ -273,11 +273,11 @@ const Home = ({newBook, recommendBook}) => {
                   slidesPerView={1}
                   spaceBetween={10}
                   breakpoints={{
-                    600: {
+                    700: {
                       slidesPerView: 2,
                       spaceBetween: 40,
                     },
-                    800: {
+                    1024: {
                       slidesPerView: 3,
                       spaceBetween: 50,
                     },

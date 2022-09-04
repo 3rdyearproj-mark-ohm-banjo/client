@@ -135,11 +135,11 @@ const BookShelfPage = ({bookShelf, relatedBook, notFound}) => {
                     slidesPerView={1}
                     spaceBetween={10}
                     breakpoints={{
-                      600: {
+                      700: {
                         slidesPerView: 2,
                         spaceBetween: 40,
                       },
-                      800: {
+                      1024: {
                         slidesPerView: 3,
                         spaceBetween: 50,
                       },

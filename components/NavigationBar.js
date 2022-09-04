@@ -360,7 +360,7 @@ const NavigationBar = () => {
           ) : (
             <MenuIcon onClick={() => setShowAuthModal(true)}>
               <Icon name={ICONS.faSignIn} size={ICON_SIZE.lg} />
-              <Hidden breakPoint="450px">เข้าสู่ระบบ</Hidden>
+              เข้าสู่ระบบ
             </MenuIcon>
           )}
         </ContentWrapper>

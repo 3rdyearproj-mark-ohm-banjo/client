@@ -133,6 +133,7 @@ const NumberTitle = styled.div`
   text-align: center;
   font-weight: 600;
   color: ${COLORS.PRIMARY};
+  flex-grow: 1;
 `
 
 const NumberBox = styled.div`
