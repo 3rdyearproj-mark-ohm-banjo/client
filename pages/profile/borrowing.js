@@ -1,15 +1,12 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import Head from 'next/head'
 import BorrowingCardInfo from '../../components/cards/BorrowingCardInfo'
-import {Swiper, SwiperSlide} from 'swiper/react'
-import {Scrollbar} from 'swiper'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
-import userService from '../../api/request/userService'
 import {useSelector} from 'react-redux'
 import useBorrowing from '../../api/query/useBorrowing'
 import {Icon} from '../../components'
@@ -104,7 +101,9 @@ const BookContainer = styled.div`
 `
 
 const BookBorrowingPage = () => {
-  const {data, error} = useBorrowing()
+  const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
+  const {data, error} = useBorrowing(isAddressTel)
 
   return (
     <>
@@ -113,19 +112,19 @@ const BookBorrowingPage = () => {
       </Head>
       <TitleWrapper>
         <Title>
-          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data?.borrowBooks?.length} / 5
+          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data?.borrowBooks?.length ?? 0} / 5
           เล่ม){' '}
         </Title>
         <SubTitle>
           เมื่ออ่านเสร็จแล้ว คุณสามารถกด<Red>ยืนยันว่าอ่านจบแล้วได้</Red>
           เพื่อให้ผู้ที่สนใจหนังสือเล่มนี้เหมือนกันมาขอยืมต่อได้
         </SubTitle>
-        <SubTitle>
+        {/* <SubTitle>
           <Red>
             ***หากหมดเวลาการยืมและคุณยังไม่ได้กดยืนยันว่าอ่านจบแล้ว
             ระบบจะทำการกดปุ่มให้อัตโนมัติ
           </Red>
-        </SubTitle>
+        </SubTitle> */}
       </TitleWrapper>
 
       {data?.data?.data?.borrowBooks?.length > 0 ? (

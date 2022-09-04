@@ -140,11 +140,12 @@ const ProfilePage = () => {
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [receiveItem, setReceiveItem] = useState({})
   const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
   const totalBookDonation = useSelector((state) => state.user.totalBookDonation)
-  const {data: borrowing, error} = useBorrowing()
-  const {data: bookRequest} = useMyBorrowRequest()
-  const {data: bookForwarding} = useMyForwardRequest()
-  const {data: borrowHistory} = useBorrowHistory()
+  const {data: borrowing, error} = useBorrowing(isAddressTel)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
+  const {data: borrowHistory} = useBorrowHistory(isAddressTel)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -219,7 +220,7 @@ const ProfilePage = () => {
         <StatItem>
           <Icon name={ICONS.faBookBookmark} />
           <p>ยืมไปแล้ว</p>
-          <span>{borrowHistory?.data?.data?.length} ครั้ง</span>
+          <span>{borrowHistory?.data?.data?.length ?? 0} ครั้ง</span>
         </StatItem>
         <StatItem>
           <Icon name={ICONS.faHandHoldingHand} />
@@ -229,7 +230,9 @@ const ProfilePage = () => {
         <StatItem>
           <Icon name={ICONS.faBook} />
           <p>ถือหนังสืออยู่</p>
-          <span>{borrowing?.data?.data?.borrowBooks?.length} / 5 เล่ม</span>
+          <span>
+            {borrowing?.data?.data?.borrowBooks?.length ?? 0} / 5 เล่ม
+          </span>
         </StatItem>
       </StatContainer>
 

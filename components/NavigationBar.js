@@ -254,7 +254,7 @@ const NavigationBar = () => {
                 บริจาคหนังสือ
               </MenuIcon>
 
-              <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
+              {/* <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
                 <NotiIconControl ref={notificationIconRef}>
                   <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
                   การแจ้งเตือน
@@ -302,6 +302,14 @@ const NavigationBar = () => {
                     </NotificationItem>
                   </NotificationDropdown>
                 )}
+              </MenuIcon> */}
+
+              <MenuIcon
+                onClick={() => router.push('/profile/borrowing')}
+                isActive={router.pathname === '/profile/borrowing'}
+              >
+                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
+                <UserName>หนังสือที่ยืมอยู่</UserName>
               </MenuIcon>
 
               <MenuIcon

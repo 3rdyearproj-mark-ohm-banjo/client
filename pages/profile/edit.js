@@ -82,11 +82,11 @@ const EditProfilePage = () => {
 
   const submitChangePassword = (passwordData) => {
     userService
-      .changePassword(passwordData)
+      .changePassword(passwordData.oldPassword, passwordData.newPassword)
       .then(() => {
         toast.success('เปลี่ยนรหัสผ่านสำเร็จ')
       })
-      .catch((err) => setPasswordErr(err))
+      .catch((err) => toast.success('เกิดข้อผิดพลาดในการแก้รหัสผ่าน'))
   }
 
   return (

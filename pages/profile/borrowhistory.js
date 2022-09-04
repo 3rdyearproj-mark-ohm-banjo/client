@@ -2,9 +2,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import React from 'react'
 import {useState} from 'react'
+import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import useBorrowHistory from '../../api/query/useBorrowHistory'
-import BookHistoryCard from '../../components/cards/BookHistoryCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import Pagination from '../../components/Pagination'
 import {years} from '../../config/years'
@@ -145,10 +145,12 @@ const EmptyRow = styled.td`
 const ContentWrapper = styled.div``
 
 const BorrowHistoryPage = () => {
+  const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
   const [filterMonth, setFilterMonth] = useState('all')
   const [filterYear, setFilterYear] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
-  const {data} = useBorrowHistory()
+  const {data} = useBorrowHistory(isAddressTel)
   const pageSize = 10
 
   const filterLogic = (item) => {

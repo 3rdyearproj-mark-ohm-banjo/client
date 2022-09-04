@@ -1,9 +1,8 @@
 import Head from 'next/head'
-import React, {useState, useEffect} from 'react'
-import toast from 'react-hot-toast'
+import React from 'react'
+import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
-import userService from '../../api/request/userService'
 import {Icon} from '../../components'
 import BookRequestCard from '../../components/cards/BookRequestCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
@@ -77,7 +76,9 @@ const EmptyState = styled.div`
 `
 
 const BookRequest = () => {
-  const {data, error} = useMyBorrowRequest()
+  const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
+  const {data, error} = useMyBorrowRequest(isAddressTel)
 
   return (
     <>

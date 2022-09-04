@@ -216,6 +216,7 @@ const BookInfo = ({bookInfo}) => {
   const [isBorrowing, setIsBorrowing] = useState(false)
   const [isQueue, setIsQueue] = useState(false)
   const [isMaximum, setIsMaximum] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (isAuth) {
@@ -270,16 +271,23 @@ const BookInfo = ({bookInfo}) => {
       router.push('/profile/edit')
       return toast.error('กรุณากรอกข้อมูลที่อยู่บัญชีของคุณก่อน')
     }
+
+    setIsLoading(true)
+
     toast.promise(userService.sendBorrowRequest(bookInfo?._id), {
       loading: 'กำลังส่งคำขอยืม...',
       success: () => {
         getBorrowing()
         getMyRequest()
-        return 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
+        setIsLoading(false)
+        return bookInfo.totalAvailable > 0
+          ? 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
+          : 'เข้าคิวสำเร็จแล้ว'
       },
       error: (err) => () => {
         getBorrowing()
         getMyRequest()
+        setIsLoading(false)
         return `${err.toString()}`
       },
     })
@@ -287,6 +295,7 @@ const BookInfo = ({bookInfo}) => {
     setShowBorrowModal(false)
   }
 
+  console.log(bookInfo)
   return (
     <>
       <ConfirmModal
@@ -420,6 +429,7 @@ const BookInfo = ({bookInfo}) => {
                     fullWidth
                     iconName={ICONS.faBook}
                     onClick={borrowHandler}
+                    isDisabled={isLoading}
                   >
                     ยืมหนังสือ
                   </Button>
@@ -437,7 +447,7 @@ const BookInfo = ({bookInfo}) => {
               </>
             )}
 
-            {isMaximum && !isBorrowing && (
+            {isAuth && isMaximum && !isBorrowing && (
               <Button
                 withIcon
                 fullWidth
@@ -448,23 +458,25 @@ const BookInfo = ({bookInfo}) => {
               </Button>
             )}
 
-            {isQueue && (
+            {isAuth && isQueue && (
               <Button
                 withIcon
                 fullWidth
                 iconName={ICONS.faBook}
                 onClick={() => router.push('/profile/bookrequest')}
+                btnType="whiteBorder"
               >
                 คุณอยู่ในคิวของหนังสือนี้แล้ว
               </Button>
             )}
 
-            {isBorrowing && !isOwner && (
+            {isAuth && isBorrowing && !isOwner && (
               <Button
                 withIcon
                 fullWidth
                 iconName={ICONS.faBook}
                 onClick={() => router.push('/profile/borrowing')}
+                btnType="whiteBorder"
               >
                 คุณกำลังยืมหนังสือเล่มนี้อยู่
               </Button>

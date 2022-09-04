@@ -252,7 +252,7 @@ const BookRequestCard = ({book, cardType}) => {
             <>
               <BorrowDate>วันที่เข้าคิว : 15/12/2022 เวลา 13:20 น.</BorrowDate>
               <LimitReceive>
-                ขณะนี้คุณอยู่ในคิวที่ <b>{book?.queuePosition}</b>
+                ขณะนี้คุณอยู่ในคิวที่ <b>{book?.queuePosition + 1}</b>
               </LimitReceive>
             </>
           ) : (
