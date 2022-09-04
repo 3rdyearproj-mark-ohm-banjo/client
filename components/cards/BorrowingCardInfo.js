@@ -16,9 +16,10 @@ import {ICONS} from '../../config/icon'
 import toast from 'react-hot-toast'
 import useBorrowing from '../../api/query/useBorrowing'
 import userService from '../../api/request/userService'
+import {formatDate} from '../../utils/format'
 
 const CardContainer = styled.div`
-  height: 400px;
+  min-height: 400px;
   padding: ${SPACING.MD};
   border-radius: ${SPACING.SM};
   background-color: ${COLORS.GRAY_LIGHT_1};
@@ -29,9 +30,12 @@ const CardContainer = styled.div`
   box-shadow: 0 1px 5px ${COLORS.GRAY_LIGHT};
 
   @media (min-width: 1300px) {
+    min-height: auto;
     height: 270px;
     flex-direction: row;
   }
+
+  ${(props) => props.isExpired && `background-color: ${COLORS.GRAY_LIGHT_2}; `}
 `
 
 const ImageWrapper = styled.div`
@@ -48,7 +52,6 @@ const ContentWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${SPACING.SM};
 `
 
 const Description = styled.div`
@@ -71,6 +74,7 @@ const CircleProgress = styled.div`
 const BookDateInfo = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: ${SPACING.XS};
 `
 
 const GetBookDate = styled.span`
@@ -78,17 +82,40 @@ const GetBookDate = styled.span`
   flex-direction: column;
   align-items: center;
   padding: ${SPACING.MD} 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
 
   > b {
     font-weight: 600;
   }
+
+  > span {
+    ${(props) => props.isExpired && `color: ${COLORS.RED_2};font-weight: 600`}
+  }
+`
+
+const ExpireMessage = styled.div`
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  padding: 2px ${SPACING.SM};
+  text-align: center;
+  margin: 0 0 2px;
+
+  ${(props) => props.successRead && `background-color:${COLORS.GREEN_1};`}
 `
 
 const BorrowingCardInfo = ({info}) => {
   const [showModal, setShowModal] = useState(false)
   const {refetch: getBorrowing} = useBorrowing(false)
+
+  const expireDay = Math.round(
+    (new Date(info.bookHistorys.expireTime).getTime() - new Date().getTime()) /
+      (1000 * 3600 * 24)
+  )
+
+  const isExpired =
+    new Date(Date.now()).getTime() >
+    new Date(info.bookHistorys.expireTime).getTime()
 
   const handleSubmit = () => {
     toast.promise(userService.confirmReadingSuccess(info._id), {
@@ -142,10 +169,10 @@ const BorrowingCardInfo = ({info}) => {
           </Button>
         </div>
       </ConfirmModal>
-      <CardContainer>
+      <CardContainer isExpired={isExpired}>
         <CircleProgress>
           <CircularProgressbarWithChildren
-            value={70}
+            value={(14 - expireDay) * 7.14}
             strokeWidth={6}
             styles={buildStyles({
               pathColor: COLORS.PRIMARY,
@@ -166,14 +193,29 @@ const BorrowingCardInfo = ({info}) => {
         <ContentWrapper>
           <Description>
             <BookName>{info.bookShelf.bookName}</BookName>
+            {isExpired && (
+              <>
+                {info.status === 'holding' ? (
+                  <ExpireMessage>หมดเวลาการยืมหนังสือนี้แล้ว</ExpireMessage>
+                ) : (
+                  <ExpireMessage successRead={true}>
+                    ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
+                  </ExpireMessage>
+                )}
+              </>
+            )}
             <BookDateInfo>
               <GetBookDate>
-                <span>วันที่ 7 ก.ย. 2022</span>
+                <span>
+                  {formatDate(info.bookHistorys.receiveTime, true, true, true)}
+                </span>
                 <b>วันที่ได้รับหนังสือ</b>
               </GetBookDate>
               <br />
-              <GetBookDate>
-                <span>วันที่ 7 ก.ย. 2022</span>
+              <GetBookDate isExpired={isExpired}>
+                <span>
+                  {formatDate(info.bookHistorys.expireTime, true, true, true)}
+                </span>
                 <b>วันที่หมดอายุการยืม</b>
               </GetBookDate>
             </BookDateInfo>
@@ -182,16 +224,15 @@ const BorrowingCardInfo = ({info}) => {
             <Button
               btnSize="sm"
               borderRadius="4px"
-              btnType="orangeGradient"
               onClick={() => setShowModal(true)}
             >
-              ยืนยันการอ่านหนังสือจบแล้ว
+              ยืนยันว่าคุณอ่านหนังสือจบแล้ว
             </Button>
           ) : (
             <Button
               btnSize="sm"
               borderRadius="4px"
-              btnType="orangeGradient"
+              btnType="whiteBorder"
               isDisabled={true}
             >
               คุณอ่านหนังสือเล่มนี้จบแล้ว

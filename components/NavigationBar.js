@@ -24,18 +24,20 @@ const NavigationBarStyled = styled.nav`
   height: 60px;
   box-shadow: 0 5px 30px ${COLORS.GRAY_LIGHT};
   z-index: 1000;
-  padding: ${SPACING.MD};
+  padding: 5px ${SPACING.MD};
 `
 
 const ContentWrapper = styled.ul`
-  margin: 10px auto;
+  margin: auto;
   max-width: 900px;
+  height: 100%;
   display: none;
 
   @media (min-width: 768px) {
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 `
 
@@ -45,9 +47,11 @@ const ActiveStyled = css`
 `
 
 const MenuIcon = styled.li`
+  height: 45px;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.XS};
+  justify-content: space-between;
   font-size: 14px;
   transition: 0.2s;
   color: ${COLORS.GRAY_DARK};
@@ -56,6 +60,10 @@ const MenuIcon = styled.li`
 
   > * {
     user-select: none;
+  }
+
+  svg {
+    height: 18px;
   }
 
   &:hover {
@@ -165,10 +173,19 @@ const DrawerWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
 `
+const UserName = styled.div`
+  font-size: 16px;
+  max-width: 100px;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
 
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
+  const userName = useSelector((state) => state.user.user.username)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showNotificationMenu, setShowNotificationMenu] = useState(false)
@@ -177,7 +194,6 @@ const NavigationBar = () => {
   useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
   const notificationRef = useRef()
   const notificationIconRef = useRef()
-
   const menuList = [{icon: ICONS.faHome, text: 'หน้าแรก', link: '/'}]
 
   const notificationHandler = (bool, event) => {
@@ -238,7 +254,7 @@ const NavigationBar = () => {
                 บริจาคหนังสือ
               </MenuIcon>
 
-              <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
+              {/* <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
                 <NotiIconControl ref={notificationIconRef}>
                   <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
                   การแจ้งเตือน
@@ -286,6 +302,14 @@ const NavigationBar = () => {
                     </NotificationItem>
                   </NotificationDropdown>
                 )}
+              </MenuIcon> */}
+
+              <MenuIcon
+                onClick={() => router.push('/profile/borrowing')}
+                isActive={router.pathname === '/profile/borrowing'}
+              >
+                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
+                <UserName>หนังสือที่ยืมอยู่</UserName>
               </MenuIcon>
 
               <MenuIcon
@@ -293,7 +317,7 @@ const NavigationBar = () => {
                 ref={profileRef}
               >
                 <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
-                <Hidden breakPoint="450px">ข้อมูลของฉัน</Hidden>
+                <UserName>{userName}</UserName>
                 {showProfileMenu && (
                   <MenuDropdown>
                     <MenuItem

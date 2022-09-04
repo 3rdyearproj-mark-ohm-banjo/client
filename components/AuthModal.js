@@ -130,6 +130,7 @@ const AuthModal = ({show, setShow}) => {
                       </PageBanner>
                       <RegisterForm
                         onShowRegister={setShowregister}
+                        onSuccess={() => setShow(false)}
                         onShow={setCloseModal}
                       />
                     </ContentWrapper>

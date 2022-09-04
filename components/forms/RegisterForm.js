@@ -13,6 +13,9 @@ import {
   validatePassword,
   validateTel,
 } from '../../utils/validate'
+import toast from 'react-hot-toast'
+import {useDispatch} from 'react-redux'
+import {updateUser} from '../../redux/feature/UserSlice'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
@@ -42,18 +45,15 @@ const ErrMessage = styled.div`
   font-weight: 600;
 `
 
-const RegisterForm = ({onShowRegister, onShow}) => {
+const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
   const [userData, setUserData] = useState({
     email: '',
     password: '',
     username: '',
-    // address: '',
-    // firstname: '',
-    // lastname: '',
-    // tel: '',
   })
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [errors, setErrors] = useState([])
+  const dispatch = useDispatch()
 
   const validate = () => {
     let errorArr = []
@@ -86,8 +86,13 @@ const RegisterForm = ({onShowRegister, onShow}) => {
     if (validate()) {
       return userService
         .register(userData)
-        .then((res) => {
-          onShowRegister(false)
+        .then(() => {
+          userService.login(userData.email, userData.password).then((res) => {
+            dispatch(updateUser(res.data?.user))
+            toast.success('สมัครสมาชิกสำเร็จแล้ว')
+            onShowRegister(false)
+            onSuccess()
+          })
         })
         .catch((err) => {
           let errorArr = []
@@ -144,28 +149,6 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('username') !== -1}
           errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
         />
-        {/* 
-        <InputWithIcon
-          label="ชื่อจริง*"
-          type="text"
-          iconName={ICONS.faUser}
-          onChange={(data) => onChange('firstname', data)}
-          maxLength={50}
-          placeholder="กรอกชื่อ"
-          error={errors.indexOf('firstname') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกชื่อของคุณ"
-        />
-
-        <InputWithIcon
-          label="นามสกุล*"
-          type="text"
-          iconName={ICONS.faUser}
-          onChange={(data) => onChange('lastname', data)}
-          maxLength={50}
-          placeholder="กรอกนามสกุล"
-          error={errors.indexOf('lastname') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกนามสกุล"
-        /> */}
 
         <InputWithIcon
           label="รหัสผ่าน*"
@@ -188,29 +171,6 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           error={errors.indexOf('comfirmpassword') !== -1}
           errorMessage="กรุณากรอกรหัสผ่านอีกครั้ง"
         />
-
-        {/* <InputWithIcon
-          label="ที่อยู่สำหรับจัดส่ง*"
-          iconName={ICONS.faLocationDot}
-          inputType="textarea"
-          onChange={(data) => onChange('address', data)}
-          placeholder="ที่อยู่สำหรับจัดส่ง"
-          maxLength={200}
-          error={errors.indexOf('address') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกที่อยู่"
-        />
-
-        <InputWithIcon
-          label="เบอร์โทร*"
-          iconName={ICONS.faPhone}
-          inputType="number"
-          onChange={(data) => onChange('tel', data)}
-          placeholder="กรอกเบอร์โทร"
-          maxLength={10}
-          error={errors.indexOf('tel') !== -1}
-          errorMessage="กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข"
-          value={userData.tel}
-        /> */}
 
         <ButtonWrapper>
           <Button fullWidth btnSize="sm" bgColor={COLORS.RED_2} type="submit">

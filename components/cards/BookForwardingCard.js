@@ -186,14 +186,8 @@ const BookForwardingCard = ({bookInfo}) => {
           />
           <ISBN>ISBN {bookInfo?.book?.bookShelf?.ISBN}</ISBN>
           <BorrowDate>
-            {donationInfo
-              ? `บริจาคเมื่อวันที่ ${formatDate(
-                  donationInfo.donationTime,
-                  true,
-                  true,
-                  true
-                )}`
-              : `อ่านจบเมื่อวันที่ XX/XX/XXXX`}
+            ได้รับคำขอยืมเมื่อ{' '}
+            {formatDate(bookInfo?.matchTime, true, true, true)}
           </BorrowDate>
         </BookInfoWrapper>
       </BookContainer>

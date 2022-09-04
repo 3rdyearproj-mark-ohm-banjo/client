@@ -73,8 +73,12 @@ const BorrowDate = styled.span`
 `
 
 const LimitReceive = styled.span`
-  font-size: 14px;
+  font-size: 16px;
   color: ${COLORS.GRAY_DARK_3};
+
+  > b {
+    font-size: 18px;
+  }
 `
 
 const ButtonWrapper = styled.div`
@@ -247,7 +251,9 @@ const BookRequestCard = ({book, cardType}) => {
           {cardType === 'queue' ? (
             <>
               <BorrowDate>วันที่เข้าคิว : 15/12/2022 เวลา 13:20 น.</BorrowDate>
-              <LimitReceive>คุณอยู่ในคิวที่ XXX</LimitReceive>
+              <LimitReceive>
+                ขณะนี้คุณอยู่ในคิวที่ <b>{book?.queuePosition + 1}</b>
+              </LimitReceive>
             </>
           ) : (
             <>
@@ -308,9 +314,9 @@ const BookRequestCard = ({book, cardType}) => {
                     >
                       ยืนยันการรับหนังสือ
                     </Button>
-                    <Button btnSize="sm" btnType="orangeGradient">
+                    {/* <Button btnSize="sm" btnType="orangeGradient">
                       ติดต่อผู้ดูแลระบบ
-                    </Button>
+                    </Button> */}
                   </>
                 )}
               </>

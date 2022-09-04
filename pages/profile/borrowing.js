@@ -1,15 +1,12 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import Head from 'next/head'
 import BorrowingCardInfo from '../../components/cards/BorrowingCardInfo'
-import {Swiper, SwiperSlide} from 'swiper/react'
-import {Scrollbar} from 'swiper'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
-import userService from '../../api/request/userService'
 import {useSelector} from 'react-redux'
 import useBorrowing from '../../api/query/useBorrowing'
 import {Icon} from '../../components'
@@ -98,13 +95,15 @@ const BookContainer = styled.div`
   gap: ${SPACING['2X']};
 
   @media (min-width: 768px) {
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 49% 49%;
+    gap: 2%;
   }
 `
 
 const BookBorrowingPage = () => {
   const user = useSelector((state) => state.user.user)
-  const {data, error} = useBorrowing()
+  const isAddressTel = user.address && user.tel ? true : false
+  const {data, error} = useBorrowing(isAddressTel)
 
   return (
     <>
@@ -113,33 +112,26 @@ const BookBorrowingPage = () => {
       </Head>
       <TitleWrapper>
         <Title>
-          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data.length} / 5 เล่ม){' '}
+          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data?.borrowBooks?.length ?? 0} / 5
+          เล่ม){' '}
         </Title>
         <SubTitle>
           เมื่ออ่านเสร็จแล้ว คุณสามารถกด<Red>ยืนยันว่าอ่านจบแล้วได้</Red>
           เพื่อให้ผู้ที่สนใจหนังสือเล่มนี้เหมือนกันมาขอยืมต่อได้
         </SubTitle>
-        <SubTitle>
+        {/* <SubTitle>
           <Red>
             ***หากหมดเวลาการยืมและคุณยังไม่ได้กดยืนยันว่าอ่านจบแล้ว
             ระบบจะทำการกดปุ่มให้อัตโนมัติ
           </Red>
-        </SubTitle>
+        </SubTitle> */}
       </TitleWrapper>
 
-      {data?.data?.data?.length > 0 ? (
+      {data?.data?.data?.borrowBooks?.length > 0 ? (
         <BookContainer>
-          {data?.data?.data
-            ?.filter((book) => {
-              return (
-                book.bookHistorys.length > 1 &&
-                book.currentHolder === user._id &&
-                book.status !== 'inProcess'
-              )
-            })
-            .map((book) => (
-              <BorrowingCardInfo key={book._id} info={book} />
-            ))}
+          {data?.data?.data?.borrowBooks.map((book) => (
+            <BorrowingCardInfo key={book._id} info={book} />
+          ))}
         </BookContainer>
       ) : (
         <EmptyState>

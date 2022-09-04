@@ -2,14 +2,12 @@ import Image from 'next/image'
 import React, {useState} from 'react'
 import toast from 'react-hot-toast'
 import styled from 'styled-components'
+import useBorrowing from '../../api/query/useBorrowing'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import userService from '../../api/request/userService'
-import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
-import Button from '../Button'
-import ConfirmModal from '../ConfirmModal'
 
 const VerticalCard = styled.div`
   width: 200px;
@@ -82,6 +80,7 @@ const BookRequestVerticalCard = ({bookInfo}) => {
   const [cancelModal, setCancelModal] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
   const {refetch: refetchBorrow} = useMyBorrowRequest(false)
+  const {refetch: refetchBorrowing} = useBorrowing(false)
 
   const handleSubmit = () => {
     toast.promise(userService.confirmReceive(bookInfo?.book?._id), {
@@ -89,11 +88,13 @@ const BookRequestVerticalCard = ({bookInfo}) => {
       success: () => {
         setConfirmModal(false)
         refetchBorrow()
+        refetchBorrowing()
         return 'ยืนยันการรับหนังสือสำเร็จแล้ว'
       },
       error: () => {
         setConfirmModal(false)
         refetchBorrow()
+        refetchBorrowing()
         return 'เกิดข้อผิดพลาด'
       },
     })
@@ -119,7 +120,6 @@ const BookRequestVerticalCard = ({bookInfo}) => {
     return toast(
       (t) => (
         <span>
-          {' '}
           {!bookInfo.book
             ? `ต้องการออกจากคิวของ ${bookInfo.bookShelf?.bookName} จริงๆ หรอ`
             : `ยกเลิกการยืม ${bookInfo.bookShelf?.bookName} จริงๆ หรอ`}

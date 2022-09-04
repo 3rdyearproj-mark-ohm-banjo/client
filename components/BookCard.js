@@ -112,10 +112,12 @@ const BottomZone = styled(animated.div)`
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
   const user = useSelector((state) => state.user.user)
+
   const isOwner = user?.donationHistory?.some(
     (info) =>
       info?.book?.bookShelf?._id === bookInfo?._id &&
-      info?.book?.currentHolder === user?._id
+      info?.book?.currentHolder === user?._id &&
+      info?.book?.bookHistorys?.length <= 2
   )
 
   const slideIn = useSpring({

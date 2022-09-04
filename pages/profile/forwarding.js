@@ -1,12 +1,10 @@
 import Head from 'next/head'
-import React, {useEffect} from 'react'
+import React from 'react'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import styled, {css} from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import {COLORS} from '../../styles/colors'
-import {useState} from 'react'
 import BookForwardingCard from '../../components/cards/BookForwardingCard'
-import userService from '../../api/request/userService'
 import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import {Icon} from '../../components'
@@ -98,7 +96,9 @@ const EmptyState = styled.div`
 `
 
 const Forwarding = () => {
-  const {data, error} = useMyForwardRequest()
+  const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
+  const {data, error} = useMyForwardRequest(isAddressTel)
 
   return (
     <>

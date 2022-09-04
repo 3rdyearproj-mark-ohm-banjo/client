@@ -215,6 +215,8 @@ const BookInfo = ({bookInfo}) => {
   const {data: myRequest, refetch: getMyRequest} = useMyBorrowRequest(false)
   const [isBorrowing, setIsBorrowing] = useState(false)
   const [isQueue, setIsQueue] = useState(false)
+  const [isMaximum, setIsMaximum] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (isAuth) {
@@ -226,9 +228,13 @@ const BookInfo = ({bookInfo}) => {
   useEffect(() => {
     if (borrowing) {
       setIsBorrowing(
-        borrowing?.data?.data.some(
+        borrowing?.data?.data?.borrowBooks?.some(
           (book) => book?.bookShelf?._id === bookInfo._id
         )
+      )
+
+      setIsMaximum(
+        borrowing?.data?.data?.borrowBooks?.length >= 5 ? true : false
       )
     }
   }, [bookInfo._id, borrowing])
@@ -244,7 +250,8 @@ const BookInfo = ({bookInfo}) => {
   const isOwner = user?.donationHistory?.some(
     (info) =>
       info?.book?.bookShelf?._id === bookInfo?._id &&
-      info?.book?.currentHolder === user?._id
+      info?.book?.currentHolder === user?._id &&
+      info?.book?.bookHistorys?.length <= 2
   )
 
   const borrowHandler = () => {
@@ -264,16 +271,23 @@ const BookInfo = ({bookInfo}) => {
       router.push('/profile/edit')
       return toast.error('กรุณากรอกข้อมูลที่อยู่บัญชีของคุณก่อน')
     }
+
+    setIsLoading(true)
+
     toast.promise(userService.sendBorrowRequest(bookInfo?._id), {
       loading: 'กำลังส่งคำขอยืม...',
       success: () => {
         getBorrowing()
         getMyRequest()
-        return 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
+        setIsLoading(false)
+        return bookInfo.totalAvailable > 0
+          ? 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
+          : 'เข้าคิวสำเร็จแล้ว'
       },
       error: (err) => () => {
         getBorrowing()
         getMyRequest()
+        setIsLoading(false)
         return `${err.toString()}`
       },
     })
@@ -281,6 +295,7 @@ const BookInfo = ({bookInfo}) => {
     setShowBorrowModal(false)
   }
 
+  console.log(bookInfo)
   return (
     <>
       <ConfirmModal
@@ -405,36 +420,63 @@ const BookInfo = ({bookInfo}) => {
               </Button>
             )}
 
-            {(!isAuth || (!isOwner && !isBorrowing && !isQueue)) && (
-              <Button
-                withIcon
-                fullWidth
-                iconName={ICONS.faBook}
-                onClick={borrowHandler}
-              >
-                ยืมหนังสือ
-              </Button>
+            {(!isAuth ||
+              (!isOwner && !isBorrowing && !isQueue && !isMaximum)) && (
+              <>
+                {bookInfo.totalAvailable > 0 ? (
+                  <Button
+                    withIcon
+                    fullWidth
+                    iconName={ICONS.faBook}
+                    onClick={borrowHandler}
+                    isDisabled={isLoading}
+                  >
+                    ยืมหนังสือ
+                  </Button>
+                ) : (
+                  <Button
+                    withIcon
+                    fullWidth
+                    iconName={ICONS.faBook}
+                    onClick={borrowHandler}
+                  >
+                    เข้าคิวเพื่อขอยืม (ขณะนี้มีคิวทั้งหมด{' '}
+                    {bookInfo.queues.length} คิว)
+                  </Button>
+                )}
+              </>
             )}
 
-            {isQueue && (
+            {isAuth && isMaximum && !isBorrowing && (
               <Button
                 withIcon
                 fullWidth
                 iconName={ICONS.faBook}
                 btnType="whiteBorder"
+              >
+                คุณถือหนังสือครบ 5 เล่มแล้ว
+              </Button>
+            )}
+
+            {isAuth && isQueue && (
+              <Button
+                withIcon
+                fullWidth
+                iconName={ICONS.faBook}
                 onClick={() => router.push('/profile/bookrequest')}
+                btnType="whiteBorder"
               >
                 คุณอยู่ในคิวของหนังสือนี้แล้ว
               </Button>
             )}
 
-            {isBorrowing && !isOwner && (
+            {isAuth && isBorrowing && !isOwner && (
               <Button
                 withIcon
                 fullWidth
                 iconName={ICONS.faBook}
-                btnType="whiteBorder"
                 onClick={() => router.push('/profile/borrowing')}
+                btnType="whiteBorder"
               >
                 คุณกำลังยืมหนังสือเล่มนี้อยู่
               </Button>
