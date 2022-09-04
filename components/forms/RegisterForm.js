@@ -70,14 +70,14 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
     })
 
     if (passwordConfirm !== userData['password']) {
-      errorArr.push('confirmpassword')
+      errorArr.push('confirmPassword')
     }
 
     if (errorArr.length > 0) {
       setErrors(errorArr)
-      return 0
+      return false
     } else {
-      return 1
+      return true
     }
   }
 
@@ -168,7 +168,7 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
           maxLength={30}
           onChange={(data) => setPasswordConfirm(data)}
           placeholder="กรอกรหัสผ่านอีกครั้ง"
-          error={errors.indexOf('comfirmpassword') !== -1}
+          error={errors.indexOf('confirmPassword') !== -1}
           errorMessage="กรุณากรอกรหัสผ่านอีกครั้ง"
         />
 

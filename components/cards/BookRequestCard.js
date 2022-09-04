@@ -150,7 +150,7 @@ const BookRequestCard = ({book, cardType}) => {
       <ConfirmModal
         onClose={setConfirmModal}
         onShow={confirmModal}
-        header={'ยืนยันการได้รับหนังสือ'}
+        header={`ยืนยันการได้รับหนังสือ ${book?.bookShelf?.bookName}`}
         icon={ICONS.faBook}
         iconBg={COLORS.GREEN_1}
       >
@@ -165,7 +165,7 @@ const BookRequestCard = ({book, cardType}) => {
           <Button
             btnSize="sm"
             bgColor={COLORS.RED_1}
-            onClick={setConfirmModal}
+            onClick={() => setConfirmModal(false)}
             fullWidth
             borderRadius="4px"
           >

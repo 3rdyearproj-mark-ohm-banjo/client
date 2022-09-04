@@ -67,6 +67,9 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
   const [isChange, setIsChange] = useState(false)
 
   const onChange = (key, value) => {
+    if (key === 'tel') {
+      value = value.replace(/[^0-9]/g, '')
+    }
     setUserData({...userData, [key]: value})
     setErrors(errors.filter((err) => err !== key))
     setIsChange(true)
@@ -176,10 +179,11 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
       <InputControl>
         <label>เบอร์ติดต่อ</label>
         <Input
-          type="tel"
+          type="text"
           placeholder="เบอร์ติดต่อ"
           onChange={(data) => onChange('tel', data.target.value)}
           value={userData?.tel ?? ''}
+          maxLength={10}
         ></Input>
         {errors.indexOf('tel') !== -1 && (
           <Error>กรุณากรอกเบอร์ไม่เกิน 10 ตัวอักษร</Error>
