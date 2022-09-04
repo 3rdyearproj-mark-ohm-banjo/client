@@ -31,7 +31,13 @@ const ContentWrapper = styled.ul`
   margin: auto;
   max-width: 900px;
   height: 100%;
-  display: none;
+  ${(props) =>
+    props.isAuth
+      ? 'display: none;'
+      : `margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;`}
 
   @media (min-width: 768px) {
     margin: 0 auto;
@@ -170,8 +176,12 @@ const DrawerWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
 `
 const UserName = styled.div`
   font-size: 16px;
@@ -180,6 +190,10 @@ const UserName = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+`
+
+const CustomHomeIcon = styled.div`
+  cursor: pointer;
 `
 
 const NavigationBar = () => {
@@ -194,7 +208,6 @@ const NavigationBar = () => {
   useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
   const notificationRef = useRef()
   const notificationIconRef = useRef()
-  const menuList = [{icon: ICONS.faHome, text: 'หน้าแรก', link: '/'}]
 
   const notificationHandler = (bool, event) => {
     if (!isAuth) {
@@ -231,11 +244,22 @@ const NavigationBar = () => {
       })
   }
 
+  const menuList = [
+    {
+      icon: ICONS.faHandHoldingHand,
+      text: 'บริจาคหนังสือ',
+      link: '/profile/donatebook',
+    },
+    {icon: ICONS.faUser, text: 'ข้อมูลของฉัน', link: '/profile'},
+    {icon: ICONS.faBook, text: 'หนังสือที่ยืมอยู่', link: '/profile/borrowing'},
+    {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
+  ]
+
   return (
     <>
       <AuthModal show={showAuthModal} setShow={setShowAuthModal} />
       <NavigationBarStyled>
-        <ContentWrapper>
+        <ContentWrapper isAuth={isAuth}>
           <MenuIcon
             onClick={() => router.push('/')}
             isActive={router.pathname === '/'}
@@ -341,9 +365,16 @@ const NavigationBar = () => {
           )}
         </ContentWrapper>
 
-        <DrawerWrapper>
-          <Drawer itemList={menuList}></Drawer>
-        </DrawerWrapper>
+        {isAuth && (
+          <DrawerWrapper>
+            <Link href="/" passHref>
+              <CustomHomeIcon>
+                <Icon name={ICONS.faHome} size={'lg'}></Icon>
+              </CustomHomeIcon>
+            </Link>
+            <Drawer itemList={menuList}></Drawer>
+          </DrawerWrapper>
+        )}
       </NavigationBarStyled>
     </>
   )

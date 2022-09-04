@@ -107,12 +107,21 @@ const Drawer = ({showAt, head, itemList}) => {
               )}
 
               {itemList.map((item) => (
-                <Link href={item.link} key={item.text} passHref>
-                  <ListItem>
-                    <Icon name={item.icon}></Icon>
-                    <span>{item.text}</span>
-                  </ListItem>
-                </Link>
+                <>
+                  {!item.function ? (
+                    <Link href={item.link} key={item.text} passHref>
+                      <ListItem>
+                        <Icon name={item.icon}></Icon>
+                        <span>{item.text}</span>
+                      </ListItem>
+                    </Link>
+                  ) : (
+                    <ListItem onClick={item.function} key={item.text}>
+                      <Icon name={item.icon}></Icon>
+                      <span>{item.text}</span>
+                    </ListItem>
+                  )}
+                </>
               ))}
             </DrawerContainer>
           )
@@ -133,6 +142,7 @@ Drawer.propTypes = {
       icon: PropTypes.object,
       text: PropTypes.string,
       link: PropTypes.string,
+      function: PropTypes.func,
     })
   ),
 }

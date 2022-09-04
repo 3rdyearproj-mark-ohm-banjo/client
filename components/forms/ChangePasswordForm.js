@@ -78,7 +78,6 @@ const ChangePasswordForm = ({onSubmit}) => {
     }
 
     if (errArr.length > 0) {
-      console.log('hello')
       setErrors(errArr)
       return false
     }
