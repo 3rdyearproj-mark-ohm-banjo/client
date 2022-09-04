@@ -11,8 +11,6 @@ const login = (email, password) => {
 }
 
 const logout = () => {
-  const cookies = new Cookies()
-  console.log(cookies.get('jwt'))
   const res = axiosPrivate.get('/logout')
   return res
 }

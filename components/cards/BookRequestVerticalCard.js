@@ -108,7 +108,6 @@ const BookRequestVerticalCard = ({bookInfo}) => {
         return !bookInfo.book ? 'ออกจากคิวสำเร็จ' : 'ยกเลิกการยืมสำเร็จ'
       },
       error: (err) => {
-        console.log(err)
         refetchBorrow()
         return 'เกิดข้อผิดพลาด'
       },
