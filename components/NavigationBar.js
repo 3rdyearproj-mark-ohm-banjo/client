@@ -15,6 +15,9 @@ import toast from 'react-hot-toast'
 import {FONTS} from '../styles/fonts'
 import Link from 'next/link'
 import Drawer from './Drawer'
+import useMyForwardRequest from '../api/query/useMyForwardRequest'
+import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
+import useBorrowing from '../api/query/useBorrowing'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -97,6 +100,9 @@ const MenuItem = styled.li`
   width: 100%;
   border-radius: ${SPACING.MD};
   transition: 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &:hover {
     background-color: ${COLORS.GRAY_DARK_5};
@@ -196,6 +202,17 @@ const CustomHomeIcon = styled.div`
   cursor: pointer;
 `
 
+const CountNumber = styled.span`
+  padding: ${SPACING.XS} ${SPACING.SM};
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${SPACING.XS};
+  font-weight: 600;
+`
+
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
@@ -254,6 +271,12 @@ const NavigationBar = () => {
     {icon: ICONS.faBook, text: 'หนังสือที่ยืมอยู่', link: '/profile/borrowing'},
     {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
   ]
+
+  const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
+  const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
 
   return (
     <>
@@ -350,7 +373,15 @@ const NavigationBar = () => {
                         router.push('/profile')
                       }}
                     >
-                      ข้อมูลของฉัน
+                      <span>ข้อมูลของฉัน</span>
+                      {(bookRequest?.length ?? 0) +
+                        (bookForwarding?.data?.data?.length ?? 0) >
+                        0 && (
+                        <CountNumber>
+                          {(bookRequest?.length ?? 0) +
+                            (bookForwarding?.data?.data?.length ?? 0)}
+                        </CountNumber>
+                      )}
                     </MenuItem>
                     <MenuItem onClick={logoutHandler}>ออกจากระบบ</MenuItem>
                   </MenuDropdown>
