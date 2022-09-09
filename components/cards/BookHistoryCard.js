@@ -10,7 +10,6 @@ const ImageCardWrapper = styled.div`
 `
 
 const BookHistoryCard = ({bookInfo}) => {
-  console.log(bookInfo)
   return (
     <div>
       <ImageCardWrapper>
