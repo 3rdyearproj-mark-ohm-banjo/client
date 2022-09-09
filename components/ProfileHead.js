@@ -15,6 +15,9 @@ import Button from './Button'
 import {useRef} from 'react'
 import Icon from './Icon'
 import {ICONS} from '../config/icon'
+import useBorrowing from '../api/query/useBorrowing'
+import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
+import useMyForwardRequest from '../api/query/useMyForwardRequest'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -95,6 +98,9 @@ const NavItem = styled.li`
   font-size: 14px;
   cursor: pointer;
   transition: 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &:hover {
     ${NavActive}
@@ -153,10 +159,26 @@ const ButtonWrapper = styled.div`
   margin-bottom: ${SPACING.MD};
 `
 
+const CountNumber = styled.span`
+  padding: ${SPACING.XS} ${SPACING.SM};
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${SPACING.XS};
+  font-weight: 600;
+`
+
 const ProfileHead = () => {
   const user = useSelector((state) => state.user.user)
   const router = useRouter()
   const [isTriggerMenu, setIsTriggerMenu] = useState(false)
+  const isAddressTel = user.address && user.tel ? true : false
+  const {data: borrowing} = useBorrowing(isAddressTel)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
+
   const MenuRef = useRef()
   useOutsideAlerter(setIsTriggerMenu, MenuRef)
 
@@ -212,17 +234,30 @@ const ProfileHead = () => {
             </Link>
             <Link href="/profile/bookrequest" passHref>
               <NavItem isActive={router.pathname === '/profile/bookrequest'}>
-                คำขอยืมหนังสือของคุณ
+                <span>คำขอยืมหนังสือของคุณ</span>
+                {bookRequest?.length > 0 && (
+                  <CountNumber>{bookRequest?.length ?? 0}</CountNumber>
+                )}
               </NavItem>
             </Link>
             <Link href="/profile/borrowing" passHref>
               <NavItem isActive={router.pathname === '/profile/borrowing'}>
-                หนังสือที่กำลังยืม
+                <span>หนังสือที่กำลังยืม</span>
+                {borrowing?.data?.data?.borrowBooks?.length > 0 && (
+                  <CountNumber>
+                    {borrowing?.data?.data?.borrowBooks?.length ?? 0}
+                  </CountNumber>
+                )}
               </NavItem>
             </Link>
             <Link href="/profile/forwarding" passHref>
               <NavItem isActive={router.pathname === '/profile/forwarding'}>
-                หนังสือที่ต้องส่งต่อ
+                <span>หนังสือที่ต้องส่งต่อ</span>
+                {bookForwarding?.data?.data?.length > 0 && (
+                  <CountNumber>
+                    {bookForwarding?.data?.data?.length ?? 0}
+                  </CountNumber>
+                )}
               </NavItem>
             </Link>
             <Link href="/profile/mydonation" passHref>
