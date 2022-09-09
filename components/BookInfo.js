@@ -207,24 +207,30 @@ const BookInfo = ({bookInfo}) => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
   const user = useSelector((state) => state.user.user)
+  const isAddressTel = user.address && user.tel ? true : false
   const slideIn = useSpring({
     from: {opacity: 0, y: -50},
     to: {opacity: 1, y: 0},
   })
+
   const [showBorrowModal, setShowBorrowModal] = useState(false)
-  const {data: borrowing, refetch: getBorrowing} = useBorrowing(false)
-  const {data: myRequest, refetch: getMyRequest} = useMyBorrowRequest(false)
+  const {data: borrowing, refetch: getBorrowing} = useBorrowing(
+    isAuth && isAddressTel
+  )
+  const {data: myRequest, refetch: getMyRequest} = useMyBorrowRequest(
+    isAuth && isAddressTel
+  )
   const [isBorrowing, setIsBorrowing] = useState(false)
   const [isQueue, setIsQueue] = useState(false)
   const [isMaximum, setIsMaximum] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (isAuth) {
+    if (isAuth && isAddressTel) {
       getBorrowing()
       getMyRequest()
     }
-  }, [isAuth, getBorrowing, getMyRequest])
+  }, [isAuth, getBorrowing, getMyRequest, isAddressTel])
 
   useEffect(() => {
     if (borrowing) {
@@ -296,7 +302,6 @@ const BookInfo = ({bookInfo}) => {
     setShowBorrowModal(false)
   }
 
-  console.log(bookInfo)
   return (
     <>
       <ConfirmModal
