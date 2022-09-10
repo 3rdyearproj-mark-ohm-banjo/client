@@ -1,5 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, {useState} from 'react'
+import {useEffect} from 'react'
+import styled, {css} from 'styled-components'
+import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
@@ -23,6 +25,7 @@ const InputWrapper = styled.div`
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
+  position: relative;
 
   ${(props) => props.isTextArea && 'min-height: 36px;height: auto;'}
 `
@@ -36,6 +39,15 @@ const InputIcon = styled.div`
   flex-shrink: 0;
 `
 
+const passwordStyled = css`
+  padding-right: 36px;
+
+  ::-ms-reveal,
+  ::-ms-clear {
+    display: none;
+  }
+`
+
 const Input = styled.input`
   flex-grow: 1;
   background-color: ${COLORS.PURPLE_3};
@@ -44,10 +56,13 @@ const Input = styled.input`
   padding: 6px 12px;
   font-family: ${FONTS.PRIMARY};
   outline: none;
+  overflow: auto;
 
   ::placeholder {
     color: ${COLORS.GRAY_DARK};
   }
+
+  ${(props) => props.inputType === 'password' && passwordStyled}
 `
 
 const TextArea = styled.textarea`
@@ -81,6 +96,22 @@ const ErrMessage = styled.span`
   font-weight: 600;
 `
 
+const NormalInputControl = styled.div`
+  display: flex;
+  width: 100%;
+`
+
+const VisibleIcon = styled.div`
+  position: absolute;
+  right: ${SPACING.XS};
+  top: 50%;
+  cursor: pointer;
+  padding: ${SPACING.XS};
+  background-color: ${COLORS.PURPLE_3};
+  border-radius: ${SPACING.SM};
+  transform: translateY(-50%);
+`
+
 const InputWithIcon = ({
   label,
   iconName,
@@ -92,6 +123,18 @@ const InputWithIcon = ({
   errorMessage,
   value,
 }) => {
+  const [isVisible, setIsVisible] = useState(true)
+
+  useEffect(() => {
+    if (inputType === 'password') {
+      setIsVisible(false)
+    }
+  }, [inputType])
+
+  const passwordVisible = () => {
+    setIsVisible((prev) => !prev)
+  }
+
   return (
     <InputControl>
       <LabelWrapper>
@@ -112,7 +155,13 @@ const InputWithIcon = ({
           />
         ) : (
           <Input
-            type={inputType}
+            type={
+              inputType === 'password' && !isVisible
+                ? 'password'
+                : inputType === 'password' && isVisible
+                ? 'text'
+                : inputType
+            }
             onChange={(e) => {
               if (inputType === 'number' && /[a-zA-Z]/.test(e.target.value)) {
                 return
@@ -123,9 +172,17 @@ const InputWithIcon = ({
             placeholder={placeholder}
             maxLength={maxLength}
             value={value}
+            inputType={inputType}
           />
         )}
+
+        {inputType === 'password' && (
+          <VisibleIcon onClick={passwordVisible}>
+            <Icon name={isVisible ? ICONS.faEyeSlash : ICONS.faEye} />
+          </VisibleIcon>
+        )}
       </InputWrapper>
+
       {error && <ErrMessage>{errorMessage}</ErrMessage>}
     </InputControl>
   )
