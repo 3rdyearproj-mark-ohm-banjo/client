@@ -33,10 +33,12 @@ const ActiveBtnStyle = css`
 const SwitchButtonWrapper = styled.div`
   display: flex;
   gap: ${SPACING.SM};
+  max-width: 100%;
   width: max-content;
   padding: ${SPACING.SM};
   background-color: ${COLORS.GRAY_LIGHT};
   border-radius: ${SPACING.SM};
+  flex-wrap: wrap;
 `
 
 const SwitchButton = styled.button`
@@ -52,6 +54,17 @@ const SwitchButton = styled.button`
   &:hover {
     ${ActiveBtnStyle}
   }
+`
+
+const ErrorMessage = styled.div`
+  margin-top: 12px;
+  background-color: ${COLORS.RED_2};
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.SM} ${SPACING.LG};
+  border-radius: ${SPACING.XS};
+  margin: 12px 24px 0;
+  width: max-content;
+  font-weight: 600;
 `
 
 const EditProfilePage = () => {
@@ -77,7 +90,9 @@ const EditProfilePage = () => {
         toast.success('อัปเดทข้อมูลสำเร็จ')
         dispatch(fetchCurrentUser())
       })
-      .catch((err) => setInfoErr(err.message))
+      .catch((err) => {
+        setInfoErr(err?.response?.data?.error)
+      })
   }
 
   const submitChangePassword = (passwordData) => {
@@ -116,7 +131,7 @@ const EditProfilePage = () => {
 
       {currentView === 'info' && (
         <>
-          {infoErr && <div>{infoErr}</div>}
+          {infoErr && <ErrorMessage>{infoErr}</ErrorMessage>}
           <EditUserInfoForm onSubmit={submitEdit} userInfo={userInfo} />
         </>
       )}

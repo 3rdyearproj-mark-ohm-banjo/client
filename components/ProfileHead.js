@@ -18,6 +18,7 @@ import {ICONS} from '../config/icon'
 import useBorrowing from '../api/query/useBorrowing'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useMyForwardRequest from '../api/query/useMyForwardRequest'
+import useAddressInfo from '../hooks/useAddressInfo'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -174,7 +175,7 @@ const ProfileHead = () => {
   const user = useSelector((state) => state.user.user)
   const router = useRouter()
   const [isTriggerMenu, setIsTriggerMenu] = useState(false)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const {data: borrowing} = useBorrowing(isAddressTel)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
@@ -205,7 +206,7 @@ const ProfileHead = () => {
             <Button
               btnSize="sm"
               borderRadius="12px "
-              onClick={() => setIsTriggerMenu(true)}
+              onClick={() => setIsTriggerMenu(false)}
             >
               <span>ปิดเมนู</span> <Icon name={ICONS.faXmark} />
             </Button>
@@ -228,12 +229,18 @@ const ProfileHead = () => {
           </UserProfile>
           <NavMenu>
             <Link href="/profile" passHref>
-              <NavItem isActive={router.pathname === '/profile'}>
+              <NavItem
+                isActive={router.pathname === '/profile'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 ข้อมูลโดยรวม
               </NavItem>
             </Link>
             <Link href="/profile/bookrequest" passHref>
-              <NavItem isActive={router.pathname === '/profile/bookrequest'}>
+              <NavItem
+                isActive={router.pathname === '/profile/bookrequest'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 <span>คำขอยืมหนังสือของคุณ</span>
                 {bookRequest?.length > 0 && (
                   <CountNumber>{bookRequest?.length ?? 0}</CountNumber>
@@ -241,7 +248,10 @@ const ProfileHead = () => {
               </NavItem>
             </Link>
             <Link href="/profile/borrowing" passHref>
-              <NavItem isActive={router.pathname === '/profile/borrowing'}>
+              <NavItem
+                isActive={router.pathname === '/profile/borrowing'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 <span>หนังสือที่กำลังยืม</span>
                 {borrowing?.data?.data?.borrowBooks?.length > 0 && (
                   <CountNumber>
@@ -251,7 +261,10 @@ const ProfileHead = () => {
               </NavItem>
             </Link>
             <Link href="/profile/forwarding" passHref>
-              <NavItem isActive={router.pathname === '/profile/forwarding'}>
+              <NavItem
+                isActive={router.pathname === '/profile/forwarding'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 <span>หนังสือที่ต้องส่งต่อ</span>
                 {bookForwarding?.data?.data?.length > 0 && (
                   <CountNumber>
@@ -261,17 +274,26 @@ const ProfileHead = () => {
               </NavItem>
             </Link>
             <Link href="/profile/mydonation" passHref>
-              <NavItem isActive={router.pathname === '/profile/mydonation'}>
+              <NavItem
+                isActive={router.pathname === '/profile/mydonation'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 ประวัติการบริจาค
               </NavItem>
             </Link>
             <Link href="/profile/borrowhistory" passHref>
-              <NavItem isActive={router.pathname === '/profile/borrowhistory'}>
+              <NavItem
+                isActive={router.pathname === '/profile/borrowhistory'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 ประวัติการยืม
               </NavItem>
             </Link>
             <Link href="/profile/edit" passHref>
-              <NavItem isActive={router.pathname === '/profile/edit'}>
+              <NavItem
+                isActive={router.pathname === '/profile/edit'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
                 แก้ไขข้อมูล
               </NavItem>
             </Link>

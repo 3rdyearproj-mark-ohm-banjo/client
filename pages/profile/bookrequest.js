@@ -7,6 +7,7 @@ import {Icon} from '../../components'
 import BookRequestCard from '../../components/cards/BookRequestCard'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import {ICONS} from '../../config/icon'
+import useAddressInfo from '../../hooks/useAddressInfo'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 
@@ -77,7 +78,7 @@ const EmptyState = styled.div`
 
 const BookRequest = () => {
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const {data, error} = useMyBorrowRequest(isAddressTel)
 
   return (

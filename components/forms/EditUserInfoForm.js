@@ -79,22 +79,30 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
     let err = []
 
     if (
-      userData.tel &&
-      userData.tel.length > 10 &&
-      !validateTel(userData.tel)
+      (userData.tel && userData.tel.length < 9 && !validateTel(userData.tel)) ||
+      !userData.tel
     ) {
       err.push('tel')
     }
 
-    if (userData.firstname && userData.firstname.length > 50) {
+    if (
+      (userData.firstname && userData.firstname.length > 50) ||
+      !userData.firstname
+    ) {
       err.push('firstname')
     }
 
-    if (userData.lastname && userData.lastname.length > 50) {
+    if (
+      (userData.lastname && userData.lastname.length > 50) ||
+      !userData.lastname
+    ) {
       err.push('lastname')
     }
 
-    if (userData.address && userData.address.length > 300) {
+    if (
+      (userData.address && userData.address.length > 200) ||
+      !userData.address
+    ) {
       err.push('address')
     }
 
@@ -138,7 +146,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
 
       <InputGroup>
         <InputControl>
-          <label>ชื่อจริง</label>
+          <label>ชื่อจริง*</label>
           <Input
             type="text"
             placeholder="ชื่อจริง"
@@ -150,7 +158,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
           )}
         </InputControl>
         <InputControl>
-          <label>นามสกุล</label>
+          <label>นามสกุล*</label>
           <Input
             type="text"
             placeholder="นามสกุล"
@@ -164,7 +172,7 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
       </InputGroup>
 
       <InputControl>
-        <label>ที่อยู่สำหรับจัดส่ง</label>
+        <label>ที่อยู่สำหรับจัดส่ง*</label>
         <TextArea
           type="text"
           placeholder="ที่อยู่สำหรับจัดส่ง"
@@ -172,12 +180,12 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
           value={userData?.address ?? ''}
         ></TextArea>
         {errors.indexOf('address') !== -1 && (
-          <Error>กรุณากรอกที่อยู่ไม่เกิน 500 ตัวอักษร</Error>
+          <Error>กรุณากรอกที่อยู่ไม่เกิน 200 ตัวอักษร</Error>
         )}
       </InputControl>
 
       <InputControl>
-        <label>เบอร์ติดต่อ</label>
+        <label>เบอร์ติดต่อ*</label>
         <Input
           type="text"
           placeholder="เบอร์ติดต่อ"

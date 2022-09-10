@@ -11,6 +11,7 @@ import {useSelector} from 'react-redux'
 import useBorrowing from '../../api/query/useBorrowing'
 import {Icon} from '../../components'
 import {ICONS} from '../../config/icon'
+import useAddressInfo from '../../hooks/useAddressInfo'
 
 const EmptyState = styled.div`
   height: 100%;
@@ -102,7 +103,7 @@ const BookContainer = styled.div`
 
 const BookBorrowingPage = () => {
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const {data, error} = useBorrowing(isAddressTel)
 
   return (
@@ -112,8 +113,8 @@ const BookBorrowingPage = () => {
       </Head>
       <TitleWrapper>
         <Title>
-          หนังสือที่คุณกำลังยืมอยู่ ({data?.data?.data?.borrowBooks?.length ?? 0} / 5
-          เล่ม){' '}
+          หนังสือที่คุณกำลังยืมอยู่ (
+          {data?.data?.data?.borrowBooks?.length ?? 0} / 5 เล่ม){' '}
         </Title>
         <SubTitle>
           เมื่ออ่านเสร็จแล้ว คุณสามารถกด<Red>ยืนยันว่าอ่านจบแล้วได้</Red>

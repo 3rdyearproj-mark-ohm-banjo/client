@@ -22,6 +22,7 @@ import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import BookRequestVerticalCard from '../../components/cards/BookRequestVerticalCard'
 import BookForwardVerticalCard from '../../components/cards/BookForwardVerticalCard'
 import useBorrowHistory from '../../api/query/useBorrowHistory'
+import useAddressInfo from '../../hooks/useAddressInfo'
 
 const TopicHead = styled.section`
   width: 100%;
@@ -140,7 +141,7 @@ const ProfilePage = () => {
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [receiveItem, setReceiveItem] = useState({})
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const totalBookDonation = useSelector((state) => state.user.totalBookDonation)
   const {data: borrowing, error} = useBorrowing(isAddressTel)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
