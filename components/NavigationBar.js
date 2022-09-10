@@ -53,7 +53,7 @@ const ContentWrapper = styled.ul`
 
 const ActiveStyled = css`
   color: ${COLORS.PRIMARY};
-  font-weight: 650;
+  opacity: 1;
 `
 
 const MenuIcon = styled.li`
@@ -66,6 +66,7 @@ const MenuIcon = styled.li`
   transition: 0.2s;
   color: ${COLORS.GRAY_DARK};
   position: relative;
+  opacity: 0.8;
   ${(props) => props.isActive && ActiveStyled}
 
   > * {
@@ -109,6 +110,11 @@ const MenuItem = styled.li`
     background-color: ${COLORS.GRAY_DARK_5};
     color: ${COLORS.WHITE};
   }
+`
+
+const MenuContentWrapper = styled.div`
+  display: flex;
+  gap: 4px;
 `
 
 const NotificationDropdown = styled.ul`
@@ -212,6 +218,19 @@ const CountNumber = styled.span`
   align-items: center;
   border-radius: ${SPACING.XS};
   font-weight: 600;
+`
+
+const CirCleCount = styled.span`
+  width: 20px;
+  flex-shrink: 0;
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 12px;
 `
 
 const NavigationBar = () => {
@@ -357,7 +376,14 @@ const NavigationBar = () => {
                 isActive={router.pathname === '/profile/borrowing'}
               >
                 <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
-                <UserName>หนังสือที่ยืมอยู่</UserName>
+                <MenuContentWrapper>
+                  หนังสือที่ยืมอยู่{' '}
+                  {borrowing?.data?.data?.borrowBooks?.length > 0 && (
+                    <CirCleCount>
+                      {borrowing?.data?.data?.borrowBooks?.length ?? 0}
+                    </CirCleCount>
+                  )}
+                </MenuContentWrapper>
               </MenuIcon>
 
               <MenuIcon

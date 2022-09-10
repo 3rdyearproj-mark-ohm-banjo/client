@@ -8,6 +8,8 @@ import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 import {useSpring, animated, useTransition} from 'react-spring'
+import useAddressInfo from '../hooks/useAddressInfo'
+import useBorrowing from '../api/query/useBorrowing'
 
 const DrawerContainer = styled(animated.ul)`
   display: none;
@@ -61,15 +63,34 @@ const ListItem = styled.li`
   background-color: ${COLORS.GRAY_LIGHT_1};
   padding: ${SPACING.MD};
   border-radius: ${SPACING.SM};
+  position: relative;
 
   &:hover {
     background-color: ${COLORS.GRAY_LIGHT_3};
   }
 `
 
+const Content = styled.span`
+  flex-grow: 1;
+`
+
+const CountNumber = styled.span`
+  justify-self: end;
+  padding: ${SPACING.XS} ${SPACING.SM};
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${SPACING.XS};
+  font-weight: 600;
+`
+
 const Drawer = ({showAt, head, itemList}) => {
   const [isTrigger, setIsTrigger] = useState(false)
   const drawerRef = useRef()
+  const isAddressTel = useAddressInfo()
+  const {data: borrowing} = useBorrowing(isAddressTel)
 
   const triggerHandler = (trig) => {
     if (isTrigger) {
@@ -112,13 +133,19 @@ const Drawer = ({showAt, head, itemList}) => {
                     <Link href={item.link} key={item.text} passHref>
                       <ListItem>
                         <Icon name={item.icon}></Icon>
-                        <span>{item.text}</span>
+                        <Content>{item.text}</Content>
+                        {borrowing?.data?.data?.borrowBooks?.length > 0 &&
+                          item.link === '/profile/borrowing' && (
+                            <CountNumber>
+                              {borrowing?.data?.data?.borrowBooks?.length ?? 0}
+                            </CountNumber>
+                          )}
                       </ListItem>
                     </Link>
                   ) : (
                     <ListItem onClick={item.function} key={item.text}>
                       <Icon name={item.icon}></Icon>
-                      <span>{item.text}</span>
+                      <Content>{item.text}</Content>
                     </ListItem>
                   )}
                 </>
