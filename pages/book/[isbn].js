@@ -72,10 +72,6 @@ const ViewMoreCard = styled.div`
     font-size: 30px;
     opacity: 0.9;
   }
-
-  @media (min-width: 600px) {
-    max-width: 350px;
-  }
 `
 
 const RelateContentHead = styled.h4`
