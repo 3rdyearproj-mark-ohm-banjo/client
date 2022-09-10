@@ -8,6 +8,7 @@ import useBorrowHistory from '../../api/query/useBorrowHistory'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
 import Pagination from '../../components/Pagination'
 import {years} from '../../config/years'
+import useAddressInfo from '../../hooks/useAddressInfo'
 import {COLORS} from '../../styles/colors'
 import {FONTS} from '../../styles/fonts'
 import {SPACING} from '../../styles/spacing'
@@ -146,7 +147,7 @@ const ContentWrapper = styled.div``
 
 const BorrowHistoryPage = () => {
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const [filterMonth, setFilterMonth] = useState('all')
   const [filterYear, setFilterYear] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)

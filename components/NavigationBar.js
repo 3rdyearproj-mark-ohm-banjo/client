@@ -18,6 +18,7 @@ import Drawer from './Drawer'
 import useMyForwardRequest from '../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useBorrowing from '../api/query/useBorrowing'
+import useAddressInfo from '../hooks/useAddressInfo'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -273,7 +274,7 @@ const NavigationBar = () => {
   ]
 
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)

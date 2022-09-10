@@ -19,6 +19,7 @@ import userService from '../api/request/userService'
 import useBorrowing from '../api/query/useBorrowing'
 import {useEffect} from 'react'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
+import useAddressInfo from '../hooks/useAddressInfo'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -207,7 +208,7 @@ const BookInfo = ({bookInfo}) => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const slideIn = useSpring({
     from: {opacity: 0, y: -50},
     to: {opacity: 1, y: 0},
@@ -276,7 +277,7 @@ const BookInfo = ({bookInfo}) => {
   const borrow = () => {
     if ((isAuth && !user.address) || user.address.length < 1) {
       router.push('/profile/edit')
-      return toast.error('กรุณากรอกข้อมูลที่อยู่บัญชีของคุณก่อน')
+      return toast.error('กรุณากรอกข้อมูลบัญชีของคุณก่อน')
     }
 
     setIsLoading(true)

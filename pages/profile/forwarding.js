@@ -9,6 +9,7 @@ import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import {Icon} from '../../components'
 import {ICONS} from '../../config/icon'
+import useAddressInfo from '../../hooks/useAddressInfo'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -97,7 +98,7 @@ const EmptyState = styled.div`
 
 const Forwarding = () => {
   const user = useSelector((state) => state.user.user)
-  const isAddressTel = user.address && user.tel ? true : false
+  const isAddressTel = useAddressInfo()
   const {data, error} = useMyForwardRequest(isAddressTel)
 
   return (
