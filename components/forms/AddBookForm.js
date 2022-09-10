@@ -330,7 +330,7 @@ const AddBookForm = ({
 
   const onChangeIsbn = (ISBN) => {
     if (
-      (ISBN.match(/^([^-.0-9]*)$/) && ISBN.length > 0) ||
+      (!(ISBN.match(/^\d+$/) ? true : false) && ISBN.length > 0) ||
       (/[a-zA-Z]/.test(ISBN) && ISBN.length > 0) ||
       ISBN.length > 13
     ) {
