@@ -128,9 +128,9 @@ const Drawer = ({showAt, head, itemList}) => {
               )}
 
               {itemList.map((item) => (
-                <>
+                <React.Fragment key={item.text}>
                   {!item.function ? (
-                    <Link href={item.link} key={item.text} passHref>
+                    <Link href={item.link} passHref>
                       <ListItem>
                         <Icon name={item.icon}></Icon>
                         <Content>{item.text}</Content>
@@ -148,7 +148,7 @@ const Drawer = ({showAt, head, itemList}) => {
                       <Content>{item.text}</Content>
                     </ListItem>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </DrawerContainer>
           )
