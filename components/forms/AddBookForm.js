@@ -294,6 +294,7 @@ const AddBookForm = ({
     let errArr = [...errors]
     Object.keys(bookData).map((key) => {
       if (
+        (key === 'ISBN' && bookData[key].length < 13) ||
         (typeof bookData[key] !== 'number' && !bookData[key]) ||
         (Array.isArray(bookData[key]) &&
           bookData[key].length < 1 &&
