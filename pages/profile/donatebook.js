@@ -15,6 +15,8 @@ import BookDonateModal from '../../components/BookDonateModal'
 import shelfService from '../../api/request/shelfService'
 import {useDispatch} from 'react-redux'
 import {fetchCurrentUser} from '../../redux/feature/UserSlice'
+import useAddressInfo from '../../hooks/useAddressInfo'
+import toast from 'react-hot-toast'
 
 const Image = styled.img`
   margin: 0 auto;
@@ -55,6 +57,7 @@ const DonateBookPage = () => {
   const router = useRouter()
   const [clearForm, setClearForm] = useState(false)
   const dispatch = useDispatch()
+  const isAddressTel = useAddressInfo()
 
   const submitBookShelf = (bookData, imageFile) => {
     shelfService.addShelf(bookData, imageFile).then((res) => {
@@ -103,7 +106,18 @@ const DonateBookPage = () => {
               ))}
 
               <ButtonWrapper>
-                <Button onClick={() => setCurrentStep(1)}>ยืนยันข้อตกลง</Button>
+                <Button
+                  onClick={() => {
+                    if (!isAddressTel) {
+                      router.push('/profile/edit')
+                      return toast.error('กรุณากรอกข้อมูลบัญชีของคุณก่อน')
+                    } else {
+                      setCurrentStep(1)
+                    }
+                  }}
+                >
+                  ยืนยันข้อตกลง
+                </Button>
               </ButtonWrapper>
             </>
           )}
