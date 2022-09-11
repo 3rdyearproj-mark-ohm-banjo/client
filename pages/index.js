@@ -329,7 +329,7 @@ export async function getStaticProps() {
 
   return {
     props: {newBook, recommendBook},
-    revalidate: 30,
+    revalidate: 10,
   }
 }
 
