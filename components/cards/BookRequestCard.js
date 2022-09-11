@@ -108,7 +108,7 @@ const BookRequestCard = ({book, cardType}) => {
   const {refetch: refetchBorrow} = useMyBorrowRequest(false)
 
   const mapStatus = {
-    pending: 'กำลังดำเนินการ',
+    pending: 'รอการจัดส่ง',
     sending: 'ผู้ส่งจัดส่งแล้ว',
     holding: 'ได้รับหนังสือแล้ว',
   }

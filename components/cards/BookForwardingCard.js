@@ -137,7 +137,7 @@ const BookForwardingCard = ({bookInfo}) => {
   })
 
   const statusDictionary = {
-    inProcess: 'กำลังดำเนินการ',
+    inProcess: 'รอการจัดส่ง',
     sending: 'จัดส่งแล้ว',
   }
 
