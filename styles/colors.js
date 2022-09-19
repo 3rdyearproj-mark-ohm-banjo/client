@@ -21,6 +21,7 @@ export const COLORS = {
   RED: '#AE2012',
   RED_1: '#E63946',
   RED_2: '#dc3545',
+  RED_2_LIGHT: 'rgba(220, 53, 69, 0.2)',
   RED_DARK: '#D62828',
   PURPLE: '#5256E3',
   PURPLE_1: '#7209B7',

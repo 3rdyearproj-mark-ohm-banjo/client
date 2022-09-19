@@ -12,7 +12,7 @@ const useMyBorrowRequest = (enabled = true) => {
         )
 
         if (findBook) {
-          item.book = findBook.book
+          item.book = findBook
         }
 
         return item

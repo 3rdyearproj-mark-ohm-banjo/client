@@ -43,7 +43,8 @@ export const AuthFormWrapper = styled.div`
 
   @media (min-width: 768px) {
     padding: 50px;
-    border-radius: 0 ${SPACING.SM} ${SPACING.SM} 0;
+    border-radius: ${(props) =>
+      props.allRound ? `${SPACING.SM}` : `${SPACING.SM} ${SPACING.SM} 0`};
   }
 `
 
