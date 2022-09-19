@@ -10,14 +10,12 @@ import Image from 'next/image'
 import PropTypes from 'prop-types'
 import {useSelector} from 'react-redux'
 import {useSpring, animated} from 'react-spring'
-import {Flex} from './Layout'
 import Link from 'next/link'
 
 const Card = styled.div`
   display: flex;
   padding: ${SPACING.LG};
   gap: ${SPACING.SM};
-  width: 100%;
   overflow: hidden;
   border-radius: ${SPACING.SM};
   background-color: ${COLORS.WHITE};
@@ -28,8 +26,8 @@ const Card = styled.div`
     box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
   }
 
-  @media (min-width: 680px) {
-    max-width: 330px;
+  @media (min-width: 1024px) {
+    width: 100%;
   }
 `
 
@@ -88,6 +86,11 @@ const Type = styled.div`
   ${(props) => props.size === 'sm' && TypeSmStyle}
 `
 
+const BorrowCountWrapper = styled.div`
+  display: flex;
+  gap: ${SPACING.MD};
+`
+
 const BorrowCount = styled.span`
   font-size: 12px;
   color: ${(props) => props.color ?? COLORS.GRAY_DARK_1};
@@ -112,10 +115,12 @@ const BottomZone = styled(animated.div)`
 const BookCard = ({bookInfo}) => {
   const router = useRouter()
   const user = useSelector((state) => state.user.user)
+
   const isOwner = user?.donationHistory?.some(
     (info) =>
       info?.book?.bookShelf?._id === bookInfo?._id &&
-      info?.book?.currentHolder === user?._id
+      info?.book?.currentHolder === user?._id &&
+      info?.book?.bookHistorys?.length <= 2
   )
 
   const slideIn = useSpring({
@@ -156,7 +161,7 @@ const BookCard = ({bookInfo}) => {
           ))}
         </Types>
 
-        <Flex gap={SPACING.MD}>
+        <BorrowCountWrapper>
           <BorrowCount>
             <span>การยืม</span> {bookInfo?.totalBorrow.toLocaleString('en-US')}{' '}
             ครั้ง
@@ -167,7 +172,7 @@ const BookCard = ({bookInfo}) => {
               เล่ม
             </span>
           </BorrowCount>
-        </Flex>
+        </BorrowCountWrapper>
 
         <BottomZone style={slideIn}>
           {isOwner && (

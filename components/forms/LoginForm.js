@@ -6,14 +6,14 @@ import Button from '../Button'
 import {ICONS} from '../../config/icon'
 import InputWithIcon from './InputWithIcon'
 import {AuthFormWrapper} from '../Layout'
-import {login} from '../../api/request/userService'
+import userService from '../../api/request/userService'
 import Icon from '../Icon'
 import {validateEmail} from '../../utils/validate'
 //import {GoogleLogin} from 'react-google-login'
 import {useRouter} from 'next/router'
 import {useDispatch} from 'react-redux'
 import {updateUser} from '../../redux/feature/UserSlice'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 const Header = styled.div`
   text-align: center;
@@ -104,7 +104,8 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const loginHandler = async (e) => {
     e.preventDefault()
     if (validate()) {
-      return await login(email, password)
+      return await userService
+        .login(email, password)
         .then((res) => {
           dispatch(updateUser(res.data?.user))
           toast.success('เข้าสู่ระบบ สำเร็จ!')
@@ -141,7 +142,6 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
 
   return (
     <AuthFormWrapper>
-      <Toaster />
       <NavWrap>
         <div onClick={() => onShow(false)}>
           <span>ปิด</span>
@@ -155,6 +155,11 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       {resErrStatus === 422 && (
         <ErrMessage>โปรดลองอีกครั้ง, อีเมลหรือรหัสผ่านไม่ถูกต้อง</ErrMessage>
       )}
+
+      {resErrStatus === 0 && (
+        <ErrMessage>เกิดข้อผิดพลาด ในการเชื่อมต่อ</ErrMessage>
+      )}
+
       <form onSubmit={loginHandler}>
         <InputWithIcon
           label="อีเมล*"

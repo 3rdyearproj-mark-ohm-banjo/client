@@ -1,3 +1,5 @@
+import regex from './regex'
+
 export const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -10,4 +12,8 @@ export const validateEmail = (email) => {
 
 export const validateTel = (tel) => {
   return tel.match(/^([0-9]){10,10}$/) ? true : false
+}
+
+export const validatePassword = (password) => {
+  return regex.passwordRegex.test(password) ? true : false
 }

@@ -11,11 +11,10 @@ import ConfirmModal from '../../components/ConfirmModal'
 import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
-import BookOwnerCard from '../../components/BookOwnerCard'
 import userService from '../../api/request/userService'
 import Pagination from '../../components/Pagination'
 import {useRouter} from 'next/router'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 const Table = styled.table`
   width: 100%;
@@ -23,45 +22,81 @@ const Table = styled.table`
   border-radius: ${SPACING.MD};
   overflow: hidden;
   margin: ${SPACING.LG} 0;
-  display: none;
-
-  @media (min-width: 768px) {
-    display: table;
-  }
+  display: table;
 `
 
 const Thead = styled.thead`
-  > tr > td {
-    padding: ${SPACING.MD};
-    border: 1px solid ${COLORS.GRAY_LIGHT};
-    border-width: 0 0 1px 0;
-    background-color: ${COLORS.GRAY_LIGHT_2};
-    font-weight: 600;
+  display: none;
+
+  @media (min-width: 800px) {
+    display: table-header-group;
+  }
+
+  > tr {
+    > td {
+      max-width: 300px;
+      padding: ${SPACING.MD};
+      border: 1px solid ${COLORS.GRAY_LIGHT};
+      border-width: 0 0 1px;
+      background-color: ${COLORS.GRAY_LIGHT_2};
+      font-weight: 600;
+    }
   }
 `
 
 const Tbody = styled.tbody`
   > tr {
+    padding: ${SPACING.SM} 0;
+    letter-spacing: 0.025em;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid ${COLORS.GRAY_LIGHT};
+    border-width: 0 0 1px;
+
     > td {
-      padding: ${SPACING.SM} 0;
-      border: 1px solid ${COLORS.GRAY_LIGHT};
-      border-width: 0 0 1px 0;
-    }
-
-    &:last-of-type > td {
+      padding: ${SPACING.SM};
       border: none;
-    }
-  }
-`
+      margin: 0 auto;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
 
-const MobileDonationWrapper = styled.div`
-  margin: 50px 0;
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: ${SPACING.LG};
-  @media (min-width: 768px) {
-    display: none;
+      @media (min-width: 800px) {
+        display: table-cell;
+        width: initial;
+        border: 1px solid ${COLORS.GRAY_LIGHT};
+        border-width: 0 0 1px;
+      }
+
+      > span:first-child {
+        width: 50%;
+        display: block;
+
+        @media (min-width: 800px) {
+          display: none;
+        }
+      }
+
+      > span:last-child {
+        width: 50%;
+      }
+
+      &:last-of-type {
+        text-align: center;
+      }
+    }
+
+    @media (min-width: 800px) {
+      display: table-row;
+    }
+
+    &:last-of-type {
+      border: none;
+
+      > td {
+        border: none;
+      }
+    }
   }
 `
 
@@ -91,6 +126,13 @@ const PaginationWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+`
+
+const EmptyRow = styled.td`
+  padding: ${SPACING['5X']} 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
 `
 
 const MyDonationPage = ({currentPage}) => {
@@ -143,7 +185,6 @@ const MyDonationPage = ({currentPage}) => {
       <Head>
         <title>ประวัติการบริจาคของคุณ</title>
       </Head>
-      <Toaster />
       <ConfirmModal
         onSubmit={handleDeleteSubmit}
         onClose={handleShowModal}
@@ -198,77 +239,71 @@ const MyDonationPage = ({currentPage}) => {
           </tr>
         </Thead>
 
-        <Tbody>
-          {donationFormat
-            ?.slice(
-              (currentPage - 1) * pageSize,
-              (currentPage - 1) * pageSize + pageSize
-            )
-            ?.map((row, i) => (
-              <tr key={`row${i}`}>
-                <td>
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
-                    alt={row.bookName}
-                    width={120}
-                    height={150}
-                    objectFit="contain"
-                  />
-                </td>
-                <td>{row.ISBN}</td>
-                <td>{row.bookName}</td>
-                <td>{formatDate(row.donationTime, true, true, true)}</td>
-                <td>
-                  {row.bookHistorys.length < 2 &&
-                  row.currentHolder === userId ? (
-                    <Button
-                      btnSize="sm"
-                      btnType="orangeGradient"
-                      onClick={() => {
-                        setShowCancelModal(true)
-                        setDeleteItem({
-                          bookId: row.bookId,
-                          bookName: row?.bookName,
-                        })
-                      }}
-                    >
-                      ยกเลิกการบริจาค
-                    </Button>
-                  ) : (
-                    <Button isDisabled>หนังสือถูกส่งต่อแล้ว</Button>
-                  )}
-                </td>
-              </tr>
-            ))}
-        </Tbody>
+        {donationFormat?.length > 0 ? (
+          <Tbody>
+            {donationFormat
+              ?.slice(
+                (currentPage - 1) * pageSize,
+                (currentPage - 1) * pageSize + pageSize
+              )
+              ?.map((row, i) => (
+                <tr key={`row${i}`}>
+                  <td>
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
+                      alt={row.bookName}
+                      width={80}
+                      height={100}
+                      objectFit="contain"
+                    />
+                  </td>
+                  <td>
+                    <span>ISBN</span>
+                    <span>{row.ISBN}</span>
+                  </td>
+                  <td>
+                    <span>ชื่อหนังสือ</span>
+                    <span>{row.bookName}</span>
+                  </td>
+                  <td>
+                    <span>วันที่บริจาค</span>
+                    <span>
+                      {formatDate(row.donationTime, true, true, true)}{' '}
+                    </span>
+                  </td>
+                  <td>
+                    {row.bookHistorys.length < 2 &&
+                    row.currentHolder === userId ? (
+                      <Button
+                        btnSize="sm"
+                        btnType="orangeGradient"
+                        onClick={() => {
+                          setShowCancelModal(true)
+                          setDeleteItem({
+                            bookId: row.bookId,
+                            bookName: row?.bookName,
+                          })
+                        }}
+                      >
+                        ยกเลิกการบริจาค
+                      </Button>
+                    ) : (
+                      <Button btnSize="sm" isDisabled>
+                        หนังสือมีคำขอยืมแล้ว
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+          </Tbody>
+        ) : (
+          <tbody>
+            <tr>
+              <EmptyRow colSpan="5">คุณยังไม่เคยบริจาคหนังสือ</EmptyRow>
+            </tr>
+          </tbody>
+        )}
       </Table>
-
-      <MobileDonationWrapper>
-        {donationFormat
-          ?.slice(
-            (currentPage - 1) * pageSize,
-            (currentPage - 1) * pageSize + pageSize
-          )
-          ?.map((item) => (
-            <BookOwnerCard
-              key={item._id}
-              bookId={item.bookId}
-              bookInfo={item}
-              donationTime={formatDate(item.donationTime, true, true, true)}
-              canCancel={
-                item.bookHistorys.length < 2 && item.currentHolder === userId
-              }
-              onCancel={() => {
-                setShowCancelModal(true)
-                setDeleteItem({
-                  bookId: item.bookId,
-                  bookName: item?.bookName,
-                })
-              }}
-              cardType="secondary"
-            />
-          ))}
-      </MobileDonationWrapper>
 
       {Math.ceil(donationHistory?.length / pageSize) > 1 && (
         <PaginationWrapper>

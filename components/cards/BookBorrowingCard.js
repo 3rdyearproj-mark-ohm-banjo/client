@@ -1,12 +1,13 @@
 import styled from 'styled-components'
-import {COLORS} from '../styles/colors'
-import {SPACING} from '../styles/spacing'
+import {COLORS} from '../../styles/colors'
+import {SPACING} from '../../styles/spacing'
 import {
   CircularProgressbarWithChildren,
   buildStyles,
 } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import {useRouter} from 'next/router'
+import {formatDate} from '../../utils/format'
 
 const CardLayout = styled.div`
   max-width: 300px;
@@ -69,23 +70,36 @@ const TimeLeft = styled.div`
 
 const BookBorrowingCard = ({bookInfo}) => {
   const router = useRouter()
+  const expireDay = Math.round(
+    (new Date(bookInfo.bookHistorys.expireTime).getTime() -
+      new Date().getTime()) /
+      (1000 * 3600 * 24)
+  )
   return (
-    <CardLayout onClick={() => router.push(`/profile/borrow/${1}`)}>
+    <CardLayout onClick={() => router.push(`/profile/borrowing`)}>
       <ContentWrapper>
-        <BookName>ติวเข้ม PAT2 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน</BookName>
-        <BorrowDate>ได้รับวันที่ 12 ส.ค. 2022</BorrowDate>
+        <BookName>{bookInfo?.bookShelf?.bookName}</BookName>
+        <BorrowDate>
+          หมดอายุ {formatDate(bookInfo.bookHistorys.expireTime)}
+        </BorrowDate>
       </ContentWrapper>
       <CircleProgress>
         <CircularProgressbarWithChildren
-          value={70}
+          value={(14 - expireDay) * 7.14}
           styles={buildStyles({
             pathColor: COLORS.PRIMARY,
           })}
         >
           <TimeLeft>
-            <span>เหลือ</span>
-            <span>5</span>
-            <span>วัน</span>
+            {expireDay < 0 ? (
+              <span>หมดเวลา</span>
+            ) : (
+              <>
+                <span>เหลือ</span>
+                <span>{expireDay}</span>
+                <span>วัน</span>
+              </>
+            )}
           </TimeLeft>
         </CircularProgressbarWithChildren>
       </CircleProgress>

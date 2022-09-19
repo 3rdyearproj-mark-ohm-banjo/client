@@ -7,11 +7,18 @@ import {SPACING} from '../styles/spacing'
 import {useRouter} from 'next/router'
 import AuthModal from './AuthModal'
 import {useDispatch, useSelector} from 'react-redux'
-import {logout} from '../api/request/userService'
+import userService from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
 import {Hidden} from './Layout'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
+import {FONTS} from '../styles/fonts'
+import Link from 'next/link'
+import Drawer from './Drawer'
+import useMyForwardRequest from '../api/query/useMyForwardRequest'
+import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
+import useBorrowing from '../api/query/useBorrowing'
+import useAddressInfo from '../hooks/useAddressInfo'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -21,34 +28,54 @@ const NavigationBarStyled = styled.nav`
   height: 60px;
   box-shadow: 0 5px 30px ${COLORS.GRAY_LIGHT};
   z-index: 1000;
-  padding: ${SPACING.MD};
+  padding: 5px ${SPACING.MD};
 `
 
 const ContentWrapper = styled.ul`
-  margin: 10px auto;
+  margin: auto;
   max-width: 900px;
+  height: 100%;
+  ${(props) =>
+    props.isAuth
+      ? 'display: none;'
+      : `margin: 0 auto;
   display: flex;
   justify-content: space-between;
+  align-items: center;`}
 
-  @media (min-width: 450px) {
+  @media (min-width: 768px) {
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 `
 
 const ActiveStyled = css`
   color: ${COLORS.PRIMARY};
-  font-weight: 650;
+  opacity: 1;
 `
 
 const MenuIcon = styled.li`
+  height: 45px;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.XS};
+  justify-content: space-between;
   font-size: 14px;
   transition: 0.2s;
   color: ${COLORS.GRAY_DARK};
   position: relative;
+  opacity: 0.8;
   ${(props) => props.isActive && ActiveStyled}
+
+  > * {
+    user-select: none;
+  }
+
+  svg {
+    height: 18px;
+  }
 
   &:hover {
     cursor: pointer;
@@ -75,24 +102,169 @@ const MenuItem = styled.li`
   width: 100%;
   border-radius: ${SPACING.MD};
   transition: 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &:hover {
-    background-color: ${COLORS.PURPLE_3};
+    background-color: ${COLORS.GRAY_DARK_5};
     color: ${COLORS.WHITE};
   }
+`
+
+const MenuContentWrapper = styled.div`
+  display: flex;
+  gap: 4px;
+`
+
+const NotificationDropdown = styled.ul`
+  width: 97vw;
+  padding: ${SPACING.SM};
+  position: fixed;
+  right: 0;
+  background-color: ${COLORS.GRAY_LIGHT_1};
+  border-radius: ${SPACING.MD};
+  box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.SM};
+
+  @media (min-width: 700px) {
+    width: 350px;
+    position: absolute;
+    right: -50%;
+  }
+`
+
+const NotificationItem = styled.li`
+  padding: ${SPACING.SM};
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.XS};
+  font-family: ${FONTS.SARABUN};
+  color: ${COLORS.GRAY_DARK};
+  border: 1px solid ${COLORS.GRAY_LIGHT};
+  border-width: 0 0 1px;
+  transition: 0.2s;
+
+  > div > svg {
+    margin-right: ${SPACING.SM};
+  }
+
+  &:last-of-type {
+    border: 0;
+  }
+
+  &:hover {
+    color: ${COLORS.GRAY_DARK_5};
+  }
+`
+
+const ViewMoreNotification = styled.div`
+  font-weight: 600;
+  color: ${COLORS.PURPLE_1};
+`
+
+const ViewAllNotification = styled.div`
+  text-align: center;
+  font-weight: 600;
+  color: ${COLORS.GRAY_DARK_5};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+const NotiIconControl = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const DrawerWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+`
+const UserName = styled.div`
+  font-size: 16px;
+  max-width: 100px;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
+const CustomHomeIcon = styled.div`
+  cursor: pointer;
+`
+
+const CountNumber = styled.span`
+  padding: ${SPACING.XS} ${SPACING.SM};
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${SPACING.XS};
+  font-weight: 600;
+`
+
+const CirCleCount = styled.span`
+  width: 20px;
+  flex-shrink: 0;
+  color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED_2};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 12px;
 `
 
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
+  const userName = useSelector((state) => state.user.user.username)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [showNotificationMenu, setShowNotificationMenu] = useState(false)
   const dispatch = useDispatch()
   const profileRef = useRef()
   useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
+  const notificationRef = useRef()
+  const notificationIconRef = useRef()
+
+  const notificationHandler = (bool, event) => {
+    if (!isAuth) {
+      return
+    }
+
+    if (
+      showNotificationMenu &&
+      notificationIconRef?.current?.contains(event.target)
+    ) {
+      return setShowNotificationMenu(false)
+    }
+
+    setShowNotificationMenu(bool)
+  }
+
+  useOutsideAlerter(notificationHandler, notificationRef)
 
   const logoutHandler = async () => {
-    const getResult = async () => await logout()
+    const getResult = async () => await userService.logout()
     setShowProfileMenu(false)
     return getResult()
       .then(() => {
@@ -109,18 +281,34 @@ const NavigationBar = () => {
       })
   }
 
+  const menuList = [
+    {
+      icon: ICONS.faHandHoldingHand,
+      text: 'บริจาคหนังสือ',
+      link: '/profile/donatebook',
+    },
+    {icon: ICONS.faUser, text: 'ข้อมูลของฉัน', link: '/profile'},
+    {icon: ICONS.faBook, text: 'หนังสือที่ยืมอยู่', link: '/profile/borrowing'},
+    {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
+  ]
+
+  const user = useSelector((state) => state.user.user)
+  const isAddressTel = useAddressInfo()
+  const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
+
   return (
     <>
       <AuthModal show={showAuthModal} setShow={setShowAuthModal} />
-      <Toaster />
       <NavigationBarStyled>
-        <ContentWrapper>
+        <ContentWrapper isAuth={isAuth}>
           <MenuIcon
             onClick={() => router.push('/')}
             isActive={router.pathname === '/'}
           >
             <Icon name={ICONS.faHome} size={ICON_SIZE.lg} />
-            <Hidden breakPoint="450px">หน้าหลัก</Hidden>
+            หน้าหลัก
           </MenuIcon>
 
           {isAuth ? (
@@ -130,12 +318,72 @@ const NavigationBar = () => {
                 isActive={router.pathname === '/profile/donatebook'}
               >
                 <Icon name={ICONS.faHandHoldingHand} size={ICON_SIZE.lg} />
-                <Hidden breakPoint="450px">บริจาคหนังสือ</Hidden>
+                บริจาคหนังสือ
               </MenuIcon>
 
-              <MenuIcon>
-                <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
-                <Hidden breakPoint="450px">การแจ้งเตือน</Hidden>
+              {/* <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
+                <NotiIconControl ref={notificationIconRef}>
+                  <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
+                  การแจ้งเตือน
+                </NotiIconControl>
+                {showNotificationMenu && (
+                  <NotificationDropdown>
+                    <NotificationItem>
+                      <div>
+                        <Icon name={ICONS.faHandHoldingHand} />
+                        <span>
+                          มีคำขอยืมหนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100%
+                          ภายใน 5 วัน ที่คุณถืออยู่ จากคุณ thanasit
+                        </span>
+                      </div>
+                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
+                    </NotificationItem>
+                    <NotificationItem>
+                      <div>
+                        <Icon name={ICONS.faBook} />
+                        <span>
+                          หนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน
+                          ที่คุณได้ทำการยืมถูกจัดส่งแล้ว
+                        </span>
+                      </div>
+                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
+                    </NotificationItem>
+                    <NotificationItem>
+                      <div>
+                        <Icon name={ICONS.faBook} />
+                        <span>
+                          หนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน
+                          ที่คุณได้ทำการยืมถูกจัดส่งแล้ว
+                        </span>
+                      </div>
+                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
+                    </NotificationItem>
+
+                    <NotificationItem>
+                      <Link href="/profile/notification" passHref>
+                        <ViewAllNotification>
+                          <Icon name={ICONS.faBell} />
+                          ดูการแจ้งเตือนทั้งหมด
+                        </ViewAllNotification>
+                      </Link>
+                    </NotificationItem>
+                  </NotificationDropdown>
+                )}
+              </MenuIcon> */}
+
+              <MenuIcon
+                onClick={() => router.push('/profile/borrowing')}
+                isActive={router.pathname === '/profile/borrowing'}
+              >
+                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
+                <MenuContentWrapper>
+                  หนังสือที่ยืมอยู่{' '}
+                  {borrowing?.data?.data?.borrowBooks?.length > 0 && (
+                    <CirCleCount>
+                      {borrowing?.data?.data?.borrowBooks?.length ?? 0}
+                    </CirCleCount>
+                  )}
+                </MenuContentWrapper>
               </MenuIcon>
 
               <MenuIcon
@@ -143,7 +391,7 @@ const NavigationBar = () => {
                 ref={profileRef}
               >
                 <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
-                <Hidden breakPoint="450px">ข้อมูลของฉัน</Hidden>
+                <UserName>{userName}</UserName>
                 {showProfileMenu && (
                   <MenuDropdown>
                     <MenuItem
@@ -152,7 +400,15 @@ const NavigationBar = () => {
                         router.push('/profile')
                       }}
                     >
-                      ข้อมูลของฉัน
+                      <span>ข้อมูลของฉัน</span>
+                      {(bookRequest?.length ?? 0) +
+                        (bookForwarding?.data?.data?.length ?? 0) >
+                        0 && (
+                        <CountNumber>
+                          {(bookRequest?.length ?? 0) +
+                            (bookForwarding?.data?.data?.length ?? 0)}
+                        </CountNumber>
+                      )}
                     </MenuItem>
                     <MenuItem onClick={logoutHandler}>ออกจากระบบ</MenuItem>
                   </MenuDropdown>
@@ -162,10 +418,21 @@ const NavigationBar = () => {
           ) : (
             <MenuIcon onClick={() => setShowAuthModal(true)}>
               <Icon name={ICONS.faSignIn} size={ICON_SIZE.lg} />
-              <Hidden breakPoint="450px">เข้าสู่ระบบ</Hidden>
+              เข้าสู่ระบบ
             </MenuIcon>
           )}
         </ContentWrapper>
+
+        {isAuth && (
+          <DrawerWrapper>
+            <Link href="/" passHref>
+              <CustomHomeIcon>
+                <Icon name={ICONS.faHome} size={'lg'}></Icon>
+              </CustomHomeIcon>
+            </Link>
+            <Drawer itemList={menuList}></Drawer>
+          </DrawerWrapper>
+        )}
       </NavigationBarStyled>
     </>
   )

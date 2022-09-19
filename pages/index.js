@@ -240,11 +240,11 @@ const Home = ({newBook, recommendBook}) => {
                   slidesPerView={1}
                   spaceBetween={10}
                   breakpoints={{
-                    600: {
+                    700: {
                       slidesPerView: 2,
                       spaceBetween: 40,
                     },
-                    800: {
+                    1024: {
                       slidesPerView: 3,
                       spaceBetween: 50,
                     },
@@ -273,11 +273,11 @@ const Home = ({newBook, recommendBook}) => {
                   slidesPerView={1}
                   spaceBetween={10}
                   breakpoints={{
-                    600: {
+                    700: {
                       slidesPerView: 2,
                       spaceBetween: 40,
                     },
-                    800: {
+                    1024: {
                       slidesPerView: 3,
                       spaceBetween: 50,
                     },
@@ -304,7 +304,10 @@ const Home = ({newBook, recommendBook}) => {
 }
 
 export async function getStaticProps() {
-  const recommendBook = await shelfService
+  let newBook = []
+  let recommendBook = []
+
+  await shelfService
     .searchBookShelf(
       {
         sortBy: 'totalBorrow',
@@ -312,15 +315,21 @@ export async function getStaticProps() {
       },
       5
     )
-    .then((res) => res.data)
-  const newBook = await shelfService
+    .then((res) => (recommendBook = res.data))
+    .catch(() => {
+      return
+    })
+
+  await shelfService
     .searchBookShelf({sortBy: '_id', isDescending: 'yes'}, 5)
-    .then((res) => {
-      return res.data
+    .then((res) => (newBook = res.data))
+    .catch(() => {
+      return
     })
 
   return {
     props: {newBook, recommendBook},
+    revalidate: 10,
   }
 }
 

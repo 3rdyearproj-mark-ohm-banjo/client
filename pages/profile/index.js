@@ -2,23 +2,27 @@ import {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import {SwiperSlide, Swiper} from 'swiper/react'
 import {Button, Icon} from '../../components'
-//import BookBorrowingCard from '../../components/BookBorrowingCard'
+import BookBorrowingCard from '../../components/cards/BookBorrowingCard'
 import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
 import {Scrollbar} from 'swiper'
-import BookOwnerCard from '../../components/BookOwnerCard'
-import {useRouter} from 'next/router'
-import {formatDate} from '../../utils/format'
 import ConfirmModal from '../../components/ConfirmModal'
 import userService from '../../api/request/userService'
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchCurrentUser, updateUser} from '../../redux/feature/UserSlice'
 import Head from 'next/head'
 import ProfileLayout from '../../components/layouts/ProfileLayout'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
+import useBorrowing from '../../api/query/useBorrowing'
+import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
+import useMyForwardRequest from '../../api/query/useMyForwardRequest'
+import BookRequestVerticalCard from '../../components/cards/BookRequestVerticalCard'
+import BookForwardVerticalCard from '../../components/cards/BookForwardVerticalCard'
+import useBorrowHistory from '../../api/query/useBorrowHistory'
+import useAddressInfo from '../../hooks/useAddressInfo'
 
 const TopicHead = styled.section`
   width: 100%;
@@ -37,35 +41,30 @@ const TopicHead = styled.section`
 
 const SwiperContainer = styled.div`
   width: 100%;
-
   > div div.swiper-slide > div {
-    margin: 5px;
-    max-width: 90%;
+    margin: 0;
+  }
+
+  .swiper-wrapper {
+    max-width: 0;
+  }
+
+  .swiper-pointer-events {
+    padding: ${SPACING.MD};
   }
 `
 
 const EmptyState = styled.div`
-  height: 200px;
-  line-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 250px;
   font-size: 20px;
   font-weight: 600;
   text-align: center;
   background-color: ${COLORS.GRAY_LIGHT};
   border-radius: ${SPACING.MD};
-  width: 100%;
-`
-
-const ViewAll = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.9;
-  }
 `
 
 const StatContainer = styled.div`
@@ -74,7 +73,6 @@ const StatContainer = styled.div`
   flex-direction: column;
   width: 100%;
   justify-content: center;
-  margin: ${SPACING.LG};
 
   @media (min-width: 600px) {
     flex-direction: row;
@@ -111,12 +109,44 @@ const StatItem = styled.span`
   }
 `
 
+const Title = styled.h2`
+  margin: 12px 0;
+  padding: ${SPACING.MD} ${SPACING.MD} 0;
+  font-size: 24px;
+  font-weight: 600;
+`
+
+const ButtonModalWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  width: 70%;
+`
+
+const BookActionContainer = styled.div`
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 2%;
+  @media (min-width: 768px) {
+    grid-template-columns: 49% 49%;
+  }
+`
+
+const ActionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const ProfilePage = () => {
-  const router = useRouter()
   const [showCancelModal, setShowCancelModal] = useState(false)
-  const [deleteItem, setDeleteItem] = useState({})
+  const [receiveItem, setReceiveItem] = useState({})
   const user = useSelector((state) => state.user.user)
+  const isAddressTel = useAddressInfo()
   const totalBookDonation = useSelector((state) => state.user.totalBookDonation)
+  const {data: borrowing, error} = useBorrowing(isAddressTel)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
+  const {data: borrowHistory} = useBorrowHistory(isAddressTel)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -130,25 +160,25 @@ const ProfilePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalBookDonation, user?.donationHistory])
 
-  const handleDeleteSubmit = () => {
-    userService.cancelDonation(deleteItem?.bookId).then(() => {
+  const handleReceiveSubmit = () => {
+    userService.cancelDonation(receiveItem?.bookId).then(() => {
       dispatch(
         updateUser({
           ...user,
           donationHistory: user.donationHistory.filter(
-            (history) => history.book._id !== deleteItem?.bookId
+            (history) => history.book._id !== receiveItem?.bookId
           ),
         })
       )
       toast.success('ยกเลิกการบริจาคสำเร็จ')
       setShowCancelModal(false)
-      setDeleteItem({})
+      setReceiveItem({})
     })
   }
 
   const handleShowModal = () => {
     setShowCancelModal(false)
-    setDeleteItem({})
+    setReceiveItem({})
   }
 
   return (
@@ -156,23 +186,15 @@ const ProfilePage = () => {
       <Head>
         <title>Share my Book - ข้อมูลของฉัน</title>
       </Head>
-      <Toaster />
       <ConfirmModal
-        onSubmit={handleDeleteSubmit}
+        onSubmit={handleReceiveSubmit}
         onClose={handleShowModal}
         onShow={showCancelModal}
-        header={`คุณต้องการยกเลิกการบริจาค ${deleteItem.bookName} จริงๆ หรอ?`}
-        icon={ICONS.faFaceSadTear}
-        iconBg={COLORS.RED_1}
+        header={`คุณได้รับหนังสือ ${receiveItem.bookName} แล้วใช่ไหม?`}
+        icon={ICONS.faBook}
+        iconBg={COLORS.GREEN_1}
       >
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            justifyContent: 'center',
-            width: '70%',
-          }}
-        >
+        <ButtonModalWrapper>
           <Button
             btnSize="sm"
             bgColor={COLORS.RED_1}
@@ -184,20 +206,22 @@ const ProfilePage = () => {
           </Button>
           <Button
             btnSize="sm"
-            onClick={handleDeleteSubmit}
+            onClick={handleReceiveSubmit}
             fullWidth
             borderRadius="4px"
           >
             ยืนยัน
           </Button>
-        </div>
+        </ButtonModalWrapper>
       </ConfirmModal>
+
+      <Title>ภาพรวมของบัญชีของคุณ</Title>
 
       <StatContainer>
         <StatItem>
           <Icon name={ICONS.faBookBookmark} />
           <p>ยืมไปแล้ว</p>
-          <span>0 ครั้ง</span>
+          <span>{borrowHistory?.data?.data?.length ?? 0} ครั้ง</span>
         </StatItem>
         <StatItem>
           <Icon name={ICONS.faHandHoldingHand} />
@@ -207,16 +231,18 @@ const ProfilePage = () => {
         <StatItem>
           <Icon name={ICONS.faBook} />
           <p>ถือหนังสืออยู่</p>
-          <span>0 / 5 เล่ม</span>
+          <span>
+            {borrowing?.data?.data?.borrowBooks?.length ?? 0} / 5 เล่ม
+          </span>
         </StatItem>
       </StatContainer>
 
-      <TopicHead>
-        <h3>หนังสือที่กำลังยืมอยู่</h3>
-      </TopicHead>
-
-      <EmptyState>ไม่พบหนังสือที่กำลังยืมอยู่</EmptyState>
-      {/* <SwiperContainer>
+      {borrowing?.data?.data?.borrowBooks.length > 0 && (
+        <>
+          <TopicHead>
+            <h3>หนังสือที่กำลังยืมอยู่</h3>
+          </TopicHead>
+          <SwiperContainer>
             <Swiper
               slidesPerView={1}
               spaceBetween={10}
@@ -237,86 +263,93 @@ const ProfilePage = () => {
               modules={[Scrollbar]}
               className="mySwiper"
             >
-              <SwiperSlide>
-                <BookBorrowingCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <BookBorrowingCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <BookBorrowingCard />
-              </SwiperSlide>
+              {borrowing?.data?.data?.borrowBooks?.map((info) => (
+                <SwiperSlide key={info._id}>
+                  <BookBorrowingCard bookInfo={info} />
+                </SwiperSlide>
+              ))}
             </Swiper>
-          </SwiperContainer> */}
+          </SwiperContainer>
+        </>
+      )}
 
-      <TopicHead>
-        <h3>หนังสือที่บริจาค</h3>
-        {user?.donationHistory?.length > 0 && (
-          <ViewAll onClick={() => router.push('/profile/mydonation')}>
-            <span> ดูทั้งหมด </span>
-            <Icon name={ICONS.faChevronRight} />
-          </ViewAll>
-        )}
-      </TopicHead>
-      <SwiperContainer>
-        {user?.donationHistory?.length > 0 ? (
-          <Swiper
-            slidesPerView={2}
-            spaceBetween={10}
-            breakpoints={{
-              520: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              700: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 20,
-              },
-            }}
-            scrollbar={{
-              hide: true,
-            }}
-            loopFillGroupWithBlank={true}
-            modules={[Scrollbar]}
-            className="mySwiper"
-          >
-            {user?.donationHistory?.map((history) => (
-              <SwiperSlide key={`donation-book-${history._id}`}>
-                <BookOwnerCard
-                  bookId={history.book?._id}
-                  bookInfo={history.book?.bookShelf}
-                  donationTime={formatDate(
-                    history?.donationTime,
-                    true,
-                    true,
-                    true
-                  )}
-                  canCancel={history.book?.currentHolder === user._id}
-                  onCancel={(showModal, bookId) => {
-                    setShowCancelModal(showModal)
-                    setDeleteItem(bookId)
-                  }}
-                ></BookOwnerCard>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        ) : (
-          <EmptyState>คุณยังไม่เคยบริจาคหนังสือ</EmptyState>
-        )}
-      </SwiperContainer>
+      <BookActionContainer>
+        <ActionGroup>
+          <TopicHead>
+            <h3>หนังสือที่คุณขอยืม</h3>
+          </TopicHead>
 
-      <TopicHead>
-        <h3> ประวัติการยืม</h3>{' '}
-        {/* <ViewAll onClick={() => router.push('/profile/borrowhistory')}>
-              <span> ดูทั้งหมด </span>
-              <Icon name={ICONS.faChevronRight} />
-            </ViewAll> */}
-      </TopicHead>
-      <EmptyState>คุณยังไม่เคยยืมหนังสือ</EmptyState>
+          {bookRequest?.length > 0 ? (
+            <SwiperContainer>
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                breakpoints={{
+                  700: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                  1024: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                loopFillGroupWithBlank={true}
+                modules={[Scrollbar]}
+                className="mySwiper"
+              >
+                {bookRequest.map((item) => (
+                  <SwiperSlide key={item._id}>
+                    <BookRequestVerticalCard bookInfo={item} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </SwiperContainer>
+          ) : (
+            <EmptyState>ไม่มีหนังสือที่คุณได้จะรับ</EmptyState>
+          )}
+        </ActionGroup>
+        <ActionGroup>
+          <TopicHead>
+            <h3>หนังสือที่ต้องส่งต่อ</h3>
+          </TopicHead>
+          {bookForwarding?.data?.data?.length > 0 ? (
+            <SwiperContainer>
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                breakpoints={{
+                  700: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                }}
+                scrollbar={{
+                  hide: true,
+                }}
+                loopFillGroupWithBlank={true}
+                modules={[Scrollbar]}
+                className="mySwiper"
+              >
+                {bookForwarding?.data?.data.map((item) => (
+                  <SwiperSlide key={item._id}>
+                    <BookForwardVerticalCard bookInfo={item} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </SwiperContainer>
+          ) : (
+            <EmptyState>ไม่มีหนังสือที่ต้องส่งต่อ</EmptyState>
+          )}
+        </ActionGroup>
+      </BookActionContainer>
     </>
   )
 }

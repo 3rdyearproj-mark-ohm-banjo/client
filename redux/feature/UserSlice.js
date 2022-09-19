@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import userService from '../../api/request/userService'
 
-export const fetchCurrentUser = createAsyncThunk('users/fetchCurrentUsr', () =>
+export const fetchCurrentUser = createAsyncThunk('users/fetchCurrentUser', () =>
   userService.getCurrentUser().then((res) => res.data.data[0])
 )
 

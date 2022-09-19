@@ -8,7 +8,6 @@ import {SPACING} from '../styles/spacing'
 import styled from 'styled-components'
 import Image from 'next/image'
 import UfoImage from '../public/static/images/ufo.jpg'
-import PropTypes from 'prop-types'
 import {animated, useSpring} from 'react-spring'
 
 const NotFoundHead = styled.h2`
@@ -51,7 +50,7 @@ const NotFoundContainer = styled(animated.div)`
   gap: ${SPACING.LG};
 `
 
-const NotFound = ({type}) => {
+const NotFound = () => {
   const router = useRouter()
   const fadeIn = useSpring({
     from: {opacity: 0, y: 50},
@@ -62,54 +61,26 @@ const NotFound = ({type}) => {
     <BackgroundContainer link={Background.src}>
       <ContentWrapper
         margin="16px 0"
-        width="1050px"
+        width="1200px"
         maxWidth="100%"
         bgColor={COLORS.GRAY_LIGHT_1}
         padding="80px 40px"
       >
         <NotFoundContainer style={fadeIn}>
-          {type === 'default' && (
-            <>
-              <NotFoundHead> 404 - ไม่พบหน้านี้ในระบบ</NotFoundHead>
-              <NotFoundImgContainer>
-                <Image
-                  src={UfoImage.src}
-                  alt="UFO image"
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </NotFoundImgContainer>
+          <NotFoundHead> 404 - ไม่พบหน้านี้ในระบบ</NotFoundHead>
+          <NotFoundImgContainer>
+            <Image
+              src={UfoImage.src}
+              alt="UFO image"
+              layout="fill"
+              objectFit="cover"
+            />
+          </NotFoundImgContainer>
 
-              <NotFoundDescribe>
-                หน้าที่คุณกำลังเข้าถึง ไม่มีในระบบ โปรดตรวจสอบ URL
-                ที่คุณกำลังเข้าถึง
-              </NotFoundDescribe>
-            </>
-          )}
-
-          {type === 'ISBN' && (
-            <>
-              <NotFoundDescribe>
-                ISBN ที่คุณกำลังค้นหาคือ <b>{router.query.isbn}</b>
-              </NotFoundDescribe>
-              <NotFoundImgContainer>
-                <Image
-                  src={UfoImage.src}
-                  alt="UFO image"
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </NotFoundImgContainer>
-              <NotFoundHead>
-                “ขอโทษนะ แต่เราไม่พบข้อมูลหนังสือที่มีหมายเลข ISBN นี้ในระบบ”
-              </NotFoundHead>
-              <NotFoundDescribe>
-                หนังสือนี้อาจจะยังไม่มีข้อมูลในระบบ หรือลองตรวจสอบเลข ISBN
-                ให้ดีๆ นะ อาจจะมีการพิมพ์ตกหล่นหรือใส่เลขผิดในบางตำแหน่ง <br />
-                (ISBN จะมีตัวเลขทั้งหมด 13 ตัว)
-              </NotFoundDescribe>
-            </>
-          )}
+          <NotFoundDescribe>
+            หน้าที่คุณกำลังเข้าถึง ไม่มีในระบบ โปรดตรวจสอบ URL
+            ที่คุณกำลังเข้าถึง
+          </NotFoundDescribe>
 
           <Button onClick={() => router.push('/')} btnType="orangeGradient">
             กลับไปหน้าหลัก
@@ -118,14 +89,6 @@ const NotFound = ({type}) => {
       </ContentWrapper>
     </BackgroundContainer>
   )
-}
-
-NotFound.propTypes = {
-  type: PropTypes.oneOf(['default', 'ISBN']),
-}
-
-NotFound.defaultProps = {
-  type: 'default',
 }
 
 export default NotFound

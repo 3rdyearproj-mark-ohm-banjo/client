@@ -264,6 +264,13 @@ const AddBookForm = ({
               preview: `${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${res.data[0].imageCover}`,
             },
           ])
+
+          Object.keys(res.data[0]).forEach(
+            (k) =>
+              (!res.data[0][k] || res.data[0][k].length === 0) &&
+              delete res.data[0][k]
+          )
+
           setBookData(res.data[0])
           if (!isbnBookToEdit) {
             setDisabledAll(true)
@@ -287,6 +294,7 @@ const AddBookForm = ({
     let errArr = [...errors]
     Object.keys(bookData).map((key) => {
       if (
+        (key === 'ISBN' && bookData[key].length < 13) ||
         (typeof bookData[key] !== 'number' && !bookData[key]) ||
         (Array.isArray(bookData[key]) &&
           bookData[key].length < 1 &&
@@ -323,7 +331,7 @@ const AddBookForm = ({
 
   const onChangeIsbn = (ISBN) => {
     if (
-      (ISBN.match(/^([^-.0-9]*)$/) && ISBN.length > 0) ||
+      (!(ISBN.match(/^\d+$/) ? true : false) && ISBN.length > 0) ||
       (/[a-zA-Z]/.test(ISBN) && ISBN.length > 0) ||
       ISBN.length > 13
     ) {

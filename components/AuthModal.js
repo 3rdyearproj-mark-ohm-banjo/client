@@ -8,6 +8,7 @@ import RegisterBanner from '../public/static/images/register-banner.png'
 import LoginBanner from '../public/static/images/people-group-reading.jpg'
 import Image from 'next/image'
 import {useTransition, a} from 'react-spring'
+import {COLORS} from '../styles/colors'
 
 const PageBanner = styled.div`
   width: 100%;
@@ -17,6 +18,7 @@ const PageBanner = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  background-color: ${COLORS.WHITE};
 `
 
 const BannerImage = styled.div`
@@ -128,6 +130,7 @@ const AuthModal = ({show, setShow}) => {
                       </PageBanner>
                       <RegisterForm
                         onShowRegister={setShowregister}
+                        onSuccess={() => setShow(false)}
                         onShow={setCloseModal}
                       />
                     </ContentWrapper>

@@ -1,4 +1,4 @@
-const thaiMonths = {
+export const thaiMonths = {
   short: [
     'ม.ค.',
     'ก.พ.',
@@ -39,8 +39,7 @@ export const formatDate = (
   let year = isNationalYear
     ? dateParse.getFullYear()
     : dateParse.getFullYear() + 543
-  let month =
-    thaiMonths[isShortMonth ? 'short' : 'full'][dateParse.getMonth() - 1]
+  let month = thaiMonths[isShortMonth ? 'short' : 'full'][dateParse.getMonth()]
   let date = dateParse.getDate()
 
   let hour = dateParse.getHours()

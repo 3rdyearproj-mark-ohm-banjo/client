@@ -24,16 +24,15 @@ const SearchInputContainer = styled.div`
 `
 
 const OptionInput = styled.input`
-  padding: 12px 8px;
-  transition: 0.3s;
-  width: 95%;
-  margin: ${SPACING.XS};
-  user-select: none;
-  font-family: ${FONTS.PRIMARY};
+  width: 100%;
   height: 40px;
+  padding: 12px 8px;
+  font-family: ${FONTS.PRIMARY};
   border: 1px solid ${COLORS.GRAY_DARK};
   border-radius: 4px;
+  transition: 0.3s;
   outline: none;
+  user-select: none;
 
   &:focus {
     border-color: ${COLORS.PRIMARY};
@@ -41,17 +40,18 @@ const OptionInput = styled.input`
 `
 
 const OptionActiveStyle = css`
-  background-color: ${COLORS.PRIMARY};
-  color: ${COLORS.WHITE};
-  font-weight: 600;
+  background-color: ${COLORS.GRAY_DARK_5};
+  color: ${COLORS.GRAY_LIGHT};
 `
 
 const OptionItem = styled.div`
-  padding: 12px 8px;
-  transition: 0.3s;
+  font-family: ${FONTS.SARABUN};
+  padding: ${SPACING.MD} ${SPACING.SM};
+  margin: ${SPACING.SM} 0;
+  border-radius: ${SPACING.SM};
+  transition: 0.2s;
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid ${COLORS.GRAY_LIGHT_2};
   outline: none;
 
   &:hover {
@@ -68,6 +68,7 @@ const Dropdown = styled.div`
   width: 100%;
   position: absolute;
   background-color: ${COLORS.WHITE};
+  padding: ${SPACING.SM};
   z-index: 100;
   border-radius: 0 8px 8px;
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
@@ -78,7 +79,7 @@ const Dropdown = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${COLORS.PRIMARY};
+    background: ${COLORS.GRAY_DARK_2};
     border-radius: 5px;
   }
 `
@@ -93,6 +94,8 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  ${(props) => props.rotate && 'transform:rotate(180deg);'}
 `
 
 const FakeInput = styled.div`
@@ -202,8 +205,9 @@ const SearchDropdown = ({
             />
             <IconContainer
               onClick={() => !isDisabled && setIsToggle(!isToggle)}
+              rotate={isToggle ? 1 : 0}
             >
-              <Icon name={isToggle ? ICONS.faChevronUp : ICONS.faChevronDown} />
+              <Icon name={ICONS.faChevronDown} />
             </IconContainer>
           </>
         ) : (
@@ -218,8 +222,9 @@ const SearchDropdown = ({
             </FakeInput>
             <IconContainer
               onClick={() => !isDisabled && setIsToggle(!isToggle)}
+              rotate={isToggle ? 1 : 0}
             >
-              <Icon name={isToggle ? ICONS.faChevronUp : ICONS.faChevronDown} />
+              <Icon name={ICONS.faChevronDown} />
             </IconContainer>
           </>
         )}

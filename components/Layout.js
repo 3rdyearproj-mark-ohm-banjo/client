@@ -3,7 +3,7 @@ import {COLORS} from '../styles/colors'
 import {SPACING} from '../styles/spacing'
 
 export const ContentWrapper = styled.section`
-  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  max-width: ${(props) => props.maxWidth ?? '1200px'};
   width: ${(props) => props.width ?? '100%'};
   margin: ${(props) => props.margin ?? '30px auto'};
   display: flex;
@@ -18,8 +18,9 @@ export const ContentWrapper = styled.section`
 `
 
 export const BoxLayout = styled.div`
-  max-width: ${(props) => props.maxWidth ?? '1050px'};
+  max-width: ${(props) => props.maxWidth ?? '1200px'};
   width: ${(props) => props.width ?? '100%'};
+  padding: ${SPACING.MD} ${SPACING.LG};
 `
 
 export const AddBookLayout = styled.section`
@@ -44,18 +45,6 @@ export const AuthFormWrapper = styled.div`
     padding: 50px;
     border-radius: 0 ${SPACING.SM} ${SPACING.SM} 0;
   }
-`
-
-export const Flex = styled.div`
-  display: flex;
-  flex-direction: ${(props) => props.flexDirection ?? 'row'};
-  gap: ${(props) => props.gap};
-  ${(props) => props.flexWrap && `flex-wrap: ${props.flexWrap};`}
-  ${(props) => props.alignItems && `align-items: ${props.alignItems};`}
-  ${(props) =>
-    props.justifyContent && `justify-content: ${props.justifyContent};`}
-  ${(props) => props.padding && `padding: ${props.padding};`}
-  ${(props) => props.margin && `padding: ${props.margin};`}
 `
 
 export const Hidden = styled.div`

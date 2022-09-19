@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, {axiosPrivate} from '../axios'
 
 const getShelfById = async (id) => {
   const res = await axios.get(`/bookShelf/${id}`)
@@ -6,18 +6,13 @@ const getShelfById = async (id) => {
 }
 
 const getShelfByIsbn = async (isbn) => {
-  const res = await axios
-    .get(`/bookShelf/isbn/${isbn}`)
-    .then((res) => res.data)
-    .catch((err) => err.response)
+  const res = await axios.get(`/bookShelf/isbn/${isbn}`).then((res) => res.data)
   return res
 }
 
 const getAllShelf = async () => {
-  const res = await axios
-    .get(`/bookShelf`)
-    .then((res) => res.data)
-    .catch((err) => err.response)
+  const res = await axios.get(`/bookShelf`).then((res) => res.data)
+
   return res
 }
 
@@ -33,7 +28,6 @@ const searchBookShelf = async (params, size) => {
   const res = await axios
     .get(`/bookShelf/search`, {params: {...params, size}})
     .then((res) => res.data)
-    .catch((err) => err.response)
   return res
 }
 
@@ -44,7 +38,7 @@ const addShelf = async (data, file) => {
   }
   formData.append('book', JSON.stringify(data))
 
-  const res = await axios
+  const res = await axiosPrivate
     .post(`/user/bookShelf`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -61,7 +55,7 @@ const editShelf = async (data, file) => {
     formData.append('imgfile', file[0])
   }
   formData.append('book', JSON.stringify(data))
-  const res = await axios
+  const res = await axiosPrivate
     .put(`/admin/bookShelf/${data._id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

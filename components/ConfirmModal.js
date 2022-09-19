@@ -7,6 +7,7 @@ import {SPACING} from '../styles/spacing'
 import Icon from './Icon'
 import {ICONS} from '../config/icon'
 import {COLORS} from '../styles/colors'
+import {useTransition, animated} from 'react-spring'
 
 const ModalLayout = styled.div`
   display: flex;
@@ -15,6 +16,7 @@ const ModalLayout = styled.div`
 `
 
 const ModalContent = styled.div`
+  width: 100%;
   background-color: ${COLORS.GRAY_LIGHT_2};
   padding: ${SPACING['2X']};
   display: flex;
@@ -43,6 +45,12 @@ const CircleIcon = styled.div`
 const ConfirmModal = ({onShow, onClose, header, children, icon, iconBg}) => {
   const modalRef = useRef()
 
+  const slideModal = useTransition(onShow, {
+    from: {opacity: 0, y: 400},
+    enter: {opacity: 1, y: 425},
+    leave: {opacity: 0, y: 400},
+  })
+
   const onCloseHandler = (close) => {
     if (!close) {
       onClose()
@@ -53,24 +61,29 @@ const ConfirmModal = ({onShow, onClose, header, children, icon, iconBg}) => {
 
   return (
     <>
-      {onShow && (
-        <ModalBackground>
-          <ModalContainer
-            maxWidth="500px"
-            maxHeight="max-content"
-            ref={modalRef}
-          >
-            <ModalLayout>
-              <CircleIcon iconBg={iconBg}>
-                <Icon size="4x" name={icon ?? ICONS.faQuestion}></Icon>
-              </CircleIcon>
-              <ModalContent>
-                <ModalHead>{header}</ModalHead>
-                {children}
-              </ModalContent>
-            </ModalLayout>
-          </ModalContainer>
-        </ModalBackground>
+      {slideModal(
+        (style, item, key) =>
+          item && (
+            <ModalBackground>
+              <animated.div style={style}>
+                <ModalContainer
+                  maxWidth="500px"
+                  maxHeight="max-content"
+                  ref={modalRef}
+                >
+                  <ModalLayout>
+                    <CircleIcon iconBg={iconBg}>
+                      <Icon size="4x" name={icon ?? ICONS.faQuestion}></Icon>
+                    </CircleIcon>
+                    <ModalContent>
+                      <ModalHead>{header}</ModalHead>
+                      {children}
+                    </ModalContent>
+                  </ModalLayout>
+                </ModalContainer>
+              </animated.div>
+            </ModalBackground>
+          )
       )}
     </>
   )

@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {register} from '../../api/request/userService'
+import userService from '../../api/request/userService'
 import {ICONS} from '../../config/icon'
 import {COLORS} from '../../styles/colors'
 import Button from '../Button'
@@ -8,7 +8,14 @@ import InputWithIcon from './InputWithIcon'
 import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import Icon from '../Icon'
-import {validateEmail, validateTel} from '../../utils/validate'
+import {
+  validateEmail,
+  validatePassword,
+  validateTel,
+} from '../../utils/validate'
+import toast from 'react-hot-toast'
+import {useDispatch} from 'react-redux'
+import {updateUser} from '../../redux/feature/UserSlice'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
@@ -38,17 +45,15 @@ const ErrMessage = styled.div`
   font-weight: 600;
 `
 
-const RegisterForm = ({onShowRegister, onShow}) => {
+const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
   const [userData, setUserData] = useState({
     email: '',
     password: '',
     username: '',
-    address: '',
-    firstname: '',
-    lastname: '',
-    tel: '',
   })
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [errors, setErrors] = useState([])
+  const dispatch = useDispatch()
 
   const validate = () => {
     let errorArr = []
@@ -57,25 +62,37 @@ const RegisterForm = ({onShowRegister, onShow}) => {
       if (
         userData[key].length < 1 ||
         (key === 'email' && !validateEmail(userData.email)) ||
-        (key === 'tel' && !validateTel(userData.tel))
+        (key === 'tel' && !validateTel(userData.tel)) ||
+        (key === 'password' && !validatePassword(userData.password))
       ) {
         errorArr.push(key)
       }
     })
+
+    if (passwordConfirm !== userData['password']) {
+      errorArr.push('confirmPassword')
+    }
+
     if (errorArr.length > 0) {
       setErrors(errorArr)
-      return 0
+      return false
     } else {
-      return 1
+      return true
     }
   }
 
   const registerHandle = (e) => {
     e.preventDefault()
     if (validate()) {
-      return register(userData)
-        .then((res) => {
-          onShowRegister(false)
+      return userService
+        .register(userData)
+        .then(() => {
+          userService.login(userData.email, userData.password).then((res) => {
+            dispatch(updateUser(res.data?.user))
+            toast.success('สมัครสมาชิกสำเร็จแล้ว')
+            onShowRegister(false)
+            onSuccess()
+          })
         })
         .catch((err) => {
           let errorArr = []
@@ -134,28 +151,6 @@ const RegisterForm = ({onShowRegister, onShow}) => {
         />
 
         <InputWithIcon
-          label="ชื่อจริง*"
-          type="text"
-          iconName={ICONS.faUser}
-          onChange={(data) => onChange('firstname', data)}
-          maxLength={50}
-          placeholder="กรอกชื่อ"
-          error={errors.indexOf('firstname') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกชื่อของคุณ"
-        />
-
-        <InputWithIcon
-          label="นามสกุล*"
-          type="text"
-          iconName={ICONS.faUser}
-          onChange={(data) => onChange('lastname', data)}
-          maxLength={50}
-          placeholder="กรอกนามสกุล"
-          error={errors.indexOf('lastname') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกนามสกุล"
-        />
-
-        <InputWithIcon
           label="รหัสผ่าน*"
           iconName={ICONS.faLock}
           inputType="password"
@@ -163,30 +158,18 @@ const RegisterForm = ({onShowRegister, onShow}) => {
           onChange={(data) => onChange('password', data)}
           placeholder="กรอกรหัสผ่าน"
           error={errors.indexOf('password') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกรหัสผ่าน"
+          errorMessage="กรุณากรอกรหัสผ่านที่ประกอบด้วย ตัวพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และตัวอักษรพิเศษ ความยาว 10 - 30 ตัว"
         />
 
         <InputWithIcon
-          label="ที่อยู่สำหรับจัดส่ง*"
-          iconName={ICONS.faLocationDot}
-          inputType="textarea"
-          onChange={(data) => onChange('address', data)}
-          placeholder="ที่อยู่สำหรับจัดส่ง"
-          maxLength={200}
-          error={errors.indexOf('address') !== -1}
-          errorMessage="คุณยังไม่ได้กรอกที่อยู่"
-        />
-
-        <InputWithIcon
-          label="เบอร์โทร*"
-          iconName={ICONS.faPhone}
-          inputType="number"
-          onChange={(data) => onChange('tel', data)}
-          placeholder="กรอกเบอร์โทร"
-          maxLength={10}
-          error={errors.indexOf('tel') !== -1}
-          errorMessage="กรุณากรอกเบอร์โทรให้ครบ 10 ตัวเลข"
-          value={userData.tel}
+          label="กรอกรหัสผ่านอีกครั้ง*"
+          iconName={ICONS.faLock}
+          inputType="password"
+          maxLength={30}
+          onChange={(data) => setPasswordConfirm(data)}
+          placeholder="กรอกรหัสผ่านอีกครั้ง"
+          error={errors.indexOf('confirmPassword') !== -1}
+          errorMessage="กรุณากรอกรหัสผ่านอีกครั้ง"
         />
 
         <ButtonWrapper>

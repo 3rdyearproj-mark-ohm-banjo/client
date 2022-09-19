@@ -4,9 +4,9 @@ export const useOutsideAlerter = (isInside, ref, mouseBehavior) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
-        isInside(false)
+        isInside(false, event)
       } else {
-        isInside(true)
+        isInside(true, event)
       }
     }
 
