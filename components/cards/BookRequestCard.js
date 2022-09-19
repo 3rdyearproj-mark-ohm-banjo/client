@@ -1,18 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import {COLORS} from '../../styles/colors'
-import {SPACING} from '../../styles/spacing'
+import { COLORS } from '../../styles/colors'
+import { SPACING } from '../../styles/spacing'
 import Button from '../Button'
 import Divider from '../Divider'
-import {useState} from 'react'
+import { useState } from 'react'
 import ConfirmModal from '../ConfirmModal'
-import {ICONS} from '../../config/icon'
+import { ICONS } from '../../config/icon'
 import userService from '../../api/request/userService'
-import {formatDate} from '../../utils/format'
+import { formatDate } from '../../utils/format'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 
 const CardContainer = styled.div`
@@ -102,13 +102,14 @@ const Status = styled.span`
   ${(props) => props.type === 'waiting' && `color: ${COLORS.BLUE_LIGHT_3}`}
 `
 
-const BookRequestCard = ({book, cardType}) => {
+const BookRequestCard = ({ book, cardType }) => {
   const [confirmModal, setConfirmModal] = useState(false)
   const [cancelModal, setCancelModal] = useState(false)
-  const {refetch: refetchBorrow} = useMyBorrowRequest(false)
+  const { refetch: refetchBorrow } = useMyBorrowRequest(false)
 
   const mapStatus = {
     pending: 'รอการจัดส่ง',
+    inProcess: 'รอการจัดส่ง',
     sending: 'ผู้ส่งจัดส่งแล้ว',
     holding: 'ได้รับหนังสือแล้ว',
   }
@@ -130,12 +131,24 @@ const BookRequestCard = ({book, cardType}) => {
   }
 
   const cancelBorrowHandler = () => {
-    toast.promise(userService.cancelBorrow(book.bookShelf._id), {
+    const successTxt = (() => {
+      if ((book?.status === 'pending' &&
+        book?.book?.status !== 'sending')) {
+        return 'ส่งคำขอยกเลิกการยืมไปยังผูัส่งเรียบร้อยแล้ว'
+      } else if (cardType === 'queue') {
+        return 'ออกจากคิวสำเร็จ'
+      }
+      return 'ยกเลิกการยืมสำเร็จ'
+    })()
+
+
+    toast.promise(userService.cancelBorrow(book.bookShelf._id, book.book._id), {
+      // ส่ง bookHistory id ด้วย
       loading: 'กำลังดำเนินการ...',
       success: () => {
         setCancelModal(false)
         refetchBorrow()
-        return cardType === 'queue' ? 'ออกจากคิวสำเร็จ' : 'ยกเลิกการยืมสำเร็จ'
+        return successTxt
       },
       error: () => {
         setCancelModal(false)
@@ -144,6 +157,9 @@ const BookRequestCard = ({book, cardType}) => {
       },
     })
   }
+
+
+  console.log(book)
 
   return (
     <>
@@ -280,26 +296,17 @@ const BookRequestCard = ({book, cardType}) => {
               </>
             ) : (
               <>
-                {book?.status === 'waiting' && (
-                  <Button
-                    btnSize="sm"
-                    btnType="orangeGradient"
-                    onClick={() => setCancelModal(true)}
-                  >
-                    ยกเลิกการยืม
-                  </Button>
-                )}
-
-                {book?.status === 'pending' &&
-                  book?.book?.status !== 'sending' && (
+                {book?.status === 'waiting' || (book?.status === 'pending' &&
+                  book?.book?.status !== 'sending' && !book?.book?.borrowerNeedToCancel) && (
                     <Button
                       btnSize="sm"
                       btnType="orangeGradient"
-                      isDisabled={true}
+                      onClick={() => setCancelModal(true)}
                     >
-                      รอการจัดส่ง
+                      ยกเลิกการยืม
                     </Button>
                   )}
+
 
                 {book?.book?.status === 'sending' && (
                   <>
@@ -319,6 +326,7 @@ const BookRequestCard = ({book, cardType}) => {
                     </Button> */}
                   </>
                 )}
+                {book?.book?.borrowerNeedToCancel && <Button btnSize="sm" btnType="orangeGradient" isDisabled={true}>ส่งคำขอยกเลิกแล้ว</Button>}
               </>
             )}
           </ButtonWrapper>

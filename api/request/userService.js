@@ -1,4 +1,4 @@
-import axios, {axiosPrivate} from '../axios'
+import axios, { axiosPrivate } from '../axios'
 import Cookies from 'universal-cookie'
 
 const login = (email, password) => {
@@ -53,8 +53,13 @@ const confirmReceive = (bookId) => {
   return res
 }
 
-const cancelBorrow = (bookshelfId) => {
-  const res = axiosPrivate.put(`user/cancelborrow/${bookshelfId}`)
+const cancelBorrow = (bookshelfId, bookTransactionId) => {
+  const res = axiosPrivate.put(`user/cancelborrow/${bookshelfId}?bookHisId=${bookTransactionId}`)
+  return res
+}
+
+const confirmCancelBorrow = (bookHisId) => {
+  const res = axiosPrivate.delete(`user/acceptcancelborrow/${bookHisId}`)
   return res
 }
 
@@ -106,4 +111,5 @@ export default {
   confirmForwarding,
   currentHoldingBook,
   borrowHistory,
+  confirmCancelBorrow
 }
