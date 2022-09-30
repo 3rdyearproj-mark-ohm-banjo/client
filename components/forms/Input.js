@@ -23,7 +23,7 @@ const StyledInput = styled.input`
 `
 
 const ErrorText = styled.span`
-  font-size: 12px;
+  font-size: ${(props) => (props.errSize ? props.errSize : '12px')};
   color: red;
 `
 
@@ -35,6 +35,7 @@ const Input = ({
   placeholder,
   isError,
   errText,
+  errSize,
 }) => {
   return (
     <>
@@ -46,7 +47,7 @@ const Input = ({
         placeholder={placeholder}
         isError={isError}
       />
-      {isError && <ErrorText>{errText}</ErrorText>}
+      {isError && <ErrorText errSize={errSize}>{errText}</ErrorText>}
     </>
   )
 }

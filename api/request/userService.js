@@ -105,6 +105,19 @@ const sendReport = (reportId, idType, message) => {
   return res
 }
 
+const forgotPassword = (email) => {
+  const res = axiosPrivate.post(`forgotpassword`, {
+    email,
+  })
+
+  return res
+}
+
+const resetPassword = (hashId, password) => {
+  const res = axiosPrivate.post(`resetpassword/${hashId}`, {password})
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -125,4 +138,6 @@ export default {
   borrowHistory,
   confirmCancelBorrow,
   sendReport,
+  forgotPassword,
+  resetPassword,
 }

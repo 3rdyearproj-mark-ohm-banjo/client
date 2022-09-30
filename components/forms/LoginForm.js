@@ -79,7 +79,6 @@ const ErrMessage = styled.div`
 const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const forgotPassword = () => {}
   const [resErrStatus, setResErrStatus] = useState()
   const [error, setError] = useState([])
   const router = useRouter()
@@ -186,7 +185,14 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
 
         <HelperWrapper>
           <span onClick={() => onShowRegister(true)}>สร้างบัญชี</span>
-          {/* <span>ลืมรหัสผ่าน?</span> */}
+          <span
+            onClick={() => {
+              onShow(false)
+              router.push('/forgotpassword')
+            }}
+          >
+            ลืมรหัสผ่าน
+          </span>
         </HelperWrapper>
 
         <Button fullWidth btnSize="sm" bgColor={COLORS.RED_2} type="submit">
