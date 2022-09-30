@@ -97,11 +97,18 @@ const GetBookDate = styled.span`
 const ExpireMessage = styled.div`
   color: ${COLORS.WHITE};
   background-color: ${COLORS.RED_2};
+  opacity: 0.65;
   padding: 2px ${SPACING.SM};
   text-align: center;
   margin: 0 0 2px;
 
   ${(props) => props.successRead && `background-color:${COLORS.GREEN_1};`}
+`
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.SM};
 `
 
 const BorrowingCardInfo = ({info}) => {
@@ -220,24 +227,35 @@ const BorrowingCardInfo = ({info}) => {
               </GetBookDate>
             </BookDateInfo>
           </Description>
-          {info.status === 'holding' ? (
+          <ButtonWrapper>
+            {info.status === 'holding' ? (
+              <Button
+                btnSize="sm"
+                borderRadius="0"
+                onClick={() => setShowModal(true)}
+              >
+                ยืนยันว่าคุณอ่านหนังสือจบแล้ว
+              </Button>
+            ) : (
+              <Button
+                btnSize="sm"
+                borderRadius="0"
+                btnType="whiteBorder"
+                isDisabled={true}
+              >
+                คุณอ่านหนังสือเล่มนี้จบแล้ว
+              </Button>
+            )}
+
             <Button
               btnSize="sm"
-              borderRadius="4px"
-              onClick={() => setShowModal(true)}
+              borderRadius="0"
+              btnType="orangeGradient"
+              onClick={() => {}}
             >
-              ยืนยันว่าคุณอ่านหนังสือจบแล้ว
+              ติดต่อผู้ดูแลระบบ
             </Button>
-          ) : (
-            <Button
-              btnSize="sm"
-              borderRadius="4px"
-              btnType="whiteBorder"
-              isDisabled={true}
-            >
-              คุณอ่านหนังสือเล่มนี้จบแล้ว
-            </Button>
-          )}
+          </ButtonWrapper>
         </ContentWrapper>
       </CardContainer>
     </>

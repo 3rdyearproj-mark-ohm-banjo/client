@@ -158,14 +158,12 @@ const Unit = styled.span`
 `
 
 const SectionContent = styled.section`
-  ${(props) => props.margin && `margin: ${props.margin};`}
-  ${(props) => props.display && `display: ${props.display};`}
-  ${(props) => props.flexDirection && `flex-direction: ${props.flexDirection};`}
-  ${(props) => props.gap && `gap: ${props.gap};`}
-  ${(props) =>
-    props.justifyContent && `justify-content: ${props.justifyContent};`}
-  border: ${(props) => props.border ?? 'none'};
-  padding: ${(props) => props.padding ?? SPACING.MD};
+  display: flex;
+  gap: ${SPACING.SM};
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: ${SPACING.SM} 0;
   border-radius: ${SPACING.MD};
 `
 
@@ -202,6 +200,23 @@ const ConfirmReminder = styled.span`
   color: ${COLORS.RED_2};
   font-size: 14px;
   font-weight: 600;
+`
+
+const ReportBtn = styled.div`
+  width: max-content;
+  display: flex;
+  gap: ${SPACING.SM};
+  align-items: center;
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.XS} ${SPACING.SM};
+  border-radius: ${SPACING.SM};
+  background-color: ${COLORS.RED_2};
+  font-size: 14px;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
 `
 
 const BookInfo = ({bookInfo}) => {
@@ -303,6 +318,12 @@ const BookInfo = ({bookInfo}) => {
     setShowBorrowModal(false)
   }
 
+  const showReportModal = () => {
+    if (!isAuth) {
+      return toast.error('กรุณาเข้าสู่ระบบก่อน')
+    }
+  }
+
   return (
     <>
       <ConfirmModal
@@ -367,6 +388,10 @@ const BookInfo = ({bookInfo}) => {
             <HeadText>
               <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
             </HeadText>
+            <ReportBtn onClick={showReportModal}>
+              <Icon name={ICONS.faFlag} />
+              <span>รายงานข้อมูลไม่ถูกต้อง</span>
+            </ReportBtn>
           </SectionContent>
 
           <NumberGroup>

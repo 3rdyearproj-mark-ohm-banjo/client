@@ -20,6 +20,7 @@ export const ModalContainer = styled.div`
   max-height: ${(props) => props.maxHeight ?? '400px'};
   width: 100%;
   height: max-content;
+  padding: ${(props) => props.padding && props.padding};
   color: ${COLORS.PRIMARY};
   background-color: ${COLORS.WHITE};
   border-radius: ${SPACING.SM};
@@ -30,6 +31,7 @@ export const ModalContainer = styled.div`
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: ${(props) => props.flexDirection ?? 'column'};
+  gap: ${(props) => props.gap && props.gap};
   overflow: hidden;
 `
 

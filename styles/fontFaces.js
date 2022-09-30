@@ -18,7 +18,7 @@ export const fontFaces = () => {
     @font-face {
       font-family: 'Noto Sans Thai';
       font-style: normal;
-      font-weight: 600;
+      font-weight: 800;
       font-stretch: 100%;
       font-display: swap;
       src: url(https://fonts.gstatic.com/s/notosansthai/v14/iJWQBXeUZi_OHPqn4wq6hQ2_hbJ1xyN9wd43SofNWcdfKI2h.woff2)
