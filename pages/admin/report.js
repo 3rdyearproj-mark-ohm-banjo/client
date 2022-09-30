@@ -68,7 +68,7 @@ const ReportPage = () => {
               <Td>{row?.status}</Td>
               <Td>{row?.userWhoReport}</Td>
               <Td>
-                <Button btnSize="sm">รับเรื่อง</Button>
+                <Button btnSize="sm">รายละเอียด</Button>
               </Td>
             </tr>
           ))}
