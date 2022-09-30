@@ -1,19 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { COLORS } from '../../styles/colors'
-import { SPACING } from '../../styles/spacing'
+import {COLORS} from '../../styles/colors'
+import {SPACING} from '../../styles/spacing'
 import Button from '../Button'
 import Divider from '../Divider'
-import { useState } from 'react'
+import {useState} from 'react'
 import ConfirmModal from '../ConfirmModal'
-import { ICONS } from '../../config/icon'
+import {ICONS} from '../../config/icon'
 import userService from '../../api/request/userService'
-import { formatDate } from '../../utils/format'
+import {formatDate} from '../../utils/format'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
+import ReportModal from '../ReportModal'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -102,10 +103,11 @@ const Status = styled.span`
   ${(props) => props.type === 'waiting' && `color: ${COLORS.BLUE_LIGHT_3}`}
 `
 
-const BookRequestCard = ({ book, cardType }) => {
+const BookRequestCard = ({book, cardType}) => {
   const [confirmModal, setConfirmModal] = useState(false)
   const [cancelModal, setCancelModal] = useState(false)
-  const { refetch: refetchBorrow } = useMyBorrowRequest(false)
+  const [showReport, setShowReport] = useState(false)
+  const {refetch: refetchBorrow} = useMyBorrowRequest(false)
 
   const mapStatus = {
     pending: 'รอการจัดส่ง',
@@ -132,15 +134,13 @@ const BookRequestCard = ({ book, cardType }) => {
 
   const cancelBorrowHandler = () => {
     const successTxt = (() => {
-      if ((book?.status === 'pending' &&
-        book?.book?.status !== 'sending')) {
+      if (book?.status === 'pending' && book?.book?.status !== 'sending') {
         return 'ส่งคำขอยกเลิกการยืมไปยังผูัส่งเรียบร้อยแล้ว'
       } else if (cardType === 'queue') {
         return 'ออกจากคิวสำเร็จ'
       }
       return 'ยกเลิกการยืมสำเร็จ'
     })()
-
 
     toast.promise(userService.cancelBorrow(book.bookShelf._id, book.book._id), {
       // ส่ง bookHistory id ด้วย
@@ -158,11 +158,16 @@ const BookRequestCard = ({ book, cardType }) => {
     })
   }
 
-
-  console.log(book)
-
   return (
     <>
+      <ReportModal
+        type="bookHistoryId"
+        bookName={book?.bookShelf?.bookName}
+        reportId={book?.book?._id}
+        isShow={showReport}
+        setIsShow={setShowReport}
+      />
+
       <ConfirmModal
         onClose={setConfirmModal}
         onShow={confirmModal}
@@ -296,20 +301,32 @@ const BookRequestCard = ({ book, cardType }) => {
               </>
             ) : (
               <>
-                {book?.status === 'waiting' || (book?.status === 'pending' &&
-                  book?.book?.status !== 'sending' && !book?.book?.borrowerNeedToCancel) && (
-                    <Button
-                      btnSize="sm"
-                      btnType="orangeGradient"
-                      onClick={() => setCancelModal(true)}
-                    >
-                      ยกเลิกการยืม
-                    </Button>
-                  )}
-
+                {book?.status === 'waiting' ||
+                  (book?.status === 'pending' &&
+                    book?.book?.status !== 'sending' &&
+                    !book?.book?.borrowerNeedToCancel && (
+                      <>
+                        <Button
+                          btnSize="sm"
+                          onClick={() => setShowReport(true)}
+                        >
+                          แจ้งไม่ได้รับหนังสือ
+                        </Button>
+                        <Button
+                          btnSize="sm"
+                          btnType="orangeGradient"
+                          onClick={() => setCancelModal(true)}
+                        >
+                          ยกเลิกการยืม
+                        </Button>
+                      </>
+                    ))}
 
                 {book?.book?.status === 'sending' && (
                   <>
+                    <Button btnSize="sm" onClick={() => setShowReport(true)}>
+                      แจ้งไม่ได้รับหนังสือ
+                    </Button>
                     <Button
                       btnSize="sm"
                       onClick={() =>
@@ -321,12 +338,22 @@ const BookRequestCard = ({ book, cardType }) => {
                     >
                       ยืนยันการรับหนังสือ
                     </Button>
-                    {/* <Button btnSize="sm" btnType="orangeGradient">
-                      ติดต่อผู้ดูแลระบบ
-                    </Button> */}
                   </>
                 )}
-                {book?.book?.borrowerNeedToCancel && <Button btnSize="sm" btnType="orangeGradient" isDisabled={true}>ส่งคำขอยกเลิกแล้ว</Button>}
+                {book?.book?.borrowerNeedToCancel && (
+                  <>
+                    <Button btnSize="sm" onClick={() => setShowReport(true)}>
+                      แจ้งไม่ได้รับหนังสือ
+                    </Button>
+                    <Button
+                      btnSize="sm"
+                      btnType="orangeGradient"
+                      isDisabled={true}
+                    >
+                      ส่งคำขอยกเลิกแล้ว
+                    </Button>
+                  </>
+                )}
               </>
             )}
           </ButtonWrapper>

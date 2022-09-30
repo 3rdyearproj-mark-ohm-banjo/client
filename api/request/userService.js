@@ -1,4 +1,4 @@
-import axios, { axiosPrivate } from '../axios'
+import axios, {axiosPrivate} from '../axios'
 import Cookies from 'universal-cookie'
 
 const login = (email, password) => {
@@ -54,7 +54,9 @@ const confirmReceive = (bookId) => {
 }
 
 const cancelBorrow = (bookshelfId, bookTransactionId) => {
-  const res = axiosPrivate.put(`user/cancelborrow/${bookshelfId}?bookHisId=${bookTransactionId}`)
+  const res = axiosPrivate.put(
+    `user/cancelborrow/${bookshelfId}?bookHisId=${bookTransactionId}`
+  )
   return res
 }
 
@@ -93,6 +95,16 @@ const borrowHistory = () => {
   return res
 }
 
+const sendReport = (reportId, idType, message) => {
+  const res = axiosPrivate.post(`user/reportadmin`, {
+    reportId,
+    idType,
+    message,
+  })
+
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -111,5 +123,6 @@ export default {
   confirmForwarding,
   currentHoldingBook,
   borrowHistory,
-  confirmCancelBorrow
+  confirmCancelBorrow,
+  sendReport,
 }

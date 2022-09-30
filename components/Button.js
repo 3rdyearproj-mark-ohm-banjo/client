@@ -97,6 +97,7 @@ const orangeGradientStyled = css`
 `
 const smSize = css`
   border-radius: 24px;
+  border-radius: 8px;
   min-height: 32px;
   min-width: 100px;
   padding: 2px 10px;
@@ -106,6 +107,7 @@ const smSize = css`
 
 const mdSize = css`
   border-radius: 24px;
+  border-radius: 8px;
   min-height: 48px;
   min-width: 200px;
   padding: 10px 20px;
@@ -115,6 +117,7 @@ const mdSize = css`
 
 const lgSize = css`
   border-radius: 40px;
+  border-radius: 8px;
   min-height: 52px;
   min-width: 220px;
   padding: 10px 20px;

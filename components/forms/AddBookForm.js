@@ -13,6 +13,7 @@ import SearchDropdown from '../SearchDropdown'
 import shelfService from '../../api/request/shelfService'
 import useTypes from '../../api/query/useTypes'
 import usePublishers from '../../api/query/usePublishers'
+import Input from './Input'
 
 const Form = styled.form`
   display: flex;
@@ -140,24 +141,6 @@ const Label = styled.label`
     color: ${COLORS.RED_1};
     font-weight: 600;
   }
-`
-
-const Input = styled.input`
-  border-radius: 4px;
-  border: 1px solid ${COLORS.GRAY_DARK};
-  height: 40px;
-  font-family: ${FONTS.PRIMARY};
-  padding: ${SPACING.SM};
-  outline: none;
-  font-size: 16px;
-  width: 100%;
-
-  &:focus {
-    border-color: ${COLORS.PRIMARY};
-    ${(props) => props.isError && 'border-color: red'}
-  }
-
-  ${(props) => props.isError && 'border-color: red'}
 `
 
 const ButtonWrapper = styled.div`
@@ -409,14 +392,9 @@ const AddBookForm = ({
               maxLength="17"
               placeholder="ISBN"
               isError={errors?.indexOf('ISBN') !== -1}
+              errText="กรุณากรอก ISBN เป็นตัวเลขจำนวน 13 หลัก (XXX-XX-XXXXX-XX-X)"
             ></Input>
           </SuggestInputContainer>
-
-          {errors?.indexOf('ISBN') !== -1 && (
-            <ErrorText>
-              กรุณากรอก ISBN เป็นตัวเลขจำนวน 13 หลัก (XXX-XX-XXXXX-XX-X)
-            </ErrorText>
-          )}
         </InputControl>
         <InputControl>
           <Label>ชื่อหนังสือ*</Label>
@@ -427,10 +405,8 @@ const AddBookForm = ({
             placeholder="กรอกชื่อหนังสือ"
             isError={errors?.indexOf('bookName') !== -1}
             disabled={disabledAll}
+            errText="กรุณากรอกชื่อหนังสือ"
           ></Input>
-          {errors?.indexOf('bookName') !== -1 && (
-            <ErrorText>กรุณากรอกชื่อหนังสือ</ErrorText>
-          )}
         </InputControl>
 
         <InputControl width="100%">
@@ -442,10 +418,8 @@ const AddBookForm = ({
             placeholder="กรอกชื่อผู้แต่ง"
             isError={errors?.indexOf('author') !== -1}
             disabled={disabledAll}
+            errText="กรุณากรอกชื่อผู้แต่ง"
           ></Input>
-          {errors?.indexOf('author') !== -1 && (
-            <ErrorText>กรุณากรอกชื่อผู้แต่ง</ErrorText>
-          )}
         </InputControl>
         {!loadingPublishers && (
           <InputControl width="50%">
