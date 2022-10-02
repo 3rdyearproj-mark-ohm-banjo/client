@@ -288,6 +288,11 @@ const BookInfo = ({bookInfo}) => {
       return toast.error('คุณถือหนังสือเล่มนี้อยู่')
     }
 
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     setShowBorrowModal(true)
   }
 

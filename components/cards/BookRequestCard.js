@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 import {useEffect} from 'react'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import ReportModal from '../ReportModal'
+import {useSelector} from 'react-redux'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -108,6 +109,7 @@ const BookRequestCard = ({book, cardType}) => {
   const [cancelModal, setCancelModal] = useState(false)
   const [showReport, setShowReport] = useState(false)
   const {refetch: refetchBorrow} = useMyBorrowRequest(false)
+  const user = useSelector((state) => state?.user?.user)
 
   const mapStatus = {
     pending: 'รอการจัดส่ง',
@@ -117,6 +119,11 @@ const BookRequestCard = ({book, cardType}) => {
   }
 
   const handleSubmit = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     toast.promise(userService.confirmReceive(book?.book?._id), {
       loading: 'กำลังดำเนินการ...',
       success: () => {
@@ -133,6 +140,11 @@ const BookRequestCard = ({book, cardType}) => {
   }
 
   const cancelBorrowHandler = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     const successTxt = (() => {
       if (book?.status === 'pending' && book?.book?.status !== 'sending') {
         return 'ส่งคำขอยกเลิกการยืมไปยังผูัส่งเรียบร้อยแล้ว'

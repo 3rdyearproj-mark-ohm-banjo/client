@@ -118,6 +118,26 @@ const resetPassword = (hashId, password) => {
   return res
 }
 
+const sendVerifyMail = () => {
+  const res = axiosPrivate.post(`user/sendmailverify`)
+  return res
+}
+
+const submitVerifyMail = (id) => {
+  const res = axiosPrivate.post(`verifymail/${id}`)
+  return res
+}
+
+const getUserEmailByHash = (id) => {
+  const res = axios.get(`getuserbyhash/${id}`)
+  return res
+}
+
+const verifyHash = (id) => {
+  const res = axios.get(`verifyhash/${id}`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -140,4 +160,8 @@ export default {
   sendReport,
   forgotPassword,
   resetPassword,
+  sendVerifyMail,
+  submitVerifyMail,
+  getUserEmailByHash,
+  verifyHash,
 }

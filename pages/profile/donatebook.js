@@ -13,7 +13,7 @@ import {AddBookLayout} from '../../components/Layout'
 import {useRouter} from 'next/router'
 import BookDonateModal from '../../components/BookDonateModal'
 import shelfService from '../../api/request/shelfService'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 import useAddressInfo from '../../hooks/useAddressInfo'
 import toast from 'react-hot-toast'
@@ -58,6 +58,7 @@ const DonateBookPage = () => {
   const [clearForm, setClearForm] = useState(false)
   const dispatch = useDispatch()
   const isAddressTel = useAddressInfo()
+  const user = useSelector((state) => state?.user?.user)
 
   const submitBookShelf = (bookData, imageFile) => {
     shelfService.addShelf(bookData, imageFile).then((res) => {
@@ -108,7 +109,10 @@ const DonateBookPage = () => {
               <ButtonWrapper>
                 <Button
                   onClick={() => {
-                    if (!isAddressTel) {
+                    if (!user.verifyEmail) {
+                      router.push('/profile/')
+                      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+                    } else if (!isAddressTel) {
                       router.push('/profile/edit')
                       return toast.error('กรุณากรอกข้อมูลบัญชีของคุณก่อน')
                     } else {

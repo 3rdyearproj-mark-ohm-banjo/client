@@ -39,9 +39,8 @@ const FormWrapper = styled.div`
   padding: ${SPACING.MD} 0;
 `
 
-const ResetPasswordPage = () => {
+const ResetPasswordPage = ({hashId}) => {
   const router = useRouter()
-  const {hashId} = router.query
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -121,3 +120,24 @@ const ResetPasswordPage = () => {
 }
 
 export default ResetPasswordPage
+
+export const getServerSideProps = async ({params}) => {
+  const hashId = params.hashId
+  let isVerify = false
+
+  try {
+    await userService.verifyHash(hashId).then(() => (isVerify = true))
+  } catch {
+    return {notFound: true}
+  }
+
+  if (!isVerify) {
+    return {notFound: true}
+  }
+
+  return {
+    props: {
+      hashId,
+    },
+  }
+}

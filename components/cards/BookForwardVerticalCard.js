@@ -1,6 +1,8 @@
 import Image from 'next/image'
+import {useRouter} from 'next/router'
 import React from 'react'
 import toast from 'react-hot-toast'
+import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import useBorrowing from '../../api/query/useBorrowing'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
@@ -79,7 +81,15 @@ const CloseBtn = styled.button`
 const BookForwardVerticalCard = ({bookInfo}) => {
   const {refetch: getMyForward} = useMyForwardRequest(false)
   const {refetch: getBorrowing} = useBorrowing()
+  const user = useSelector((state) => state?.user?.user)
+  const router = useRouter()
+
   const submitForwarding = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     toast.promise(userService.confirmForwarding(bookInfo.book._id), {
       loading: 'กำลังดำเนินการ...',
       success: () => {
@@ -96,6 +106,11 @@ const BookForwardVerticalCard = ({bookInfo}) => {
   }
 
   const showConfirmToast = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     toast.dismiss()
     return toast(
       (t) => (
