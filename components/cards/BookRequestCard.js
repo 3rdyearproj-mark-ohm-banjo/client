@@ -126,7 +126,7 @@ const BookRequestCard = ({book, cardType}) => {
       return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
     }
 
-    toast.promise(userService.confirmReceive(book?.book?._id), {
+    toast.promise(userService.confirmReceive(book?.book?.book?._id), {
       loading: 'กำลังดำเนินการ...',
       success: () => {
         setConfirmModal(false)
