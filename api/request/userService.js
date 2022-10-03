@@ -54,9 +54,13 @@ const confirmReceive = (bookId) => {
 }
 
 const cancelBorrow = (bookshelfId, bookTransactionId) => {
-  const res = axiosPrivate.put(
-    `user/cancelborrow/${bookshelfId}?bookHisId=${bookTransactionId}`
-  )
+  let url = `user/cancelborrow/${bookshelfId}`
+
+  if (bookTransactionId) {
+    url += `?bookHisId=${bookTransactionId}`
+  }
+
+  const res = axiosPrivate.put(url)
   return res
 }
 
