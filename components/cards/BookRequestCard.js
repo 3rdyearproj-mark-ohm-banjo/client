@@ -156,7 +156,7 @@ const BookRequestCard = ({book, cardType}) => {
       return 'ยกเลิกการยืมสำเร็จ'
     })()
 
-    toast.promise(userService.cancelBorrow(book.bookShelf._id, book.book._id), {
+    toast.promise(userService.cancelBorrow(book.bookShelf._id, book?.book?._id ?? null), {
       // ส่ง bookHistory id ด้วย
       loading: 'กำลังดำเนินการ...',
       success: () => {
