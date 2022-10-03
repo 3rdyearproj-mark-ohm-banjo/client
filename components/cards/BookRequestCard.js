@@ -156,20 +156,23 @@ const BookRequestCard = ({book, cardType}) => {
       return 'ยกเลิกการยืมสำเร็จ'
     })()
 
-    toast.promise(userService.cancelBorrow(book.bookShelf._id, book?.book?._id ?? null), {
-      // ส่ง bookHistory id ด้วย
-      loading: 'กำลังดำเนินการ...',
-      success: () => {
-        setCancelModal(false)
-        refetchBorrow()
-        return successTxt
-      },
-      error: () => {
-        setCancelModal(false)
-        refetchBorrow()
-        return 'เกิดข้อผิดพลาด'
-      },
-    })
+    toast.promise(
+      userService.cancelBorrow(book.bookShelf._id, book?.book?._id ?? null),
+      {
+        // ส่ง bookHistory id ด้วย
+        loading: 'กำลังดำเนินการ...',
+        success: () => {
+          setCancelModal(false)
+          refetchBorrow()
+          return successTxt
+        },
+        error: () => {
+          setCancelModal(false)
+          refetchBorrow()
+          return 'เกิดข้อผิดพลาด'
+        },
+      }
+    )
   }
 
   return (
@@ -317,28 +320,31 @@ const BookRequestCard = ({book, cardType}) => {
               <>
                 {book?.status === 'waiting' ||
                   (book?.status === 'pending' &&
-                    book?.book?.status !== 'sending' &&
+                    book?.book?.book?.status !== 'sending' &&
                     !book?.book?.borrowerNeedToCancel && (
                       <>
                         <Button
                           btnSize="sm"
                           onClick={() => setShowReport(true)}
+                          btnType="orangeGradient"
                         >
                           แจ้งไม่ได้รับหนังสือ
                         </Button>
                         <Button
                           btnSize="sm"
-                          btnType="orangeGradient"
                           onClick={() => setCancelModal(true)}
                         >
                           ยกเลิกการยืม
                         </Button>
                       </>
                     ))}
-
-                {book?.book?.status === 'sending' && (
+                {book?.book?.book?.status === 'sending' && (
                   <>
-                    <Button btnSize="sm" onClick={() => setShowReport(true)}>
+                    <Button
+                      btnSize="sm"
+                      onClick={() => setShowReport(true)}
+                      btnType="orangeGradient"
+                    >
                       แจ้งไม่ได้รับหนังสือ
                     </Button>
                     <Button
@@ -356,14 +362,14 @@ const BookRequestCard = ({book, cardType}) => {
                 )}
                 {book?.book?.borrowerNeedToCancel && (
                   <>
-                    <Button btnSize="sm" onClick={() => setShowReport(true)}>
-                      แจ้งไม่ได้รับหนังสือ
-                    </Button>
                     <Button
                       btnSize="sm"
+                      onClick={() => setShowReport(true)}
                       btnType="orangeGradient"
-                      isDisabled={true}
                     >
+                      แจ้งไม่ได้รับหนังสือ
+                    </Button>
+                    <Button btnSize="sm" isDisabled={true}>
                       ส่งคำขอยกเลิกแล้ว
                     </Button>
                   </>
