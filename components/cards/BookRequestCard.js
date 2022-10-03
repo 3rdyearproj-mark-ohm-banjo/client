@@ -16,6 +16,7 @@ import {useEffect} from 'react'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import ReportModal from '../ReportModal'
 import {useSelector} from 'react-redux'
+import {useRouter} from 'next/router'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -110,6 +111,7 @@ const BookRequestCard = ({book, cardType}) => {
   const [showReport, setShowReport] = useState(false)
   const {refetch: refetchBorrow} = useMyBorrowRequest(false)
   const user = useSelector((state) => state?.user?.user)
+  const router = useRouter()
 
   const mapStatus = {
     pending: 'รอการจัดส่ง',
