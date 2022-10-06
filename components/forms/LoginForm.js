@@ -9,11 +9,11 @@ import {AuthFormWrapper} from '../Layout'
 import userService from '../../api/request/userService'
 import Icon from '../Icon'
 import {validateEmail} from '../../utils/validate'
-//import {GoogleLogin} from 'react-google-login'
 import {useRouter} from 'next/router'
 import {useDispatch} from 'react-redux'
 import {updateUser} from '../../redux/feature/UserSlice'
 import toast from 'react-hot-toast'
+import ssoAuth from '../../api/request/ssoAuth'
 
 const Header = styled.div`
   text-align: center;
@@ -76,6 +76,14 @@ const ErrMessage = styled.div`
   font-weight: 600;
 `
 
+const ThirdPartyContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${SPACING.MD};
+  flex-wrap: wrap;
+`
+
 const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -130,14 +138,6 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
       setError((errs) => errs.filter((err) => err !== 'password'))
     }
   }, [password])
-
-  // const googleLogin = (data) => {
-  //   console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, data)
-  // }
-
-  // const googleLoginFailed = (data) => {
-  //   console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, data)
-  // }
 
   return (
     <AuthFormWrapper>
@@ -199,18 +199,26 @@ const LoginForm = ({onShowRegister, onSuccess, onShow}) => {
           เข้าสู่ระบบ
         </Button>
       </form>
-      {/* <OtherLoginChoice>
+
+      <OtherLoginChoice>
         <ChoiceHeader>หรือเข้าสู่ระบบด้วยบัญชี</ChoiceHeader>
         <ChoiceWrapper>
-          <GoogleLogin
+          <Button fullWidth btnSize="sm" onClick={ssoAuth.googleLogin}>
+            <ThirdPartyContent>
+              <Icon name={ICONS.faGoogle} />
+              <span>เข้าสู่ระบบด้วย Google</span>
+            </ThirdPartyContent>
+          </Button>
+
+          {/*  <GoogleLogin
             clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
             buttonText="เข้าสู่ระบบด้วย Google"
             onSuccess={googleLogin}
             onFailure={googleLoginFailed}
             cookiePolicy={'single_host_origin'}
-          ></GoogleLogin>
+          ></GoogleLogin> */}
         </ChoiceWrapper>
-      </OtherLoginChoice> */}
+      </OtherLoginChoice>
     </AuthFormWrapper>
   )
 }
