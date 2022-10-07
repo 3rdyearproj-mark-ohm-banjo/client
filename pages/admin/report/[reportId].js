@@ -261,7 +261,7 @@ const ReportInfoPage = ({reportId}) => {
               หนังสือ {reportInfo?.reportItem?.bookShelf?.bookName} (
               {reportInfo?.reportItem?.bookShelf?.ISBN})
             </span>
-            <span>สถานะการยืม {reportInfo?.reportItem?.status}</span>
+            <span>สถานะหนังสือ {reportInfo?.reportItem?.status}</span>
           </>
         )
 
