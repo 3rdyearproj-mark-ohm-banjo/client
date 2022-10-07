@@ -224,7 +224,7 @@ const ProfileHead = () => {
             </Circle>
             <UserNameContainer>
               <span>สวัสดี, คุณ</span>
-              <UserName>{user?.username}</UserName>
+              <UserName>{user?.firstname ?? user?.email}</UserName>
             </UserNameContainer>
           </UserProfile>
           <NavMenu>

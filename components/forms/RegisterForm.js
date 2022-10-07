@@ -56,7 +56,7 @@ const RegisterForm = ({
   const defaultUserData = {
     email: '',
     password: '',
-    username: '',
+    // username: '',
   }
   const [userData, setUserData] = useState(defaultUserData)
   const [passwordConfirm, setPasswordConfirm] = useState('')
@@ -169,7 +169,7 @@ const RegisterForm = ({
           value={userData.email}
         />
 
-        <InputWithIcon
+        {/* <InputWithIcon
           label="ชื่อผู้ใช้*"
           type="text"
           iconName={ICONS.faUser}
@@ -179,7 +179,7 @@ const RegisterForm = ({
           error={errors.indexOf('username') !== -1}
           errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
           value={userData.username}
-        />
+        /> */}
 
         <InputWithIcon
           label="รหัสผ่าน*"

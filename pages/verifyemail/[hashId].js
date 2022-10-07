@@ -63,7 +63,6 @@ const VerifyEmailPage = ({user, hashId}) => {
           padding="80px 40px"
         >
           <Title>ยืนยันอีเมลนี้ : {user.email}</Title>
-          <Title>ชื่อบัญชี : {user.username}</Title>
 
           <Describe>ยืนยันอีเมลเพื่อใช้งานระบบ</Describe>
 

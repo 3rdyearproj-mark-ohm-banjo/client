@@ -260,7 +260,7 @@ const BorrowingCardInfo = ({info}) => {
             <Button
               btnSize="sm"
               borderRadius="0"
-              btnType="secondary"
+              btnType="orangeGradient"
               onClick={() => setShowReport(true)}
             >
               แจ้งหนังสือเสียหาย

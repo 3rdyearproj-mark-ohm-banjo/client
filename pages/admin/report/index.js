@@ -1,12 +1,14 @@
+import {useRouter} from 'next/router'
 import React from 'react'
 import styled from 'styled-components'
-import useAllReport from '../../api/query/useAllReport'
-import {Button} from '../../components'
-import {AdminTitle} from '../../components/Admin'
-import AdminLayout from '../../components/layouts/AdminLayout'
-import {COLORS} from '../../styles/colors'
-import {SPACING} from '../../styles/spacing'
-import {formatDate} from '../../utils/format'
+import useAllReport from '../../../api/query/useAllReport'
+import {Button} from '../../../components'
+import {AdminTitle} from '../../../components/Admin'
+import AdminLayout from '../../../components/layouts/AdminLayout'
+import {reportTypes} from '../../../config/reportType'
+import {COLORS} from '../../../styles/colors'
+import {SPACING} from '../../../styles/spacing'
+import {formatDate} from '../../../utils/format'
 
 const Table = styled.table`
   width: 100%;
@@ -35,15 +37,9 @@ const Tbody = styled.tbody`
 `
 
 const ReportPage = () => {
-  const reportTypes = {
-    bookId: 'หนังสือชำรุดเสียหาย',
-    bookHistoryId: 'ไม่ได้รับหนังสือ',
-    bookShelfId: 'ข้อมูลหนังสือไม่ถูกต้อง',
-  }
-
   const {data: reportList} = useAllReport()
+  const router = useRouter()
 
-  console.log(reportList?.data?.data)
   return (
     <div>
       <AdminTitle>การรายงานทั้งหมด</AdminTitle>
@@ -68,7 +64,12 @@ const ReportPage = () => {
               <Td>{row?.status}</Td>
               <Td>{row?.userWhoReport}</Td>
               <Td>
-                <Button btnSize="sm">รายละเอียด</Button>
+                <Button
+                  btnSize="sm"
+                  onClick={() => router.push(`report/${row._id}`)}
+                >
+                  รายละเอียด
+                </Button>
               </Td>
             </tr>
           ))}

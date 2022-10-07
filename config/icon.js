@@ -48,6 +48,7 @@ import {
   faEye,
   faEyeSlash,
   faFlag,
+  faClock,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
@@ -104,6 +105,7 @@ export const ICONS = {
   faEye,
   faEyeSlash,
   faFlag,
+  faClock,
 }
 export const ICON_SIZE = {
   xs: 'xs',
