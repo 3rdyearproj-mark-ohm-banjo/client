@@ -23,7 +23,7 @@ const PageWrapper = styled.section`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-yarn`
+`
 
 const ReportId = styled.h1`
   font-size: 24px;
