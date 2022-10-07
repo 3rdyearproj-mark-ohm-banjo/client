@@ -9,17 +9,15 @@ import {ICONS} from '../../../config/icon'
 import {SPACING} from '../../../styles/spacing'
 import {COLORS} from '../../../styles/colors'
 import useAcceptReport from '../../../api/query/useAcceptReport'
-import {useEffect} from 'react'
-import toast from 'react-hot-toast'
 import {reportTypes} from '../../../config/reportType'
 import {Divider} from '../../../components'
 import {useSelector} from 'react-redux'
-import {useRouter} from 'next/router'
 import useRejectReport from '../../../api/query/useRejectReport'
 import useBookCanRead from '../../../api/query/useBookCanRead'
 import useBookCantRead from '../../../api/query/useBookCantRead'
 import useBookNotSendCantContact from '../../../api/query/useBookNotSendCantContact'
 import useBookNotSendCanContact from '../../../api/query/useBookNotSendCanContact'
+import useReportBookInfoEdit from '../../../api/query/useReportBookInfoEdit'
 
 const PageWrapper = styled.section`
   display: flex;
@@ -116,6 +114,7 @@ const ReportInfoPage = ({reportId}) => {
   const {mutate: bookCantRead} = useBookCantRead()
   const {mutate: bookNotSendCanContact} = useBookNotSendCanContact()
   const {mutate: bookNotSendCantContact} = useBookNotSendCantContact()
+  const {mutate: bookInfoEdit} = useReportBookInfoEdit()
   console.log(reportInfo)
 
   const buttonSwitch = () => {
@@ -173,7 +172,7 @@ const ReportInfoPage = ({reportId}) => {
                 >
                   ไปแก้ไขข้อมูลหนังสือ
                 </Button>
-                <Button onClick={() => acceptCase(reportId)}>
+                <Button onClick={() => bookInfoEdit(reportId)}>
                   แก้ไขข้อมูลเรียบร้อยแล้ว
                 </Button>
               </ButtonWrapper>

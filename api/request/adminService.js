@@ -57,6 +57,11 @@ const acceptBookNotSendContact = (id) => {
   return res
 }
 
+const confirmBookInfoEdit = (id) => {
+  const res = axiosPrivate.put(`admin/bookshelfeditsuccess/${id}`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   addAdmin,
@@ -68,4 +73,5 @@ export default {
   acceptBookCantRead,
   acceptBookNotSendContact,
   acceptBookNotSendCantContact,
+  confirmBookInfoEdit,
 }
