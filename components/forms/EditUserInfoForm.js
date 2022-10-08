@@ -18,7 +18,7 @@ const Form = styled.form`
 const InputGroup = styled.div`
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: ${SPACING.LG};
 `
 
@@ -124,15 +124,6 @@ const EditUserInfoForm = ({onSubmit, userInfo}) => {
   return (
     <Form>
       <InputGroup>
-        <InputControl>
-          <label>ชื่อบัญชี</label>
-          <Input
-            type="text"
-            placeholder="ชื่อบัญชี"
-            disabled
-            value={userData?.username}
-          ></Input>
-        </InputControl>
         <InputControl>
           <label>อีเมล</label>
           <Input

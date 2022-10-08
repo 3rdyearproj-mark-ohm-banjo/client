@@ -161,18 +161,8 @@ const CancelDescription = styled.span`
 `
 
 const BookForwardingCard = ({bookInfo}) => {
-  console.log(bookInfo)
-
   const {refetch: getMyForward} = useMyForwardRequest(false)
-  const donationHistory = useSelector(
-    (state) => state?.user?.user?.donationHistory
-  )
-
-  const donationInfo = donationHistory?.find((history) => {
-    if (history.book._id === bookInfo?.book?._id) {
-      return history
-    }
-  })
+  const user = useSelector((state) => state?.user?.user)
 
   const statusDictionary = {
     inProcess: 'รอการจัดส่ง',
@@ -180,6 +170,11 @@ const BookForwardingCard = ({bookInfo}) => {
   }
 
   const submitForwarding = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     toast.promise(userService.confirmForwarding(bookInfo.book._id), {
       loading: 'กำลังดำเนินการ...',
       success: () => {
@@ -203,6 +198,11 @@ const BookForwardingCard = ({bookInfo}) => {
   }
 
   const confirmCancel = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     toast.promise(userService.confirmCancelBorrow(bookInfo._id), {
       loading: 'กำลังดำเนินการ...',
       success: () => {

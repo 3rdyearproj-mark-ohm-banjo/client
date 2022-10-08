@@ -17,6 +17,7 @@ import toast from 'react-hot-toast'
 import useBorrowing from '../../api/query/useBorrowing'
 import userService from '../../api/request/userService'
 import {formatDate} from '../../utils/format'
+import ReportModal from '../ReportModal'
 
 const CardContainer = styled.div`
   min-height: 400px;
@@ -113,6 +114,7 @@ const ButtonWrapper = styled.div`
 
 const BorrowingCardInfo = ({info}) => {
   const [showModal, setShowModal] = useState(false)
+  const [showReport, setShowReport] = useState(false)
   const {refetch: getBorrowing} = useBorrowing(false)
 
   const expireDay = Math.round(
@@ -142,6 +144,14 @@ const BorrowingCardInfo = ({info}) => {
 
   return (
     <>
+      <ReportModal
+        type="bookId"
+        bookName={info?.bookShelf?.bookName}
+        reportId={info?._id}
+        isShow={showReport}
+        setIsShow={setShowReport}
+      />
+
       <ConfirmModal
         onClose={setShowModal}
         onShow={showModal}
@@ -251,9 +261,9 @@ const BorrowingCardInfo = ({info}) => {
               btnSize="sm"
               borderRadius="0"
               btnType="orangeGradient"
-              onClick={() => {}}
+              onClick={() => setShowReport(true)}
             >
-              ติดต่อผู้ดูแลระบบ
+              แจ้งหนังสือเสียหาย
             </Button>
           </ButtonWrapper>
         </ContentWrapper>

@@ -54,9 +54,13 @@ const confirmReceive = (bookId) => {
 }
 
 const cancelBorrow = (bookshelfId, bookTransactionId) => {
-  const res = axiosPrivate.put(
-    `user/cancelborrow/${bookshelfId}?bookHisId=${bookTransactionId}`
-  )
+  let url = `user/cancelborrow/${bookshelfId}`
+
+  if (bookTransactionId) {
+    url += `?bookHisId=${bookTransactionId}`
+  }
+
+  const res = axiosPrivate.put(url)
   return res
 }
 
@@ -105,6 +109,39 @@ const sendReport = (reportId, idType, message) => {
   return res
 }
 
+const forgotPassword = (email) => {
+  const res = axiosPrivate.post(`forgotpassword`, {
+    email,
+  })
+
+  return res
+}
+
+const resetPassword = (hashId, password) => {
+  const res = axiosPrivate.post(`resetpassword/${hashId}`, {password})
+  return res
+}
+
+const sendVerifyMail = () => {
+  const res = axiosPrivate.post(`user/sendmailverify`)
+  return res
+}
+
+const submitVerifyMail = (id) => {
+  const res = axiosPrivate.post(`verifymail/${id}`)
+  return res
+}
+
+const getUserEmailByHash = (id) => {
+  const res = axios.get(`getuserbyhash/${id}`)
+  return res
+}
+
+const verifyHash = (id) => {
+  const res = axios.get(`verifyhash/${id}`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -125,4 +162,10 @@ export default {
   borrowHistory,
   confirmCancelBorrow,
   sendReport,
+  forgotPassword,
+  resetPassword,
+  sendVerifyMail,
+  submitVerifyMail,
+  getUserEmailByHash,
+  verifyHash,
 }

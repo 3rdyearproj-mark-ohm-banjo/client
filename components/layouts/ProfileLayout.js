@@ -6,6 +6,10 @@ import ProfileHead from '../ProfileHead'
 import styled from 'styled-components'
 import {COLORS} from '../../styles/colors'
 import {SPACING} from '../../styles/spacing'
+import Button from '../Button'
+import {useSelector} from 'react-redux'
+import userService from '../../api/request/userService'
+import toast from 'react-hot-toast'
 
 const ProfileLayoutWrapper = styled.div`
   display: flex;
@@ -50,7 +54,42 @@ const ChildrenWrapper = styled.section`
   flex-direction: column;
 `
 
+const VerifyMailWrapper = styled.header`
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.MD};
+  padding: ${SPACING.SM};
+  border-radius: ${SPACING.XS};
+  background-color: ${COLORS.GRAY_LIGHT};
+  font-size: 18px;
+
+  @media (min-width: 960px) {
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+
+  b {
+    color: ${COLORS.RED_2};
+    font-weight: 650;
+  }
+`
+
 const ProfileLayout = ({children}) => {
+  const user = useSelector((state) => state.user.user)
+
+  const sendVerifyEmail = () => {
+    toast.promise(userService.sendVerifyMail(), {
+      loading: 'กำลังส่งเมลยืนยัน...',
+      success: () => {
+        return 'ส่งคำยืนยันทางอีเมลเรียบร้อยแล้ว'
+      },
+      error: (err) => () => {
+        return `${err.toString()}`
+      },
+    })
+  }
+
   return (
     <UserLayout>
       <BackgroundContainer link={Background.src}>
@@ -59,7 +98,25 @@ const ProfileLayout = ({children}) => {
             <ProfileHead />
           </ProfileHeadWrapper>
           <ProfileWrapper>
-            <ChildrenWrapper>{children}</ChildrenWrapper>
+            <ChildrenWrapper>
+              {!user.verifyEmail && (
+                <VerifyMailWrapper>
+                  <span>
+                    <b>**บัญชีนี้ยังไม่ได้ยืนยันอีเมล</b>{' '}
+                    (ยืนยันอีเมลเพื่อทำการใช้งานระบบยืมและบริจาค)
+                  </span>
+                  <Button
+                    btnSize="sm"
+                    btnType="orangeGradient"
+                    onClick={sendVerifyEmail}
+                  >
+                    ส่งอีเมลยืนยัน
+                  </Button>
+                </VerifyMailWrapper>
+              )}
+
+              {children}
+            </ChildrenWrapper>
           </ProfileWrapper>
         </ProfileLayoutWrapper>
       </BackgroundContainer>

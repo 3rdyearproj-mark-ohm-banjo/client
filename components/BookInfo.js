@@ -20,6 +20,7 @@ import useBorrowing from '../api/query/useBorrowing'
 import {useEffect} from 'react'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useAddressInfo from '../hooks/useAddressInfo'
+import ReportModal from './ReportModal'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -240,6 +241,7 @@ const BookInfo = ({bookInfo}) => {
   const [isQueue, setIsQueue] = useState(false)
   const [isMaximum, setIsMaximum] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showReport, setShowReport] = useState(false)
 
   useEffect(() => {
     if (isAuth && isAddressTel) {
@@ -286,6 +288,11 @@ const BookInfo = ({bookInfo}) => {
       return toast.error('คุณถือหนังสือเล่มนี้อยู่')
     }
 
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     setShowBorrowModal(true)
   }
 
@@ -322,10 +329,19 @@ const BookInfo = ({bookInfo}) => {
     if (!isAuth) {
       return toast.error('กรุณาเข้าสู่ระบบก่อน')
     }
+
+    setShowReport(true)
   }
 
   return (
     <>
+      <ReportModal
+        type="bookShelfId"
+        bookName={bookInfo?.bookName}
+        reportId={bookInfo?._id}
+        isShow={showReport}
+        setIsShow={setShowReport}
+      />
       <ConfirmModal
         onShow={showBorrowModal}
         icon={ICONS.faHandHoldingHand}

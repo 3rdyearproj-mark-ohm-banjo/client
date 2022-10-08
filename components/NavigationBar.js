@@ -9,7 +9,6 @@ import AuthModal from './AuthModal'
 import {useDispatch, useSelector} from 'react-redux'
 import userService from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
-import {Hidden} from './Layout'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 import toast from 'react-hot-toast'
 import {FONTS} from '../styles/fonts'
@@ -90,7 +89,7 @@ const MenuDropdown = styled.ul`
   width: 220px;
   border-radius: ${SPACING.MD};
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
-  margin-top: 40px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
@@ -236,7 +235,7 @@ const CirCleCount = styled.span`
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
-  const userName = useSelector((state) => state.user.user.username)
+  const user = useSelector((state) => state.user.user)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showNotificationMenu, setShowNotificationMenu] = useState(false)
@@ -292,7 +291,6 @@ const NavigationBar = () => {
     {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
   ]
 
-  const user = useSelector((state) => state.user.user)
   const isAddressTel = useAddressInfo()
   const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
@@ -391,7 +389,7 @@ const NavigationBar = () => {
                 ref={profileRef}
               >
                 <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
-                <UserName>{userName}</UserName>
+                <UserName>{user?.firstname ?? user?.email}</UserName>
                 {showProfileMenu && (
                   <MenuDropdown>
                     <MenuItem

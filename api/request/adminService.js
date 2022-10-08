@@ -5,25 +5,63 @@ const addAdmin = (adminData) => {
   return res
 }
 
-const getAllReport = (pageSize = 10, pageNo = 1, query) => {
-  const q = (() => {
-    if (query) {
-      return '&' + q
-    } else return null
-  })()
+const searchReport = (params, size) => {
+  const res = axiosPrivate.get(`admin/reportinformation`, {
+    params: {...params, size},
+  })
+  return res
+}
 
-  let url = `admin/reportinformation?size=${pageSize}&page=${pageNo}`
+const getReportInfo = (id) => {
+  const res = axiosPrivate.get(`admin/reportinformation/${id}`)
+  return res
+}
 
-  if (q) {
-    url += q
-  }
+const acceptReport = (id) => {
+  const res = axiosPrivate.put(`admin/acceptreportrequest/${id}`)
+  return res
+}
 
-  const res = axiosPrivate.get(url)
+const rejectReport = (id) => {
+  const res = axiosPrivate.put(`admin/rejectreportrequest/${id}`)
+  return res
+}
+
+const acceptBookCanRead = (id) => {
+  const res = axiosPrivate.put(`admin/bookcanread/${id}`)
+  return res
+}
+
+const acceptBookCantRead = (id) => {
+  const res = axiosPrivate.put(`admin/bookcannotread/${id}`)
+  return res
+}
+
+const acceptBookNotSendCantContact = (id) => {
+  const res = axiosPrivate.put(`admin/booknotsendcannotcontact/${id}`)
+  return res
+}
+
+const acceptBookNotSendContact = (id) => {
+  const res = axiosPrivate.put(`admin/booknotsendcancontact/${id}`)
+  return res
+}
+
+const confirmBookInfoEdit = (id) => {
+  const res = axiosPrivate.put(`admin/bookshelfeditsuccess/${id}`)
   return res
 }
 
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   addAdmin,
-  getAllReport,
+  searchReport,
+  getReportInfo,
+  acceptReport,
+  rejectReport,
+  acceptBookCanRead,
+  acceptBookCantRead,
+  acceptBookNotSendContact,
+  acceptBookNotSendCantContact,
+  confirmBookInfoEdit,
 }
