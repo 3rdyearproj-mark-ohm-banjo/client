@@ -98,12 +98,6 @@ const SideBar = () => {
         จัดการข้อมูลสำนักพิมพ์
       </SideBarItem>
       <SideBarItem
-        onClick={() => router.push('/admin/users')}
-        isActive={router.pathname === '/admin/users'}
-      >
-        จัดการผู้ใช้
-      </SideBarItem>
-      <SideBarItem
         onClick={() => router.push('/admin/report')}
         isActive={router.pathname === '/admin/report'}
       >

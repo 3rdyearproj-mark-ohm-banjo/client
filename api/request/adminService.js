@@ -5,20 +5,10 @@ const addAdmin = (adminData) => {
   return res
 }
 
-const getAllReport = (pageSize = 10, pageNo = 1, query) => {
-  const q = (() => {
-    if (query) {
-      return '&' + q
-    } else return null
-  })()
-
-  let url = `admin/reportinformation?size=${pageSize}&page=${pageNo}`
-
-  if (q) {
-    url += q
-  }
-
-  const res = axiosPrivate.get(url)
+const searchReport = (params, size) => {
+  const res = axiosPrivate.get(`admin/reportinformation`, {
+    params: {...params, size},
+  })
   return res
 }
 
@@ -65,7 +55,7 @@ const confirmBookInfoEdit = (id) => {
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   addAdmin,
-  getAllReport,
+  searchReport,
   getReportInfo,
   acceptReport,
   rejectReport,
