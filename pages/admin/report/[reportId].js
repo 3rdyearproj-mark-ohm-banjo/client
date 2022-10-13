@@ -18,6 +18,7 @@ import useBookCantRead from '../../../api/query/useBookCantRead'
 import useBookNotSendCantContact from '../../../api/query/useBookNotSendCantContact'
 import useBookNotSendCanContact from '../../../api/query/useBookNotSendCanContact'
 import useReportBookInfoEdit from '../../../api/query/useReportBookInfoEdit'
+import useSystemBookNotReceive from '../../../api/query/useSystemBookNotReceive'
 
 const PageWrapper = styled.section`
   display: flex;
@@ -115,6 +116,7 @@ const ReportInfoPage = ({reportId}) => {
   const {mutate: bookNotSendCanContact} = useBookNotSendCanContact()
   const {mutate: bookNotSendCantContact} = useBookNotSendCantContact()
   const {mutate: bookInfoEdit} = useReportBookInfoEdit()
+  const {mutate: systemBookNotReceive} = useSystemBookNotReceive()
   console.log(reportInfo)
 
   const buttonSwitch = () => {
@@ -134,81 +136,71 @@ const ReportInfoPage = ({reportId}) => {
       )
     }
 
+    if (!isMyCase) {
+      return <Button isDisabled={true}>คุณไม่ได้เป็นผู้รับดูแลเรื่องนี้</Button>
+    }
+
     switch (reportInfo?.idType) {
       case 'bookHistoryId':
         return (
-          <>
-            {isMyCase ? (
-              <ButtonWrapper>
-                <Button
-                  onClick={() => bookNotSendCantContact(reportId)}
-                  btnType="orangeGradient"
-                >
-                  ไม่สามารถติดต่อผู้ส่งได้
-                </Button>
-                <Button onClick={() => bookNotSendCanContact(reportId)}>
-                  ติดต่อผู้ส่งได้และผู้ส่งจัดส่งแล้ว
-                </Button>
-              </ButtonWrapper>
-            ) : (
-              <Button isDisabled={true}>
-                คุณไม่ได้เป็นผู้รับดูแลเรื่องนี้
-              </Button>
-            )}
-          </>
+          <ButtonWrapper>
+            <Button
+              onClick={() => bookNotSendCantContact(reportId)}
+              btnType="orangeGradient"
+            >
+              ไม่สามารถติดต่อผู้ส่งได้
+            </Button>
+            <Button onClick={() => bookNotSendCanContact(reportId)}>
+              ติดต่อผู้ส่งได้และผู้ส่งจัดส่งแล้ว
+            </Button>
+          </ButtonWrapper>
         )
       case 'bookShelfId':
         return (
-          <>
-            {isMyCase ? (
-              <ButtonWrapper>
-                <Button
-                  onClick={() =>
-                    window.open(
-                      `/admin/editbook/${reportInfo?.reportItem?.ISBN}`
-                    )
-                  }
-                  btnType="secondary"
-                >
-                  ไปแก้ไขข้อมูลหนังสือ
-                </Button>
-                <Button onClick={() => bookInfoEdit(reportId)}>
-                  แก้ไขข้อมูลเรียบร้อยแล้ว
-                </Button>
-              </ButtonWrapper>
-            ) : (
-              <Button isDisabled={true}>
-                คุณไม่ได้เป็นผู้รับดูแลเรื่องนี้
-              </Button>
-            )}
-          </>
+          <ButtonWrapper>
+            <Button
+              onClick={() =>
+                window.open(`/admin/editbook/${reportInfo?.reportItem?.ISBN}`)
+              }
+              btnType="secondary"
+            >
+              ไปแก้ไขข้อมูลหนังสือ
+            </Button>
+            <Button onClick={() => bookInfoEdit(reportId)}>
+              แก้ไขข้อมูลเรียบร้อยแล้ว
+            </Button>
+          </ButtonWrapper>
         )
       case 'bookId':
         return (
           <>
-            {isMyCase ? (
-              <>
-                <ButtonHead>
-                  **หลังจากติดต่อเพื่อส่งข้อมูลที่จัดส่งกับผู้รายงานและได้รับหนังสือจากผู้รายงานแล้ว
-                </ButtonHead>
-                <ButtonWrapper>
-                  <br />
-                  <Button
-                    onClick={() => bookCantRead(reportId)}
-                    btnType="orangeGradient"
-                  >
-                    ยืนยันสภาพหนังสือยังไม่สามารถอ่านได้
-                  </Button>
-                  <Button onClick={() => bookCanRead(reportId)}>
-                    ยืนยันสภาพหนังสือยังสามารถอ่านได้
-                  </Button>
-                </ButtonWrapper>
-              </>
-            ) : (
-              <Button isDisabled={true}>
-                คุณไม่ได้เป็นผู้รับดูแลเรื่องนี้
+            <ButtonHead>
+              **หลังจากติดต่อเพื่อส่งข้อมูลที่จัดส่งกับผู้รายงานและได้รับหนังสือจากผู้รายงานแล้ว
+            </ButtonHead>
+            <ButtonWrapper>
+              <br />
+              <Button
+                onClick={() => bookCantRead(reportId)}
+                btnType="orangeGradient"
+              >
+                ยืนยันสภาพหนังสือยังไม่สามารถอ่านได้
               </Button>
-            )}
+              <Button onClick={() => bookCanRead(reportId)}>
+                ยืนยันสภาพหนังสือยังสามารถอ่านได้
+              </Button>
+            </ButtonWrapper>
+          </>
+        )
+      case 'systemReportBookHis':
+        return (
+          <>
+            <ButtonHead>**หลังจากติดต่อและผู้รับได้แล้ว</ButtonHead>
+            <ButtonWrapper>
+              <br />
+              <Button onClick={() => systemBookNotReceive(reportId)}>
+                ผู้รับกดยืนยันการรับแล้ว
+              </Button>
+            </ButtonWrapper>
           </>
         )
       default:
@@ -263,7 +255,38 @@ const ReportInfoPage = ({reportId}) => {
             <span>สถานะหนังสือ {reportInfo?.reportItem?.status}</span>
           </>
         )
-
+      case 'systemReportBookHis':
+        return (
+          <>
+            {' '}
+            <span>
+              หนังสือ {reportInfo?.reportItem?.book?.bookShelf?.bookName} (
+              {reportInfo?.reportItem?.book?.bookShelf?.ISBN})
+            </span>
+            <span>สถานะการยืม {reportInfo?.reportItem?.status}</span>
+            <span>
+              วันที่จับคู่{' '}
+              {formatDate(reportInfo?.reportItem?.matchTime, true, true, true)}{' '}
+            </span>
+            <span>
+              วันที่จัดส่ง{' '}
+              {formatDate(
+                reportInfo?.reportItem?.sendingTime,
+                true,
+                true,
+                true
+              )}{' '}
+            </span>
+            <Divider lineColor={COLORS.GRAY_LIGHT} />
+            <span>
+              ข้อมูลผู้ส่ง
+              <br /> ชื่อ {reportInfo?.reportItem?.senderInfo?.firstname}{' '}
+              {reportInfo?.reportItem?.senderInfo?.lastname} <br />
+              อีเมล {reportInfo?.reportItem?.senderInfo?.email} <br />
+              โทร {reportInfo?.reportItem?.senderInfo?.tel}
+            </span>
+          </>
+        )
       default:
         return <div>ไม่มีข้อมูล</div>
     }
