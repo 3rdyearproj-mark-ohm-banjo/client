@@ -52,6 +52,11 @@ const confirmBookInfoEdit = (id) => {
   return res
 }
 
+const confirmSystemReportBookNotReceive = (id) => {
+  const res = axiosPrivate.put(`admin/bookhissystemeditsuccess/${id}`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   addAdmin,
@@ -64,4 +69,5 @@ export default {
   acceptBookNotSendContact,
   acceptBookNotSendCantContact,
   confirmBookInfoEdit,
+  confirmSystemReportBookNotReceive,
 }

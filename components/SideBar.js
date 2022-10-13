@@ -103,6 +103,12 @@ const SideBar = () => {
       >
         ข้อมูลการรายงาน
       </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/forwarding')}
+        isActive={router.pathname === '/admin/forwarding'}
+      >
+        หนังสือที่ต้องส่งต่อ
+      </SideBarItem>
       <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
     </SideBarStyled>
   )
