@@ -109,6 +109,12 @@ const SideBar = () => {
       >
         หนังสือที่ต้องส่งต่อ
       </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/edit')}
+        isActive={router.pathname === '/admin/edit'}
+      >
+        แก้ไขข้อมูล
+      </SideBarItem>
       <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
     </SideBarStyled>
   )

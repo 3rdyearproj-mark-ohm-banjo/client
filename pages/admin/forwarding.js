@@ -1,14 +1,12 @@
 import Head from 'next/head'
 import React from 'react'
-import styled, {css} from 'styled-components'
+import styled from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import {COLORS} from '../../styles/colors'
 import BookForwardingCard from '../../components/cards/BookForwardingCard'
-import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import {Icon} from '../../components'
 import {ICONS} from '../../config/icon'
-import useAddressInfo from '../../hooks/useAddressInfo'
 import AdminLayout from '../../components/layouts/AdminLayout'
 
 const TitleWrapper = styled.div`

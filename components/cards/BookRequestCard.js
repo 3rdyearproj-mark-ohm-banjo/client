@@ -360,20 +360,21 @@ const BookRequestCard = ({book, cardType}) => {
                     </Button>
                   </>
                 )}
-                {book?.book?.borrowerNeedToCancel && (
-                  <>
-                    <Button
-                      btnSize="sm"
-                      onClick={() => setShowReport(true)}
-                      btnType="orangeGradient"
-                    >
-                      แจ้งไม่ได้รับหนังสือ
-                    </Button>
-                    <Button btnSize="sm" isDisabled={true}>
-                      ส่งคำขอยกเลิกแล้ว
-                    </Button>
-                  </>
-                )}
+                {book?.book?.borrowerNeedToCancel &&
+                  book?.book?.book?.status !== 'sending' && (
+                    <>
+                      <Button
+                        btnSize="sm"
+                        onClick={() => setShowReport(true)}
+                        btnType="orangeGradient"
+                      >
+                        แจ้งไม่ได้รับหนังสือ
+                      </Button>
+                      <Button btnSize="sm" isDisabled={true}>
+                        ส่งคำขอยกเลิกแล้ว
+                      </Button>
+                    </>
+                  )}
               </>
             )}
           </ButtonWrapper>
