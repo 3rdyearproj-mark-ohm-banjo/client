@@ -123,6 +123,13 @@ const ReportPage = ({isEmptyQuery}) => {
     })
   }
 
+  const pageHandler = (page) => {
+    router.push({
+      pathname,
+      query: {...router.query, page},
+    })
+  }
+
   return (
     <div>
       <AdminTitle>การรายงานทั้งหมด (พบทั้งหมด {total} รายงาน)</AdminTitle>
@@ -236,6 +243,7 @@ const ReportPage = ({isEmptyQuery}) => {
       {Math.ceil(total / pageSize) > 0 && (
         <PaginationWrapper>
           <Pagination
+            onPageChange={pageHandler}
             currentPage={+router.query.page}
             totalPage={Math.ceil(total / pageSize)}
           />
