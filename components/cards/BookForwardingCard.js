@@ -10,6 +10,7 @@ import Image from 'next/image'
 import {formatDate} from '../../utils/format'
 import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
+import {useSocket} from '../../contexts/Socket'
 
 const CardLayout = styled.div`
   padding: ${SPACING.MD};
@@ -163,6 +164,7 @@ const CancelDescription = styled.span`
 const BookForwardingCard = ({bookInfo}) => {
   const {refetch: getMyForward} = useMyForwardRequest(false)
   const user = useSelector((state) => state?.user?.user)
+  const {socket} = useSocket()
 
   const statusDictionary = {
     inProcess: 'รอการจัดส่ง',
@@ -205,11 +207,22 @@ const BookForwardingCard = ({bookInfo}) => {
 
     toast.promise(userService.confirmCancelBorrow(bookInfo._id), {
       loading: 'กำลังดำเนินการ...',
-      success: () => {
+      success: (res) => {
+        console.log(res.data)
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'acceptCancelBorrow',
+            bookName: bookInfo?.book?.bookShelf?.bookName,
+          })
+        }
         getMyForward()
         return 'ยกเลิกการส่งต่อนี้สำเร็จ'
       },
-      error: () => {
+      error: (err) => {
+        console.log(err)
         getMyForward()
         return 'เกิดข้อผิดพลาด'
       },

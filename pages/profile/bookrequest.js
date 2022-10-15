@@ -80,7 +80,6 @@ const BookRequest = () => {
   const user = useSelector((state) => state.user.user)
   const isAddressTel = useAddressInfo()
   const {data, error} = useMyBorrowRequest(isAddressTel)
-  console.log(data)
   return (
     <>
       <Head>

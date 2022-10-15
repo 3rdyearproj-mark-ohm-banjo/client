@@ -12,11 +12,11 @@ import userService from '../../api/request/userService'
 import {formatDate} from '../../utils/format'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
-import {useEffect} from 'react'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import ReportModal from '../ReportModal'
 import {useSelector} from 'react-redux'
 import {useRouter} from 'next/router'
+import {useSocket} from '../../contexts/Socket'
 
 const CardContainer = styled.div`
   padding: ${SPACING.MD};
@@ -112,13 +112,14 @@ const BookRequestCard = ({book, cardType}) => {
   const {refetch: refetchBorrow} = useMyBorrowRequest(false)
   const user = useSelector((state) => state?.user?.user)
   const router = useRouter()
+  const {socket} = useSocket()
 
   const mapStatus = {
     pending: 'รอการจัดส่ง',
     inProcess: 'รอการจัดส่ง',
     sending: 'ผู้ส่งจัดส่งแล้ว',
     holding: 'ได้รับหนังสือแล้ว',
-    unavailable: 'หนังสือถูกพักการใช้งาน'
+    unavailable: 'หนังสือถูกพักการใช้งาน',
   }
 
   const handleSubmit = () => {
@@ -162,7 +163,16 @@ const BookRequestCard = ({book, cardType}) => {
       {
         // ส่ง bookHistory id ด้วย
         loading: 'กำลังดำเนินการ...',
-        success: () => {
+        success: (res) => {
+          const receiverNotification = res?.data?.data?.senderEmail ?? null
+          if (receiverNotification) {
+            socket.emit('sendNotification', {
+              senderEmail: user.email,
+              receiverEmail: receiverNotification,
+              type: 'cancelBorrow',
+              bookName: book?.bookShelf?.bookName,
+            })
+          }
           setCancelModal(false)
           refetchBorrow()
           return successTxt
@@ -175,8 +185,6 @@ const BookRequestCard = ({book, cardType}) => {
       }
     )
   }
-
-  console.log(book?.book?.status)
 
   return (
     <>
@@ -280,7 +288,9 @@ const BookRequestCard = ({book, cardType}) => {
             {cardType === 'queue' ? (
               <Status type="waiting">อยู่ในคิว</Status>
             ) : (
-              <Status type="waiting">{mapStatus[book?.book?.book?.status]}</Status>
+              <Status type="waiting">
+                {mapStatus[book?.book?.book?.status]}
+              </Status>
             )}
           </BookHeader>
 

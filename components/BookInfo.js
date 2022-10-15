@@ -21,6 +21,7 @@ import {useEffect} from 'react'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useAddressInfo from '../hooks/useAddressInfo'
 import ReportModal from './ReportModal'
+import {useSocket} from '../contexts/Socket'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -242,6 +243,7 @@ const BookInfo = ({bookInfo}) => {
   const [isMaximum, setIsMaximum] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showReport, setShowReport] = useState(false)
+  const {socket} = useSocket()
 
   useEffect(() => {
     if (isAuth && isAddressTel) {
@@ -306,10 +308,19 @@ const BookInfo = ({bookInfo}) => {
 
     toast.promise(userService.sendBorrowRequest(bookInfo?._id), {
       loading: 'กำลังส่งคำขอยืม...',
-      success: () => {
+      success: (res) => {
         getBorrowing()
         getMyRequest()
         setIsLoading(false)
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'addQueue',
+            bookName: bookInfo?.bookName,
+          })
+        }
         return bookInfo.totalAvailable > 0
           ? 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
           : 'เข้าคิวสำเร็จแล้ว'
