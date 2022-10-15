@@ -239,32 +239,43 @@ const BorrowingCardInfo = ({info}) => {
           </Description>
           <ButtonWrapper>
             {info.status === 'holding' ? (
-              <Button
-                btnSize="sm"
-                borderRadius="0"
-                onClick={() => setShowModal(true)}
-              >
-                ยืนยันว่าคุณอ่านหนังสือจบแล้ว
-              </Button>
+              <>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  onClick={() => setShowModal(true)}
+                >
+                  ยืนยันว่าคุณอ่านหนังสือจบแล้ว
+                </Button>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  btnType="orangeGradient"
+                  onClick={() => setShowReport(true)}
+                >
+                  แจ้งหนังสือเสียหาย
+                </Button>
+              </>
             ) : (
-              <Button
-                btnSize="sm"
-                borderRadius="0"
-                btnType="whiteBorder"
-                isDisabled={true}
-              >
-                คุณอ่านหนังสือเล่มนี้จบแล้ว
-              </Button>
+              <>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  btnType="whiteBorder"
+                  isDisabled={true}
+                >
+                  คุณอ่านหนังสือเล่มนี้จบแล้ว
+                </Button>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  btnType="orangeGradient"
+                  isDisabled={true}
+                >
+                  แจ้งหนังสือเสียหาย
+                </Button>
+              </>
             )}
-
-            <Button
-              btnSize="sm"
-              borderRadius="0"
-              btnType="orangeGradient"
-              onClick={() => setShowReport(true)}
-            >
-              แจ้งหนังสือเสียหาย
-            </Button>
           </ButtonWrapper>
         </ContentWrapper>
       </CardContainer>
