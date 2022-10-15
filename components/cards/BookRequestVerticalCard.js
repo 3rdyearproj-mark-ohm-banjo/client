@@ -178,11 +178,11 @@ const BookRequestVerticalCard = ({bookInfo}) => {
           <CardBtn onClick={showCancelToast}>ออกจากคิว</CardBtn>
         )}
         {bookInfo?.status === 'pending' &&
-          bookInfo?.book?.status !== 'sending' && (
+          bookInfo?.book?.book?.status !== 'sending' && (
             <CardBtn isDisabled={true}>รอการจัดส่ง</CardBtn>
           )}
 
-        {bookInfo?.book?.status === 'sending' && (
+        {bookInfo?.book?.book?.status === 'sending' && (
           <CardBtn onClick={showReceiveToast}>ยืนยันการรับ</CardBtn>
         )}
       </VerticalCard>

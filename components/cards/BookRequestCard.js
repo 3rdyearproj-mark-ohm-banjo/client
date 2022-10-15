@@ -118,6 +118,7 @@ const BookRequestCard = ({book, cardType}) => {
     inProcess: 'รอการจัดส่ง',
     sending: 'ผู้ส่งจัดส่งแล้ว',
     holding: 'ได้รับหนังสือแล้ว',
+    unavailable: 'หนังสือถูกพักการใช้งาน'
   }
 
   const handleSubmit = () => {
@@ -174,6 +175,8 @@ const BookRequestCard = ({book, cardType}) => {
       }
     )
   }
+
+  console.log(book?.book?.status)
 
   return (
     <>
@@ -277,7 +280,7 @@ const BookRequestCard = ({book, cardType}) => {
             {cardType === 'queue' ? (
               <Status type="waiting">อยู่ในคิว</Status>
             ) : (
-              <Status type="waiting">{mapStatus[book?.book?.status]}</Status>
+              <Status type="waiting">{mapStatus[book?.book?.book?.status]}</Status>
             )}
           </BookHeader>
 

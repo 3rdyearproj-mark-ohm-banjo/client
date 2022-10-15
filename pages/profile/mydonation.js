@@ -272,7 +272,7 @@ const MyDonationPage = ({currentPage}) => {
                     </span>
                   </td>
                   <td>
-                    {row.bookHistorys.length < 2 &&
+                    {row?.bookHistorys?.length < 2 &&
                     row.currentHolder === userId ? (
                       <Button
                         btnSize="sm"
