@@ -183,7 +183,12 @@ const BorrowHistoryPage = () => {
       </TitleWrapper>
       <HeadWrapper>
         <span>เดือนที่ยืม</span>
-        <Select onClick={(e) => setFilterMonth(e.target.value)}>
+        <Select
+          onChange={(e) => {
+            setCurrentPage(1)
+            setFilterMonth(e.target.value)
+          }}
+        >
           <option value="all" defaultValue>
             ทั้งหมด
           </option>
@@ -194,7 +199,12 @@ const BorrowHistoryPage = () => {
           ))}
         </Select>
         <span>ปี</span>
-        <Select onClick={(e) => setFilterYear(e.target.value)}>
+        <Select
+          onChange={(e) => {
+            setCurrentPage(1)
+            setFilterYear(e.target.value)
+          }}
+        >
           <option value="all" defaultValue>
             ทั้งหมด
           </option>

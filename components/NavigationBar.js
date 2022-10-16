@@ -18,6 +18,10 @@ import useMyForwardRequest from '../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useBorrowing from '../api/query/useBorrowing'
 import useAddressInfo from '../hooks/useAddressInfo'
+import useMyNotification from '../api/query/useMyNotification'
+import {formatDate} from '../utils/format'
+import {useEffect} from 'react'
+import useSeenNotification from '../api/query/useSeenNotification'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -244,6 +248,12 @@ const NavigationBar = () => {
   useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
   const notificationRef = useRef()
   const notificationIconRef = useRef()
+  const isAddressTel = useAddressInfo()
+  const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
+  const {data: myNotification} = useMyNotification()
+  const {mutate: seenNotification} = useSeenNotification()
 
   const notificationHandler = (bool, event) => {
     if (!isAuth) {
@@ -255,6 +265,15 @@ const NavigationBar = () => {
       notificationIconRef?.current?.contains(event.target)
     ) {
       return setShowNotificationMenu(false)
+    }
+    if (bool) {
+      let unseenList = myNotification?.data?.data?.notificationList
+        ?.slice(0, 5)
+        ?.filter((item) => !item.seen)
+
+      if (unseenList.length > 0) {
+        seenNotification(unseenList)
+      }
     }
 
     setShowNotificationMenu(bool)
@@ -291,10 +310,22 @@ const NavigationBar = () => {
     {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
   ]
 
-  const isAddressTel = useAddressInfo()
-  const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
-  const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
-  const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
+  const mapNotificationType = (type, bookName) => {
+    switch (type) {
+      case 'addQueue':
+        return `ขณะนี้มีผู้ใช้ส่งคำขอยืมหนังสือ ${bookName} มาถึงคุณ`
+      case 'cancelBorrow':
+        return `ขณะนี้มีผู้ใช้ต้องการยกเลิกส่งคำขอยืมหนังสือ ${bookName}`
+      case 'confirmSendingSuccess':
+        return `ผู้ส่งได้ส่งหนังสือ ${bookName} แล้ว`
+      case 'acceptCancelBorrow':
+        return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${bookName} แล้ว`
+      case 'confirmReceiveBook':
+        return `ผู้ใช้รับหนังสือ ${bookName} จากคุณแล้ว`
+      default:
+        return
+    }
+  }
 
   return (
     <>
@@ -319,56 +350,6 @@ const NavigationBar = () => {
                 บริจาคหนังสือ
               </MenuIcon>
 
-              {/* <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
-                <NotiIconControl ref={notificationIconRef}>
-                  <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
-                  การแจ้งเตือน
-                </NotiIconControl>
-                {showNotificationMenu && (
-                  <NotificationDropdown>
-                    <NotificationItem>
-                      <div>
-                        <Icon name={ICONS.faHandHoldingHand} />
-                        <span>
-                          มีคำขอยืมหนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100%
-                          ภายใน 5 วัน ที่คุณถืออยู่ จากคุณ thanasit
-                        </span>
-                      </div>
-                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
-                    </NotificationItem>
-                    <NotificationItem>
-                      <div>
-                        <Icon name={ICONS.faBook} />
-                        <span>
-                          หนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน
-                          ที่คุณได้ทำการยืมถูกจัดส่งแล้ว
-                        </span>
-                      </div>
-                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
-                    </NotificationItem>
-                    <NotificationItem>
-                      <div>
-                        <Icon name={ICONS.faBook} />
-                        <span>
-                          หนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน
-                          ที่คุณได้ทำการยืมถูกจัดส่งแล้ว
-                        </span>
-                      </div>
-                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
-                    </NotificationItem>
-
-                    <NotificationItem>
-                      <Link href="/profile/notification" passHref>
-                        <ViewAllNotification>
-                          <Icon name={ICONS.faBell} />
-                          ดูการแจ้งเตือนทั้งหมด
-                        </ViewAllNotification>
-                      </Link>
-                    </NotificationItem>
-                  </NotificationDropdown>
-                )}
-              </MenuIcon> */}
-
               <MenuIcon
                 onClick={() => router.push('/profile/borrowing')}
                 isActive={router.pathname === '/profile/borrowing'}
@@ -382,6 +363,48 @@ const NavigationBar = () => {
                     </CirCleCount>
                   )}
                 </MenuContentWrapper>
+              </MenuIcon>
+
+              <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
+                <NotiIconControl ref={notificationIconRef}>
+                  <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
+                  <MenuContentWrapper>
+                    การแจ้งเตือน
+                    {myNotification?.data?.data?.unseenCount > 0 && (
+                      <CirCleCount>
+                        {myNotification?.data?.data?.unseenCount}
+                      </CirCleCount>
+                    )}
+                  </MenuContentWrapper>
+                </NotiIconControl>
+                {showNotificationMenu && (
+                  <NotificationDropdown>
+                    {myNotification?.data?.data?.notificationList
+                      ?.slice(0, 5)
+                      ?.map((item) => (
+                        <NotificationItem key={item?._id}>
+                          <div>
+                            <Icon name={ICONS.faHandHoldingHand} />
+                            <span>
+                              {mapNotificationType(item?.type, item?.bookName)}
+                            </span>
+                          </div>
+                          <ViewMoreNotification>
+                            {formatDate(item?.timestamp, true, true, true)}
+                          </ViewMoreNotification>
+                        </NotificationItem>
+                      ))}
+
+                    <NotificationItem>
+                      <Link href="/profile/notification" passHref>
+                        <ViewAllNotification>
+                          <Icon name={ICONS.faBell} />
+                          ดูการแจ้งเตือนทั้งหมด
+                        </ViewAllNotification>
+                      </Link>
+                    </NotificationItem>
+                  </NotificationDropdown>
+                )}
               </MenuIcon>
 
               <MenuIcon

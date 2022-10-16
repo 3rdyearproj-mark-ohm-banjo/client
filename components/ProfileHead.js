@@ -19,6 +19,7 @@ import useBorrowing from '../api/query/useBorrowing'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useMyForwardRequest from '../api/query/useMyForwardRequest'
 import useAddressInfo from '../hooks/useAddressInfo'
+import useMyNotification from '../api/query/useMyNotification'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -163,7 +164,7 @@ const ButtonWrapper = styled.div`
 const CountNumber = styled.span`
   padding: ${SPACING.XS} ${SPACING.SM};
   color: ${COLORS.WHITE};
-  background-color: ${COLORS.RED_2};
+  background-color: ${(props) => (props.noti ? COLORS.RED_2 : COLORS.PRIMARY)};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -179,6 +180,7 @@ const ProfileHead = () => {
   const {data: borrowing} = useBorrowing(isAddressTel)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
+  const {data: myNotification} = useMyNotification()
 
   const MenuRef = useRef()
   useOutsideAlerter(setIsTriggerMenu, MenuRef)
@@ -236,6 +238,20 @@ const ProfileHead = () => {
                 ข้อมูลโดยรวม
               </NavItem>
             </Link>
+            <Link href="/profile/notification" passHref>
+              <NavItem
+                isActive={router.pathname === '/profile/notification'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
+                <span>การแจ้งเตือนทั้งหมด</span>
+                {myNotification?.data?.data?.unseenCount > 0 && (
+                  <CountNumber noti={true}>
+                    {myNotification?.data?.data?.unseenCount}
+                  </CountNumber>
+                )}
+              </NavItem>
+            </Link>
+
             <Link href="/profile/bookrequest" passHref>
               <NavItem
                 isActive={router.pathname === '/profile/bookrequest'}
@@ -289,6 +305,7 @@ const ProfileHead = () => {
                 ประวัติการยืม
               </NavItem>
             </Link>
+
             <Link href="/profile/edit" passHref>
               <NavItem
                 isActive={router.pathname === '/profile/edit'}

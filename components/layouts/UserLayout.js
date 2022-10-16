@@ -11,6 +11,8 @@ import styled from 'styled-components'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import {COLORS} from '../../styles/colors'
+import useBorrowing from '../../api/query/useBorrowing'
+import useMyNotification from '../../api/query/useMyNotification'
 
 const CloseToast = styled.div`
   cursor: pointer;
@@ -24,6 +26,8 @@ const UserLayout = ({children}) => {
   const {socket} = useSocket()
   const {refetch: refetchForwardReq} = useMyForwardRequest()
   const {refetch: refetchBorrowReq} = useMyBorrowRequest()
+  const {refetch: refetchCurrentBorrow} = useBorrowing()
+  const {refetch: refetchMyNotification} = useMyNotification()
 
   useEffect(() => {
     const cookies = new Cookies()
@@ -55,12 +59,15 @@ const UserLayout = ({children}) => {
             case 'acceptCancelBorrow':
               refetchBorrowReq()
               return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${data?.bookName} แล้ว`
-
+            case 'confirmReceiveBook':
+              refetchForwardReq()
+              refetchCurrentBorrow()
+              return `ผู้ใช้รับหนังสือ ${data?.bookName} จากคุณแล้ว`
             default:
               return
           }
         }
-
+        refetchMyNotification()
         toast(
           (t) => (
             <>
@@ -79,7 +86,7 @@ const UserLayout = ({children}) => {
               />
             ),
             position: 'top-right',
-            duration: 600000,
+            duration: 6000,
           }
         )
       })
@@ -90,7 +97,7 @@ const UserLayout = ({children}) => {
       socket?.off('disconnect')
       socket?.off('getNotification')
     }
-  }, [refetchBorrowReq, refetchForwardReq, socket])
+  }, [refetchBorrowReq, refetchCurrentBorrow, refetchForwardReq, socket])
 
   return (
     <>

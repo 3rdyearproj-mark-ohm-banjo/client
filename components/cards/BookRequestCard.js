@@ -130,9 +130,19 @@ const BookRequestCard = ({book, cardType}) => {
 
     toast.promise(userService.confirmReceive(book?.book?.book?._id), {
       loading: 'กำลังดำเนินการ...',
-      success: () => {
+      success: (res) => {
         setConfirmModal(false)
         refetchBorrow()
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'confirmReceiveBook',
+            bookName: book?.bookShelf?.bookName,
+          })
+        }
+
         return 'ยืนยันการรับหนังสือสำเร็จแล้ว'
       },
       error: () => {
