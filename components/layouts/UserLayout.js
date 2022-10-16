@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import {COLORS} from '../../styles/colors'
+import useBorrowing from '../../api/query/useBorrowing'
 
 const CloseToast = styled.div`
   cursor: pointer;
@@ -24,6 +25,7 @@ const UserLayout = ({children}) => {
   const {socket} = useSocket()
   const {refetch: refetchForwardReq} = useMyForwardRequest()
   const {refetch: refetchBorrowReq} = useMyBorrowRequest()
+  const {refetch: refetchCurrentBorrow} = useBorrowing()
 
   useEffect(() => {
     const cookies = new Cookies()
@@ -55,7 +57,10 @@ const UserLayout = ({children}) => {
             case 'acceptCancelBorrow':
               refetchBorrowReq()
               return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${data?.bookName} แล้ว`
-
+            case 'acceptCancelBorrow':
+              refetchForwardReq()
+              refetchCurrentBorrow()
+              return `ผู้ใช้รับหนังสือ ${data?.bookName} จากคุณแล้ว`
             default:
               return
           }
@@ -79,7 +84,7 @@ const UserLayout = ({children}) => {
               />
             ),
             position: 'top-right',
-            duration: 600000,
+            duration: 60000,
           }
         )
       })
