@@ -87,7 +87,7 @@ const RelateContentHead = styled.h4`
   user-select: none;
 `
 
-const BookShelfPage = ({bookShelf, relatedBook, notFound}) => {
+const BookShelfPage = ({bookShelf, relatedBook}) => {
   const router = useRouter()
 
   if (!bookShelf || !relatedBook) {
@@ -215,13 +215,14 @@ export const getStaticProps = async ({params}) => {
 
     bookShelf = bookFetch
     relatedBook = relatedBookFetch
-  } catch {
+  } catch (err) {
+    console.log(err)
     return {notFound: true}
   }
 
-  if (Object.keys(bookShelf).length < 1) {
-    return {notFound: true}
-  }
+  // if (Object.keys(bookShelf).length < 1) {
+  //   return {notFound: true}
+  // }
 
   return {
     props: {
