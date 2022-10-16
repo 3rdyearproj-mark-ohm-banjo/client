@@ -179,11 +179,22 @@ const BookForwardingCard = ({bookInfo}) => {
 
     toast.promise(userService.confirmForwarding(bookInfo.book._id), {
       loading: 'กำลังดำเนินการ...',
-      success: () => {
+      success: (res) => {
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        console.log(res?.data)
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'confirmSendingSuccess',
+            bookName: bookInfo?.book?.bookShelf?.bookName,
+          })
+        }
         getMyForward()
         return 'ยืนยันการส่งหนังสือสำเร็จ'
       },
-      error: () => {
+      error: (err) => {
+        console.log(err)
         getMyForward()
         return 'เกิดข้อผิดพลาด'
       },

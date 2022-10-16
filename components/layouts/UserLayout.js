@@ -10,10 +10,12 @@ import {ICONS} from '../../config/icon'
 import styled from 'styled-components'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
+import {COLORS} from '../../styles/colors'
 
 const CloseToast = styled.div`
   cursor: pointer;
   font-size: 18px;
+  margin-left: 8px;
 `
 
 const UserLayout = ({children}) => {
@@ -69,14 +71,26 @@ const UserLayout = ({children}) => {
             </>
           ),
           {
-            icon: <Icon name={ICONS.faCheck} />,
+            icon: (
+              <Icon
+                name={ICONS.faCircleCheck}
+                color={COLORS.GREEN_1}
+                size={'lg'}
+              />
+            ),
             position: 'top-right',
-            duration: Infinity,
+            duration: 600000,
           }
         )
       })
     }
-  }, [socket])
+
+    return () => {
+      socket?.off('connect')
+      socket?.off('disconnect')
+      socket?.off('getNotification')
+    }
+  }, [refetchBorrowReq, refetchForwardReq, socket])
 
   return (
     <>
