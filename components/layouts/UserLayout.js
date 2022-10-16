@@ -12,6 +12,7 @@ import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import {COLORS} from '../../styles/colors'
 import useBorrowing from '../../api/query/useBorrowing'
+import useMyNotification from '../../api/query/useMyNotification'
 
 const CloseToast = styled.div`
   cursor: pointer;
@@ -26,6 +27,7 @@ const UserLayout = ({children}) => {
   const {refetch: refetchForwardReq} = useMyForwardRequest()
   const {refetch: refetchBorrowReq} = useMyBorrowRequest()
   const {refetch: refetchCurrentBorrow} = useBorrowing()
+  const {refetch: refetchMyNotification} = useMyNotification()
 
   useEffect(() => {
     const cookies = new Cookies()
@@ -65,7 +67,7 @@ const UserLayout = ({children}) => {
               return
           }
         }
-
+        refetchMyNotification()
         toast(
           (t) => (
             <>
@@ -84,7 +86,7 @@ const UserLayout = ({children}) => {
               />
             ),
             position: 'top-right',
-            duration: 60000,
+            duration: 6000,
           }
         )
       })
@@ -95,7 +97,7 @@ const UserLayout = ({children}) => {
       socket?.off('disconnect')
       socket?.off('getNotification')
     }
-  }, [refetchBorrowReq, refetchForwardReq, socket])
+  }, [refetchBorrowReq, refetchCurrentBorrow, refetchForwardReq, socket])
 
   return (
     <>
