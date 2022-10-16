@@ -57,7 +57,7 @@ const UserLayout = ({children}) => {
             case 'acceptCancelBorrow':
               refetchBorrowReq()
               return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${data?.bookName} แล้ว`
-            case 'acceptCancelBorrow':
+            case 'confirmReceiveBook':
               refetchForwardReq()
               refetchCurrentBorrow()
               return `ผู้ใช้รับหนังสือ ${data?.bookName} จากคุณแล้ว`
