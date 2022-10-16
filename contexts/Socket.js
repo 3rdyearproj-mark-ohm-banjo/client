@@ -7,7 +7,9 @@ export const SocketProvider = (props) => {
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
-    setSocket(io(process.env.NEXT_PUBLIC_SERVER_URL))
+    setSocket(io(process.env.NEXT_PUBLIC_SERVER_URL), {
+      path: process.env.NEXT_PUBLIC_SOCKET_PATH
+    })
   }, [])
 
   useEffect(() => {
