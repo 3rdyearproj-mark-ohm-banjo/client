@@ -7,6 +7,7 @@ import UserLayout from '../components/layouts/UserLayout'
 import {Provider} from 'react-redux'
 import {store} from '../redux/store'
 import {Toaster} from 'react-hot-toast'
+import {SocketProvider} from '../contexts/Socket'
 
 fontAwesomeConfig.autoAddCss = false
 const GlobalStyle = getGlobalStyle()
@@ -14,16 +15,19 @@ const queryClient = new QueryClient(queryClientConfig)
 
 function MyApp({Component, pageProps}) {
   const Layout = Component.Layout || UserLayout
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <GlobalStyle />
-        <Toaster />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </Provider>
-    </QueryClientProvider>
+    <SocketProvider>
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <GlobalStyle />
+          <Toaster />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </Provider>
+      </QueryClientProvider>
+    </SocketProvider>
   )
 }
 
