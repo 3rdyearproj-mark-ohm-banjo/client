@@ -319,6 +319,21 @@ const NavigationBar = () => {
                 บริจาคหนังสือ
               </MenuIcon>
 
+              <MenuIcon
+                onClick={() => router.push('/profile/borrowing')}
+                isActive={router.pathname === '/profile/borrowing'}
+              >
+                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
+                <MenuContentWrapper>
+                  หนังสือที่ยืมอยู่{' '}
+                  {borrowing?.data?.data?.borrowBooks?.length > 0 && (
+                    <CirCleCount>
+                      {borrowing?.data?.data?.borrowBooks?.length ?? 0}
+                    </CirCleCount>
+                  )}
+                </MenuContentWrapper>
+              </MenuIcon>
+
               {/* <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
                 <NotiIconControl ref={notificationIconRef}>
                   <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
@@ -368,21 +383,6 @@ const NavigationBar = () => {
                   </NotificationDropdown>
                 )}
               </MenuIcon> */}
-
-              <MenuIcon
-                onClick={() => router.push('/profile/borrowing')}
-                isActive={router.pathname === '/profile/borrowing'}
-              >
-                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
-                <MenuContentWrapper>
-                  หนังสือที่ยืมอยู่{' '}
-                  {borrowing?.data?.data?.borrowBooks?.length > 0 && (
-                    <CirCleCount>
-                      {borrowing?.data?.data?.borrowBooks?.length ?? 0}
-                    </CirCleCount>
-                  )}
-                </MenuContentWrapper>
-              </MenuIcon>
 
               <MenuIcon
                 isActive={router.pathname === '/profile'}
