@@ -307,6 +307,15 @@ const ProfileHead = () => {
               </NavItem>
             </Link>
 
+            <Link href="/profile/myreport" passHref>
+              <NavItem
+                isActive={router.pathname === '/profile/myreport'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
+                การรายงานของฉัน
+              </NavItem>
+            </Link>
+
             <Link href="/profile/edit" passHref>
               <NavItem
                 isActive={router.pathname === '/profile/edit'}

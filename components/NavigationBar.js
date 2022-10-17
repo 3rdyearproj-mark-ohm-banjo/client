@@ -308,7 +308,13 @@ const NavigationBar = () => {
       link: '/profile/donatebook',
     },
     {icon: ICONS.faUser, text: 'ข้อมูลของฉัน', link: '/profile'},
+    {icon: ICONS.faBell, text: 'การแจ้งเตือน', link: '/profile/notification'},
     {icon: ICONS.faBook, text: 'หนังสือที่ยืมอยู่', link: '/profile/borrowing'},
+    {
+      icon: ICONS.faExclamationCircle,
+      text: 'การรายงาน',
+      link: '/profile/myreport',
+    },
     {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
   ]
 

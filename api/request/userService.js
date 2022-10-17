@@ -142,6 +142,11 @@ const verifyHash = (id) => {
   return res
 }
 
+const getMyReport = () => {
+  const res = axiosPrivate.get(`user/myreport`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login,
@@ -168,4 +173,5 @@ export default {
   submitVerifyMail,
   getUserEmailByHash,
   verifyHash,
+  getMyReport,
 }
