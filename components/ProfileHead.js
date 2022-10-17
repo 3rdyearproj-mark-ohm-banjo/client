@@ -20,6 +20,7 @@ import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useMyForwardRequest from '../api/query/useMyForwardRequest'
 import useAddressInfo from '../hooks/useAddressInfo'
 import useMyNotification from '../api/query/useMyNotification'
+import {animated, useTransition} from 'react-spring'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -161,7 +162,7 @@ const ButtonWrapper = styled.div`
   margin-bottom: ${SPACING.MD};
 `
 
-const CountNumber = styled.span`
+const CountNumber = styled(animated.div)`
   padding: ${SPACING.XS} ${SPACING.SM};
   color: ${COLORS.WHITE};
   background-color: ${(props) => (props.noti ? COLORS.RED_2 : COLORS.PRIMARY)};
@@ -185,6 +186,15 @@ const ProfileHead = () => {
 
   const MenuRef = useRef()
   useOutsideAlerter(setIsTriggerMenu, MenuRef)
+
+  const fadeUnseenSpring = useTransition(
+    myNotification?.data?.data?.unseenCount > 0,
+    {
+      from: {opacity: 0},
+      enter: {opacity: 1},
+      leave: {opacity: 0},
+    }
+  )
 
   return (
     <>
@@ -246,7 +256,7 @@ const ProfileHead = () => {
               >
                 <span>การแจ้งเตือนทั้งหมด</span>
                 {myNotification?.data?.data?.unseenCount > 0 && (
-                  <CountNumber noti={true}>
+                  <CountNumber noti={true} style={fadeUnseenSpring}>
                     {myNotification?.data?.data?.unseenCount}
                   </CountNumber>
                 )}

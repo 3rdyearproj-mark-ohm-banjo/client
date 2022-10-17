@@ -22,6 +22,8 @@ import useMyNotification from '../api/query/useMyNotification'
 import {formatDate} from '../utils/format'
 import useSeenNotification from '../api/query/useSeenNotification'
 import {useSocket} from '../contexts/Socket'
+import {animated, useSpring, useTransition} from 'react-spring'
+import {useEffect} from 'react'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -223,7 +225,7 @@ const CountNumber = styled.span`
   font-weight: 600;
 `
 
-const CirCleCount = styled.span`
+const CirCleCount = styled(animated.div)`
   width: 20px;
   flex-shrink: 0;
   color: ${COLORS.WHITE};
@@ -335,6 +337,15 @@ const NavigationBar = () => {
     }
   }
 
+  const boopingSpring = useSpring({
+    config: {tension: 1000, friction: 50},
+    from: {scaleX: 0, scaleY: 0},
+    to: [
+      {scaleX: 1.2, scaleY: 1.2},
+      {scaleX: 1, scaleY: 1},
+    ],
+  })
+
   return (
     <>
       <AuthModal show={showAuthModal} setShow={setShowAuthModal} />
@@ -366,7 +377,7 @@ const NavigationBar = () => {
                 <MenuContentWrapper>
                   หนังสือที่ยืมอยู่{' '}
                   {borrowing?.data?.data?.borrowBooks?.length > 0 && (
-                    <CirCleCount>
+                    <CirCleCount style={boopingSpring}>
                       {borrowing?.data?.data?.borrowBooks?.length ?? 0}
                     </CirCleCount>
                   )}
@@ -379,7 +390,7 @@ const NavigationBar = () => {
                   <MenuContentWrapper>
                     การแจ้งเตือน
                     {myNotification?.data?.data?.unseenCount > 0 && (
-                      <CirCleCount>
+                      <CirCleCount style={boopingSpring}>
                         {myNotification?.data?.data?.unseenCount}
                       </CirCleCount>
                     )}

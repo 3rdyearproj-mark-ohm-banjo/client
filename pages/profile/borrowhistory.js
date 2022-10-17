@@ -239,7 +239,7 @@ const BorrowHistoryPage = () => {
                   <tr key={`row${i}`}>
                     <td>
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.book.bookShelf.imageCover}`}
+                        src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row?.book?.bookShelf?.imageCover}`}
                         alt={row.bookName}
                         width={80}
                         height={100}
@@ -248,22 +248,22 @@ const BorrowHistoryPage = () => {
                     </td>
                     <td>
                       <span>ISBN</span>
-                      <span>{row.book.bookShelf.ISBN}</span>
+                      <span>{row?.book?.bookShelf?.ISBN}</span>
                     </td>
                     <td>
                       <span>ชื่อหนังสือ</span>
-                      <span>{row.book.bookShelf.bookName}</span>
+                      <span>{row?.book?.bookShelf?.bookName}</span>
                     </td>
                     <td>
                       <span>วันที่ได้รับ</span>
                       <span>
-                        {formatDate(row.receiveTime, true, true, true)}{' '}
+                        {formatDate(row?.receiveTime, true, true, true)}{' '}
                       </span>
                     </td>
                     <td>
                       <span>วันหมดอายุ</span>
                       <span>
-                        {formatDate(row.expireTime, true, true, true)}{' '}
+                        {formatDate(row?.expireTime, true, true, true)}{' '}
                       </span>
                     </td>
                   </tr>
