@@ -98,7 +98,13 @@ const UserLayout = ({children}) => {
       socket?.off('disconnect')
       socket?.off('getNotification')
     }
-  }, [refetchBorrowReq, refetchCurrentBorrow, refetchForwardReq, socket])
+  }, [
+    refetchBorrowReq,
+    refetchCurrentBorrow,
+    refetchForwardReq,
+    refetchMyNotification,
+    socket,
+  ])
 
   return (
     <>

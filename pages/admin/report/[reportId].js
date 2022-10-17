@@ -349,9 +349,18 @@ const ReportInfoPage = ({reportId}) => {
       {!reportInfo?.adminWhoManage?._id ? (
         <ButtonWrapper>
           <Button onClick={() => acceptCase(reportId)}>รับรายงาน</Button>
-          <Button btnType="orangeGradient" onClick={() => rejectCase(reportId)}>
-            ยกเลิกรายงานนี้
-          </Button>
+          {reportInfo?.idType === 'bookShelfId' && (
+            <Button
+              btnType="orangeGradient"
+              onClick={() => {
+                if (confirm('ต้องการยกเลิกรายงานนี้ใช่ไหม')) {
+                  rejectCase(reportId)
+                }
+              }}
+            >
+              ยกเลิกรายงานนี้
+            </Button>
+          )}
         </ButtonWrapper>
       ) : (
         buttonSwitch()

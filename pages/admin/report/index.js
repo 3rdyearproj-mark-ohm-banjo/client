@@ -109,17 +109,16 @@ const ReportPage = ({isEmptyQuery}) => {
     if (e.target.value === 'all') {
       let routerQuery = router.query
       delete routerQuery[key]
-      console.log(routerQuery)
 
       return router.push({
         pathname,
-        query: {...routerQuery},
+        query: {...routerQuery, page: 1},
       })
     }
 
     router.push({
       pathname,
-      query: {...router.query, [key]: e.target.value},
+      query: {...router.query, [key]: e.target.value, page: 1},
     })
   }
 

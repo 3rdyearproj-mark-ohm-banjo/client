@@ -31,6 +31,8 @@ const ButtonWrapper = styled.div`
 
 const ReportModal = ({isShow, setIsShow, type, bookName, reportId}) => {
   const [description, setDescription] = useState('')
+  const [isError, setIsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const reportTypes = {
     bookId: {
@@ -47,17 +49,27 @@ const ReportModal = ({isShow, setIsShow, type, bookName, reportId}) => {
 
   const clearState = () => {
     setIsShow(false)
+    setIsLoading(false)
     setDescription('')
   }
 
   const submitReport = () => {
+    if (description.length < 1) {
+      setIsError(true)
+    } else {
+      setIsError(false)
+    }
     toast.promise(userService.sendReport(reportId, type, description), {
-      loading: 'กำลังส่งรายงาน...',
+      loading: () => {
+        setIsLoading(true)
+        return 'กำลังส่งรายงาน...'
+      },
       success: () => {
         clearState()
         return 'ส่งรายงานสำเร็จแล้ว'
       },
       error: (err) => () => {
+        setIsLoading(false)
         return `${err.toString()}`
       },
     })
@@ -79,13 +91,21 @@ const ReportModal = ({isShow, setIsShow, type, bookName, reportId}) => {
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength="500"
                 value={description}
+                isDisabled={isLoading}
+                isError={isError}
+                errText={'กรุณากรอกรายละเอียดรายงาน'}
+                errSize="16px"
               />
             </div>
             <ButtonWrapper>
               <Button onClick={clearState} btnType="whiteBorder" btnSize="sm">
                 ปิด
               </Button>
-              <Button onClick={submitReport} btnSize="sm">
+              <Button
+                onClick={submitReport}
+                btnSize="sm"
+                isDisabled={isLoading}
+              >
                 ส่งรายงาน
               </Button>
             </ButtonWrapper>

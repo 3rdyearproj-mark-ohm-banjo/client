@@ -206,7 +206,7 @@ const NotificationPage = () => {
         <Title>การแจ้งเตือนทั้งหมด</Title>
       </TitleWrapper>
       <HeadWrapper>
-        <span>เดือนที่ยืม</span>
+        <span>เดือน</span>
         <Select
           onChange={(e) => {
             setCurrentPage(1)

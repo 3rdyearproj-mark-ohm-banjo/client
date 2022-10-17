@@ -7,7 +7,7 @@ const addAdmin = (adminData) => {
 
 const searchReport = (params, size) => {
   const res = axiosPrivate.get(`admin/reportinformation`, {
-    params: {...params, size},
+    params: {...params, size, page: params?.page ? params.page : 1},
   })
   return res
 }

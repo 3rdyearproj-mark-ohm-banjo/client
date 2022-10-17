@@ -32,7 +32,7 @@ const BookWrapper = styled.div`
 `
 
 const EmptyState = styled.div`
-  height: 100%;
+  height: 40%;
   padding: ${SPACING.MD};
   background-color: ${COLORS.GRAY_LIGHT};
   border-radius: ${SPACING.MD};

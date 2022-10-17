@@ -20,8 +20,8 @@ import useBorrowing from '../api/query/useBorrowing'
 import useAddressInfo from '../hooks/useAddressInfo'
 import useMyNotification from '../api/query/useMyNotification'
 import {formatDate} from '../utils/format'
-import {useEffect} from 'react'
 import useSeenNotification from '../api/query/useSeenNotification'
+import {useSocket} from '../contexts/Socket'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -254,6 +254,7 @@ const NavigationBar = () => {
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
   const {data: myNotification} = useMyNotification(isAuth)
   const {mutate: seenNotification} = useSeenNotification()
+  const {socket} = useSocket()
 
   const notificationHandler = (bool, event) => {
     if (!isAuth) {
@@ -286,6 +287,7 @@ const NavigationBar = () => {
     setShowProfileMenu(false)
     return getResult()
       .then(() => {
+        socket.on('logout', () => {})
         dispatch(clearUser())
         toast.success('ออกจากระบบสำเร็จ')
         if (router.pathname.includes('profile')) {
