@@ -7,6 +7,7 @@ import userService from '../api/request/userService'
 import {useRouter} from 'next/router'
 import Icon from './Icon'
 import {ICONS} from '../config/icon'
+import {useSocket} from '../contexts/Socket'
 
 const SideBarStyled = styled.div`
   background-color: ${COLORS.PURPLE_3};
@@ -50,11 +51,13 @@ const SideBar = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const user = useSelector((state) => state.user.user)
+  const {socket} = useSocket()
 
   const logoutHandler = async () => {
     const getResult = async () => await userService.logout()
     return getResult()
       .then(() => {
+        socket.on('logout', () => {})
         dispatch(clearUser())
         router.push('/')
       })

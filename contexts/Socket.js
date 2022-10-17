@@ -14,10 +14,6 @@ export const SocketProvider = (props) => {
     )
   }, [])
 
-  useEffect(() => {
-    console.log(socket, process.env.NEXT_PUBLIC_SERVER_URL)
-  }, [socket])
-
   return (
     <SocketContext.Provider
       value={{
