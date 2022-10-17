@@ -10,6 +10,7 @@ import {FONTS} from '../../styles/fonts'
 import {years} from '../../config/years'
 import Pagination from '../../components/Pagination'
 import useSeenNotification from '../../api/query/useSeenNotification'
+import {useSelector} from 'react-redux'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -140,7 +141,8 @@ const EmptyRow = styled.td`
 `
 
 const NotificationPage = () => {
-  const {data: myNotification} = useMyNotification()
+  const isAuth = useSelector((state) => state.user.isAuth)
+  const {data: myNotification} = useMyNotification(isAuth)
   const [filterMonth, setFilterMonth] = useState('all')
   const [filterYear, setFilterYear] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)

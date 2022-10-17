@@ -22,12 +22,13 @@ const CloseToast = styled.div`
 
 const UserLayout = ({children}) => {
   const user = useSelector((state) => state.user.user)
+  const isAuth = useSelector((state) => state.user.isAuth)
   const dispatch = useDispatch()
   const {socket} = useSocket()
   const {refetch: refetchForwardReq} = useMyForwardRequest()
   const {refetch: refetchBorrowReq} = useMyBorrowRequest()
   const {refetch: refetchCurrentBorrow} = useBorrowing()
-  const {refetch: refetchMyNotification} = useMyNotification()
+  const {refetch: refetchMyNotification} = useMyNotification(isAuth)
 
   useEffect(() => {
     const cookies = new Cookies()

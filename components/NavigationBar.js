@@ -252,7 +252,7 @@ const NavigationBar = () => {
   const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
-  const {data: myNotification} = useMyNotification()
+  const {data: myNotification} = useMyNotification(isAuth)
   const {mutate: seenNotification} = useSeenNotification()
 
   const notificationHandler = (bool, event) => {

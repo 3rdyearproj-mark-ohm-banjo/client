@@ -174,13 +174,14 @@ const CountNumber = styled.span`
 
 const ProfileHead = () => {
   const user = useSelector((state) => state.user.user)
+  const isAuth = useSelector((state) => state.user.isAuth)
   const router = useRouter()
   const [isTriggerMenu, setIsTriggerMenu] = useState(false)
   const isAddressTel = useAddressInfo()
   const {data: borrowing} = useBorrowing(isAddressTel)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
-  const {data: myNotification} = useMyNotification()
+  const {data: myNotification} = useMyNotification(isAuth)
 
   const MenuRef = useRef()
   useOutsideAlerter(setIsTriggerMenu, MenuRef)
