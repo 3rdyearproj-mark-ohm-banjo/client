@@ -65,6 +65,11 @@ const BookName = styled.div`
   padding-bottom: 2px;
   border: solid ${COLORS.GRAY_LIGHT};
   border-width: 0 0 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `
 const CircleProgress = styled.div`
   width: 220px;
@@ -95,7 +100,7 @@ const GetBookDate = styled.span`
   }
 `
 
-const ExpireMessage = styled.div`
+const EventMessage = styled.div`
   color: ${COLORS.WHITE};
   background-color: ${COLORS.RED_2};
   opacity: 0.65;
@@ -140,6 +145,26 @@ const BorrowingCardInfo = ({info}) => {
         return 'เกิดข้อผิดพลาด'
       },
     })
+  }
+
+  const switchEventMessage = () => {
+    switch (info?.status) {
+      case 'holding':
+        return <EventMessage>หมดเวลาการยืมหนังสือนี้แล้ว</EventMessage>
+      case 'waitHolderResponse':
+        return (
+          <EventMessage>
+            หนังสือไม่ถูกส่งต่อ โปรดติดต่อ{' '}
+            {process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+          </EventMessage>
+        )
+      default:
+        return (
+          <EventMessage successRead={true}>
+            ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
+          </EventMessage>
+        )
+    }
   }
 
   return (
@@ -210,17 +235,7 @@ const BorrowingCardInfo = ({info}) => {
         <ContentWrapper>
           <Description>
             <BookName>{info.bookShelf.bookName}</BookName>
-            {isExpired && (
-              <>
-                {info.status === 'holding' ? (
-                  <ExpireMessage>หมดเวลาการยืมหนังสือนี้แล้ว</ExpireMessage>
-                ) : (
-                  <ExpireMessage successRead={true}>
-                    ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
-                  </ExpireMessage>
-                )}
-              </>
-            )}
+            {switchEventMessage()}
             <BookDateInfo>
               <GetBookDate>
                 <span>

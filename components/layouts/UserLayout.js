@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 import NavigationBar from '../NavigationBar'
@@ -13,6 +13,7 @@ import useMyBorrowRequest from '../../api/query/useMyBorrowRequest'
 import {COLORS} from '../../styles/colors'
 import useBorrowing from '../../api/query/useBorrowing'
 import useMyNotification from '../../api/query/useMyNotification'
+import useAddressInfo from '../../hooks/useAddressInfo'
 
 const CloseToast = styled.div`
   cursor: pointer;
@@ -27,8 +28,12 @@ const UserLayout = ({children}) => {
   const {socket} = useSocket()
   const {refetch: refetchForwardReq} = useMyForwardRequest()
   const {refetch: refetchBorrowReq} = useMyBorrowRequest()
-  const {refetch: refetchCurrentBorrow} = useBorrowing()
   const {refetch: refetchMyNotification} = useMyNotification(isAuth)
+  const isAddressTel = useAddressInfo()
+  const {data: borrowing, refetch: refetchCurrentBorrow} = useBorrowing(
+    isAddressTel && isAuth
+  )
+  const [isAdminCantContact, setIsAdminCantContact] = useState(false)
 
   useEffect(() => {
     const cookies = new Cookies()
@@ -41,7 +46,36 @@ const UserLayout = ({children}) => {
     if (user.email) {
       socket?.emit('signIn', user.email)
     }
+
+    if (!user.email) {
+      toast.dismiss()
+    }
   }, [user.email, socket])
+
+  useEffect(() => {
+    if (
+      borrowing &&
+      borrowing?.data?.data?.borrowBooks?.some(
+        (item) => item.status === 'waitHolderResponse'
+      )
+    ) {
+      toast.error(
+        `มีหนังสือที่คุณถูกรายงานว่าไม่ได้ส่งต่อ โปรดติดต่อ ${process.env.NEXT_PUBLIC_SUPPORT_MAIL}`,
+        {
+          duration: Infinity,
+          position: 'bottom-right',
+          style: {
+            background: COLORS.RED_2,
+            color: COLORS.WHITE,
+          },
+        }
+      )
+    }
+
+    return () => {
+      toast.dismiss()
+    }
+  }, [borrowing])
 
   useEffect(() => {
     if (socket) {
@@ -64,6 +98,10 @@ const UserLayout = ({children}) => {
               refetchForwardReq()
               refetchCurrentBorrow()
               return `ผู้ใช้รับหนังสือ ${data?.bookName} จากคุณแล้ว`
+            case 'checkMailFromAdmin':
+              refetchForwardReq()
+              refetchCurrentBorrow()
+              return `มีหนังสือของคุณที่ถูกระงับการใช้งาน เนื่องจากไม่มีการส่งต่อ โปรดติดต่อผู้ดูแลระบบที่ ${process.env.NEXT_PUBLIC_SUPPORT_MAIL}`
             default:
               return
           }

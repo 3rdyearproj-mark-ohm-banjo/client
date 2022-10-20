@@ -19,6 +19,10 @@ import useBookNotSendCantContact from '../../../api/query/useBookNotSendCantCont
 import useBookNotSendCanContact from '../../../api/query/useBookNotSendCanContact'
 import useReportBookInfoEdit from '../../../api/query/useReportBookInfoEdit'
 import useSystemBookNotReceive from '../../../api/query/useSystemBookNotReceive'
+import useMatchUserAfterContact from '../../../api/query/useMatchUserAfterContact'
+import adminService from '../../../api/request/adminService'
+import toast from 'react-hot-toast'
+import {useSocket} from '../../../contexts/Socket'
 
 const PageWrapper = styled.section`
   display: flex;
@@ -105,7 +109,7 @@ const ButtonHead = styled.header`
 `
 
 const ReportInfoPage = ({reportId}) => {
-  const {data} = useReportInfo(reportId)
+  const {data, refetch: refetchReport} = useReportInfo(reportId)
   const user = useSelector((state) => state.user.user)
   const reportInfo = data?.data?.data
   const isMyCase = user?._id === reportInfo?.adminWhoManage?._id
@@ -114,9 +118,11 @@ const ReportInfoPage = ({reportId}) => {
   const {mutate: bookCanRead} = useBookCanRead()
   const {mutate: bookCantRead} = useBookCantRead()
   const {mutate: bookNotSendCanContact} = useBookNotSendCanContact()
-  const {mutate: bookNotSendCantContact} = useBookNotSendCantContact()
   const {mutate: bookInfoEdit} = useReportBookInfoEdit()
   const {mutate: systemBookNotReceive} = useSystemBookNotReceive()
+  const {mutate: matchUserAfterContact} = useMatchUserAfterContact()
+  const {socket} = useSocket()
+
   console.log(reportInfo)
 
   const buttonSwitch = () => {
@@ -143,17 +149,60 @@ const ReportInfoPage = ({reportId}) => {
     switch (reportInfo?.idType) {
       case 'bookHistoryId':
         return (
-          <ButtonWrapper>
-            <Button
-              onClick={() => bookNotSendCantContact(reportId)}
-              btnType="orangeGradient"
-            >
-              ไม่สามารถติดต่อผู้ส่งได้
-            </Button>
-            <Button onClick={() => bookNotSendCanContact(reportId)}>
-              ติดต่อผู้ส่งได้และผู้ส่งจัดส่งแล้ว
-            </Button>
-          </ButtonWrapper>
+          <>
+            {reportInfo?.status === 'waitHolderResponse' ? (
+              <>
+                <ButtonHead>**หลังจากติดต่อกับผู้ใช้เรียบร้อยแล้ว</ButtonHead>
+                <ButtonWrapper>
+                  <br />
+                  <Button onClick={() => matchUserAfterContact(reportId)}>
+                    จับคู่ให้ผู้ใช้ใหม่
+                  </Button>
+                </ButtonWrapper>
+              </>
+            ) : (
+              <ButtonWrapper>
+                <Button
+                  onClick={() =>
+                    toast.promise(
+                      adminService.acceptBookNotSendCantContact(reportId),
+                      {
+                        loading: 'กำลังดำเนินการ...',
+                        success: (res) => {
+                          const receiverNotification =
+                            res?.data?.data?.receiverEmail ?? null
+                          console.log(res?.data?.data?.receiverEmail)
+                          if (receiverNotification) {
+                            socket.emit('sendNotification', {
+                              senderEmail: user.email,
+                              receiverEmail: receiverNotification,
+                              type: 'checkMailFromAdmin',
+                              bookName:
+                                reportInfo?.reportItem?.book?.bookShelf
+                                  ?.bookName,
+                            })
+                          }
+                          refetchReport()
+                          return 'ยืนยันการส่งหนังสือสำเร็จ'
+                        },
+                        error: (err) => {
+                          console.log(err)
+                          refetchReport()
+                          return 'เกิดข้อผิดพลาด'
+                        },
+                      }
+                    )
+                  }
+                  btnType="orangeGradient"
+                >
+                  ไม่สามารถติดต่อผู้ส่งได้
+                </Button>
+                <Button onClick={() => bookNotSendCanContact(reportId)}>
+                  ติดต่อผู้ส่งได้และผู้ส่งจัดส่งแล้ว
+                </Button>
+              </ButtonWrapper>
+            )}
+          </>
         )
       case 'bookShelfId':
         return (
@@ -203,6 +252,9 @@ const ReportInfoPage = ({reportId}) => {
             </ButtonWrapper>
           </>
         )
+      case 'waitHolderResponse':
+        return <></>
+
       default:
         return <div></div>
     }
@@ -349,18 +401,16 @@ const ReportInfoPage = ({reportId}) => {
       {!reportInfo?.adminWhoManage?._id ? (
         <ButtonWrapper>
           <Button onClick={() => acceptCase(reportId)}>รับรายงาน</Button>
-          {reportInfo?.idType === 'bookShelfId' && (
-            <Button
-              btnType="orangeGradient"
-              onClick={() => {
-                if (confirm('ต้องการยกเลิกรายงานนี้ใช่ไหม')) {
-                  rejectCase(reportId)
-                }
-              }}
-            >
-              ยกเลิกรายงานนี้
-            </Button>
-          )}
+          <Button
+            btnType="orangeGradient"
+            onClick={() => {
+              if (confirm('ต้องการยกเลิกรายงานนี้ใช่ไหม')) {
+                rejectCase(reportId)
+              }
+            }}
+          >
+            ยกเลิกรายงานนี้
+          </Button>
         </ButtonWrapper>
       ) : (
         buttonSwitch()
