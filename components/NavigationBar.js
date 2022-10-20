@@ -332,6 +332,8 @@ const NavigationBar = () => {
         return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${bookName} แล้ว`
       case 'confirmReceiveBook':
         return `ผู้ใช้รับหนังสือ ${bookName} จากคุณแล้ว`
+      case 'checkMailFromAdmin':
+        return `คุณถูกรายงานว่าไม่ส่งหนังสือ ${bookName} และผู้ดูแลระบบไม่สามารถติดต่อคุณได้`
       default:
         return
     }

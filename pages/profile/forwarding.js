@@ -100,6 +100,7 @@ const Forwarding = () => {
   const user = useSelector((state) => state.user.user)
   const isAddressTel = useAddressInfo()
   const {data, error} = useMyForwardRequest(isAddressTel)
+  console.log(data)
 
   return (
     <>
