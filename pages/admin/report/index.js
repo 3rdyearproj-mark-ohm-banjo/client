@@ -178,6 +178,12 @@ const ReportPage = ({isEmptyQuery}) => {
             >
               ถูกยกเลิก
             </option>
+            <option
+              value="reject"
+              defaultValue={router.query.status === 'waitHolderResponse'}
+            >
+              รอผู้ใช้ติดต่อกลับ
+            </option>
           </select>
         </SelectLabel>
 
