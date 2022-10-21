@@ -150,7 +150,11 @@ const BorrowingCardInfo = ({info}) => {
   const switchEventMessage = () => {
     switch (info?.status) {
       case 'holding':
-        return <EventMessage>หมดเวลาการยืมหนังสือนี้แล้ว</EventMessage>
+        if (isExpired) {
+          return <EventMessage>หมดเวลาการยืมหนังสือนี้แล้ว</EventMessage>
+        } else {
+          return
+        }
       case 'waitHolderResponse':
         return (
           <EventMessage>
@@ -159,11 +163,15 @@ const BorrowingCardInfo = ({info}) => {
           </EventMessage>
         )
       default:
-        return (
-          <EventMessage successRead={true}>
-            ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
-          </EventMessage>
-        )
+        if (isExpired) {
+          return (
+            <EventMessage successRead={true}>
+              ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
+            </EventMessage>
+          )
+        } else {
+          return
+        }
     }
   }
 
