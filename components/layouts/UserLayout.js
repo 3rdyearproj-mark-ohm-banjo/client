@@ -63,7 +63,7 @@ const UserLayout = ({children}) => {
         `มีหนังสือที่คุณถูกรายงานว่าไม่ได้ส่งต่อ โปรดติดต่อ ${process.env.NEXT_PUBLIC_SUPPORT_MAIL}`,
         {
           duration: Infinity,
-          position: 'bottom-right',
+          position: 'bottom-left',
           style: {
             background: COLORS.RED_2,
             color: COLORS.WHITE,
