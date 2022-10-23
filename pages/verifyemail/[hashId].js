@@ -88,8 +88,6 @@ export const getServerSideProps = async ({params}) => {
     return {notFound: true}
   }
 
-  console.log(user)
-
   if (Object.keys(user).length < 1) {
     return {notFound: true}
   }
