@@ -73,8 +73,6 @@ const TypePage = ({currentPage}) => {
   const pageSize = 10
   const router = useRouter()
 
-  const queryClient = new QueryClient()
-
   const validate = () => {
     if (inputType.length < 1) {
       return 0

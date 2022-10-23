@@ -18,17 +18,6 @@ const Title = styled.h2`
   color: ${COLORS.PRIMARY};
   text-align: center;
 `
-const Describe = styled.span`
-  font-size: 20px;
-  color: ${COLORS.PRIMARY};
-  text-align: center;
-
-  > b {
-    font-weight: 600;
-    font-size: 24px;
-    letter-spacing: 0.05em;
-  }
-`
 
 const FormWrapper = styled.div`
   max-width: 500px;
