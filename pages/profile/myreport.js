@@ -244,7 +244,7 @@ const MyReportPage = () => {
                   <td>{item?.status}</td>
 
                   <td>
-                    {item?.adminWhoManage ? (
+                    {!item?.adminWhoManage ? (
                       <ReceiveReport unReceive={true}>
                         {' '}
                         <Icon name={ICONS.faCircleXmark} />
