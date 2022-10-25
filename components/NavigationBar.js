@@ -285,6 +285,10 @@ const NavigationBar = () => {
   useOutsideAlerter(notificationHandler, notificationRef)
 
   const logoutHandler = async () => {
+    if (router.pathname.includes('profile')) {
+      router.push('/')
+    }
+
     const getResult = async () => await userService.logout()
     setShowProfileMenu(false)
     return getResult()
@@ -292,9 +296,6 @@ const NavigationBar = () => {
         socket.on('logout', () => {})
         dispatch(clearUser())
         toast.success('ออกจากระบบสำเร็จ')
-        if (router.pathname.includes('profile')) {
-          router.push('/')
-        }
       })
       .catch(() => {
         toast.success('ออกจากระบบสำเร็จ')
