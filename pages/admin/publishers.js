@@ -48,6 +48,7 @@ const Tbody = styled.tbody`
       padding: ${SPACING.SM};
       border: 1px solid ${COLORS.GRAY_LIGHT};
       border-width: 0 0 1px 0;
+      word-break: break-all;
     }
 
     &:last-of-type > td {
