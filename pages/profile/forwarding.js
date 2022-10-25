@@ -5,7 +5,6 @@ import styled, {css} from 'styled-components'
 import {SPACING} from '../../styles/spacing'
 import {COLORS} from '../../styles/colors'
 import BookForwardingCard from '../../components/cards/BookForwardingCard'
-import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import {Icon} from '../../components'
 import {ICONS} from '../../config/icon'
@@ -97,10 +96,8 @@ const EmptyState = styled.div`
 `
 
 const Forwarding = () => {
-  const user = useSelector((state) => state.user.user)
   const isAddressTel = useAddressInfo()
-  const {data, error} = useMyForwardRequest(isAddressTel)
-  console.log(data)
+  const {data} = useMyForwardRequest(isAddressTel)
 
   return (
     <>
