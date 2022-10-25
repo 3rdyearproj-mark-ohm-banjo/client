@@ -33,6 +33,7 @@ const Td = styled.td`
   border-color: ${COLORS.GRAY_LIGHT};
   max-width: 250px;
   font-size: 14px;
+  word-break: break-all;
 `
 
 const Tbody = styled.tbody`

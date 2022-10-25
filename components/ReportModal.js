@@ -89,7 +89,7 @@ const ReportModal = ({isShow, setIsShow, type, bookName, reportId}) => {
                 type="text"
                 placeholder="รายละเอียดการรายงาน"
                 onChange={(e) => setDescription(e.target.value)}
-                maxLength="500"
+                maxLength="300"
                 value={description}
                 isDisabled={isLoading}
                 isError={isError}
