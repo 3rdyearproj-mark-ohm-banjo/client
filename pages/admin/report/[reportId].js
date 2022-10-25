@@ -187,14 +187,13 @@ const ReportInfoPage = ({reportId}) => {
           <>
             {reportInfo?.status === 'waitHolderResponse' ? (
               <>
-                <ButtonHead>**หลังจากติดต่อกับผู้ใช้เรียบร้อยแล้ว</ButtonHead>
+                <ButtonHead>**หลังจากติดต่อกับผู้ส่งเรียบร้อยแล้ว</ButtonHead>
                 <ButtonWrapper>
-                  <br />
                   <Button
                     onClick={() => matchUserAfterContact(reportId)}
                     isDisabled={isLoading}
                   >
-                    จับคู่ให้ผู้ใช้ใหม่
+                    จับคู่ให้ผู้ส่งใหม่
                   </Button>
                   <Button
                     btnType="orangeGradient"
@@ -241,7 +240,7 @@ const ReportInfoPage = ({reportId}) => {
                       }
                     )
                   }
-                  btnType="orangeGradient"
+                  btnType="secondary"
                   isDisabled={isLoading}
                 >
                   ไม่สามารถติดต่อผู้ส่งได้
@@ -251,7 +250,7 @@ const ReportInfoPage = ({reportId}) => {
                   isDisabled={isLoading}
                 >
                   ติดต่อผู้ส่งได้และผู้ส่งจัดส่งแล้ว
-                </Button>
+                </Button>{' '}
                 <Button
                   btnType="orangeGradient"
                   onClick={() => {
@@ -303,10 +302,9 @@ const ReportInfoPage = ({reportId}) => {
               **หลังจากติดต่อเพื่อส่งข้อมูลที่จัดส่งกับผู้รายงานและได้รับหนังสือจากผู้รายงานแล้ว
             </ButtonHead>
             <ButtonWrapper>
-              <br />
               <Button
                 onClick={() => bookCantRead(reportId)}
-                btnType="orangeGradient"
+                btnType="secondary"
                 isDisabled={isLoading}
               >
                 ยืนยันสภาพหนังสือยังไม่สามารถอ่านได้
@@ -335,7 +333,6 @@ const ReportInfoPage = ({reportId}) => {
           <>
             <ButtonHead>**หลังจากติดต่อและผู้รับได้แล้ว</ButtonHead>
             <ButtonWrapper>
-              <br />
               <Button
                 onClick={() => systemBookNotReceive(reportId)}
                 isDisabled={isLoading}
