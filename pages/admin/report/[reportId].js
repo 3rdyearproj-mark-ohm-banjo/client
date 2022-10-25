@@ -62,6 +62,7 @@ const Message = styled.p`
   gap: ${SPACING.MD};
   font-size: 24px;
   margin: ${SPACING.LG} 0;
+  word-break: break-all;
 `
 
 const ReportCase = styled.div`
