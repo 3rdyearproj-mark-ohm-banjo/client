@@ -110,11 +110,11 @@ const DonateBookPage = () => {
                 <Button
                   onClick={() => {
                     if (!user.verifyEmail) {
-                      router.push('/profile/')
-                      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+                      toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+                      return router.push('/profile/')
                     } else if (!isAddressTel) {
-                      router.push('/profile/edit')
-                      return toast.error('กรุณากรอกข้อมูลบัญชีของคุณก่อน')
+                      toast.error('กรุณากรอกข้อมูลบัญชีของคุณก่อน')
+                      return router.push('/profile/edit')
                     } else {
                       setCurrentStep(1)
                     }
