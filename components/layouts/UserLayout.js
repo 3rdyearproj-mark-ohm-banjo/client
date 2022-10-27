@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchCurrentUser} from '../../redux/feature/UserSlice'
 import NavigationBar from '../NavigationBar'
@@ -26,14 +26,15 @@ const UserLayout = ({children}) => {
   const isAuth = useSelector((state) => state.user.isAuth)
   const dispatch = useDispatch()
   const {socket} = useSocket()
-  const {refetch: refetchForwardReq} = useMyForwardRequest()
-  const {refetch: refetchBorrowReq} = useMyBorrowRequest()
+  const {refetch: refetchForwardReq} = useMyForwardRequest(
+    isAddressTel && isAuth
+  )
+  const {refetch: refetchBorrowReq} = useMyBorrowRequest(isAddressTel && isAuth)
   const {refetch: refetchMyNotification} = useMyNotification(isAuth)
   const isAddressTel = useAddressInfo()
   const {data: borrowing, refetch: refetchCurrentBorrow} = useBorrowing(
     isAddressTel && isAuth
   )
-  const [isAdminCantContact, setIsAdminCantContact] = useState(false)
 
   useEffect(() => {
     const cookies = new Cookies()

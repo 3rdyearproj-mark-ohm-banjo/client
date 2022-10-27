@@ -1,7 +1,7 @@
 import axios, {axiosPrivate} from '../axios'
 
 const addAdmin = (adminData) => {
-  const res = axiosPrivate.post(`admin/register`, adminData)
+  const res = axiosPrivate.post(`admin/newadmin`, adminData)
   return res
 }
 
