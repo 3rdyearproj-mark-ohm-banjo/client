@@ -26,12 +26,12 @@ const UserLayout = ({children}) => {
   const isAuth = useSelector((state) => state.user.isAuth)
   const dispatch = useDispatch()
   const {socket} = useSocket()
+  const isAddressTel = useAddressInfo()
   const {refetch: refetchForwardReq} = useMyForwardRequest(
     isAddressTel && isAuth
   )
   const {refetch: refetchBorrowReq} = useMyBorrowRequest(isAddressTel && isAuth)
   const {refetch: refetchMyNotification} = useMyNotification(isAuth)
-  const isAddressTel = useAddressInfo()
   const {data: borrowing, refetch: refetchCurrentBorrow} = useBorrowing(
     isAddressTel && isAuth
   )
