@@ -11,6 +11,7 @@ import {formatDate} from '../../utils/format'
 import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
 import {useSocket} from '../../contexts/Socket'
+import {useRouter} from 'next/router'
 
 const CardLayout = styled.div`
   padding: ${SPACING.MD};
@@ -165,6 +166,7 @@ const BookForwardingCard = ({bookInfo}) => {
   const {refetch: getMyForward} = useMyForwardRequest(false)
   const user = useSelector((state) => state?.user?.user)
   const {socket} = useSocket()
+  const router = useRouter()
 
   const statusDictionary = {
     inProcess: 'รอการจัดส่ง',
