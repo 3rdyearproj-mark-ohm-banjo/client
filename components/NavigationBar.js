@@ -404,7 +404,12 @@ const NavigationBar = () => {
                     {myNotification?.data?.data?.notificationList
                       ?.slice(0, 5)
                       ?.map((item) => (
-                        <NotificationItem key={item?._id}>
+                        <NotificationItem
+                          key={item?._id}
+                          onClick={() =>
+                            router.push(`/profile/notification/${item?._id}`)
+                          }
+                        >
                           <div>
                             <Icon name={ICONS.faHandHoldingHand} />
                             <span>
