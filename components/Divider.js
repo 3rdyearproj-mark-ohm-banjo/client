@@ -15,7 +15,7 @@ const DividerStyled = styled.div`
     transparent ${SPACING.SM},
     transparent ${SPACING.MD}
   )`
-      : `${props.lineColor ?? COLORS.RED}`};
+      : `${props.lineColor ?? COLORS.GRAY_DARK_1}`};
 
   ${(props) => props.lineMargin && `margin: ${props.lineMargin};`}
 `

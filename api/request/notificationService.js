@@ -5,6 +5,12 @@ const getMyNotification = () => {
   return res
 }
 
+const getMyNotificationById = (id) => {
+  console.log(id)
+  const res = axiosPrivate.get(`notification/mynotification/${id}`)
+  return res
+}
+
 const seenNotification = (seenList) => {
   const res = axiosPrivate.put(`notification/seennotification`, {
     seenList,
@@ -15,5 +21,6 @@ const seenNotification = (seenList) => {
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   getMyNotification,
+  getMyNotificationById,
   seenNotification,
 }

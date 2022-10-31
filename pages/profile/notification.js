@@ -11,6 +11,7 @@ import {years} from '../../config/years'
 import Pagination from '../../components/Pagination'
 import useSeenNotification from '../../api/query/useSeenNotification'
 import {useSelector} from 'react-redux'
+import {useRouter} from 'next/router'
 
 const TitleWrapper = styled.div`
   width: 100%;
@@ -61,6 +62,11 @@ const Tbody = styled.tbody`
     flex-direction: column;
     border: 1px solid ${COLORS.GRAY_LIGHT};
     border-width: 0 0 1px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: ${COLORS.GRAY_LIGHT};
+    }
 
     > td {
       padding: ${SPACING.SM};
@@ -148,6 +154,7 @@ const NotificationPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const {mutate: seenNotification} = useSeenNotification()
   const pageSize = 10
+  const router = useRouter()
 
   const filterLogic = (item) => {
     const receiveDate = new Date(item.timestamp)
@@ -257,7 +264,12 @@ const NotificationPage = () => {
             {filterList()
               .slice((currentPage - 1) * pageSize, currentPage * pageSize)
               ?.map((item) => (
-                <tr key={item?._id}>
+                <tr
+                  key={item?._id}
+                  onClick={() =>
+                    router.push(`/profile/notification/${item?._id}`)
+                  }
+                >
                   <td>{item?.senderEmail}</td>
                   <td>{mapNotificationType(item?.type, item?.bookName)}</td>
                   <td>{formatDate(item?.timestamp, true, true, true)}</td>

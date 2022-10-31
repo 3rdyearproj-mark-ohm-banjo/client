@@ -75,8 +75,8 @@ const ReportCase = styled.div`
 `
 
 const AdminHandler = styled.span`
-  color: ${COLORS.RED_2};
   font-size: 22px;
+  color: ${(props) => (props.success ? COLORS.GREEN : COLORS.RED_2)};
 `
 
 const Reporter = styled.div`
