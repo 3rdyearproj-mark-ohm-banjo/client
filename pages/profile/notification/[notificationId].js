@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Head from 'next/head'
 import {useRouter} from 'next/router'
 import React from 'react'
 import {useEffect} from 'react'
@@ -82,13 +82,9 @@ const NotificationInfoPage = () => {
   const router = useRouter()
   const {notificationId} = router.query
 
-  const {data, refetch} = useMyNotificationById(
-    notificationId,
-    notificationId ? true : false
-  )
+  const {data, refetch} = useMyNotificationById(notificationId, false)
   const notificationInfo = data?.data?.data?.notificationInfo
   const bookShelf = data?.data?.data?.bookShelf
-  console.log(notificationInfo, bookShelf)
 
   const mapNotificationTypeHead = (type) => {
     switch (type) {
@@ -135,46 +131,51 @@ const NotificationInfoPage = () => {
   }, [notificationId, refetch])
 
   return (
-    <NotificationWrapper>
-      <NotificationHead>
-        {mapNotificationTypeHead(notificationInfo?.type)}
-      </NotificationHead>
-      <NotificationType>
-        {mapNotificationType(
-          notificationInfo?.type,
-          notificationInfo?.bookName
-        )}
-      </NotificationType>
-      <Divider />
-      <NotificationContent>
-        <NormalBookCard bookInfo={bookShelf} />
+    <>
+      <Head>
+        <title>การแจ้งเตือนของฉัน</title>
+      </Head>
+      <NotificationWrapper>
+        <NotificationHead>
+          {mapNotificationTypeHead(notificationInfo?.type)}
+        </NotificationHead>
+        <NotificationType>
+          {mapNotificationType(
+            notificationInfo?.type,
+            notificationInfo?.bookName
+          )}
+        </NotificationType>
+        <Divider />
+        <NotificationContent>
+          <NormalBookCard bookInfo={bookShelf} />
 
-        <NotificationSender>
-          จากผู้ใช้ {notificationInfo?.senderEmail}
-        </NotificationSender>
-        <TimeStamp>
-          <Icon name={ICONS.faClock} />
-          <span>
-            วันที่การแจ้งเตือนนี้ถูกส่ง{' '}
-            {formatDate(notificationInfo?.timestamp, true, true, true)}
-          </span>
-        </TimeStamp>
-        <TimeStamp>
-          <Icon name={ICONS.faEye} />
-          <span>
-            วันที่เห็นการแจ้งเตือน{' '}
-            {formatDate(notificationInfo?.seenTime, true, true, true)}
-          </span>
-        </TimeStamp>
-        <Button onClick={() => router.push(`/book/${bookShelf?.ISBN}`)}>
-          ดูข้อมูลหนังสือ
-        </Button>
-      </NotificationContent>
-      <NotificationFooter>
-        หากมีข้อสงสัยสามารถติดต่อเราได้ที่{' '}
-        {process.env.NEXT_PUBLIC_SUPPORT_MAIL}
-      </NotificationFooter>
-    </NotificationWrapper>
+          <NotificationSender>
+            จากผู้ใช้ {notificationInfo?.senderEmail}
+          </NotificationSender>
+          <TimeStamp>
+            <Icon name={ICONS.faClock} />
+            <span>
+              วันที่การแจ้งเตือนนี้ถูกส่ง{' '}
+              {formatDate(notificationInfo?.timestamp, true, true, true)}
+            </span>
+          </TimeStamp>
+          <TimeStamp>
+            <Icon name={ICONS.faEye} />
+            <span>
+              วันที่เห็นการแจ้งเตือน{' '}
+              {formatDate(notificationInfo?.seenTime, true, true, true)}
+            </span>
+          </TimeStamp>
+          <Button onClick={() => router.push(`/book/${bookShelf?.ISBN}`)}>
+            ดูข้อมูลหนังสือ
+          </Button>
+        </NotificationContent>
+        <NotificationFooter>
+          หากมีข้อสงสัยสามารถติดต่อเราได้ที่{' '}
+          {process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+        </NotificationFooter>
+      </NotificationWrapper>
+    </>
   )
 }
 
