@@ -7,6 +7,7 @@ import userService from '../api/request/userService'
 import {useRouter} from 'next/router'
 import Icon from './Icon'
 import {ICONS} from '../config/icon'
+import {useSocket} from '../contexts/Socket'
 
 const SideBarStyled = styled.div`
   background-color: ${COLORS.PURPLE_3};
@@ -32,6 +33,13 @@ const SecondItemStyled = css`
   cursor: default;
 `
 
+const HeadItemStyled = css`
+  max-width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
 const SideBarItem = styled.div`
   color: ${COLORS.WHITE};
   padding: ${SPACING.MD};
@@ -39,6 +47,10 @@ const SideBarItem = styled.div`
   transition: 0.2s;
   ${(props) => props.isActive && ActiveItemStyled}
   ${(props) => props.isSecondary && SecondItemStyled}
+
+  > span {
+    ${(props) => props.isHead && HeadItemStyled}
+  }
 
   &:hover {
     ${ActiveItemStyled}
@@ -50,11 +62,13 @@ const SideBar = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const user = useSelector((state) => state.user.user)
+  const {socket} = useSocket()
 
   const logoutHandler = async () => {
     const getResult = async () => await userService.logout()
     return getResult()
       .then(() => {
+        socket.on('logout', () => {})
         dispatch(clearUser())
         router.push('/')
       })
@@ -68,8 +82,8 @@ const SideBar = () => {
 
   return (
     <SideBarStyled>
-      <SideBarItem isSecondary>
-        <span>คุณ {user.username}</span>
+      <SideBarItem isSecondary isHead={true}>
+        <span>{user.email}</span>
         <Icon name={ICONS.faUserShield} />
       </SideBarItem>
 
@@ -98,16 +112,22 @@ const SideBar = () => {
         จัดการข้อมูลสำนักพิมพ์
       </SideBarItem>
       <SideBarItem
-        onClick={() => router.push('/admin/users')}
-        isActive={router.pathname === '/admin/users'}
-      >
-        จัดการผู้ใช้
-      </SideBarItem>
-      <SideBarItem
         onClick={() => router.push('/admin/report')}
         isActive={router.pathname === '/admin/report'}
       >
         ข้อมูลการรายงาน
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/forwarding')}
+        isActive={router.pathname === '/admin/forwarding'}
+      >
+        หนังสือที่ต้องส่งต่อ
+      </SideBarItem>
+      <SideBarItem
+        onClick={() => router.push('/admin/edit')}
+        isActive={router.pathname === '/admin/edit'}
+      >
+        แก้ไขข้อมูล
       </SideBarItem>
       <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
     </SideBarStyled>

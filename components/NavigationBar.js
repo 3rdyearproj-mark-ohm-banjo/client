@@ -9,7 +9,6 @@ import AuthModal from './AuthModal'
 import {useDispatch, useSelector} from 'react-redux'
 import userService from '../api/request/userService'
 import {clearUser} from '../redux/feature/UserSlice'
-import {Hidden} from './Layout'
 import {useOutsideAlerter} from '../hooks/useOutsideAlerter'
 import toast from 'react-hot-toast'
 import {FONTS} from '../styles/fonts'
@@ -19,6 +18,12 @@ import useMyForwardRequest from '../api/query/useMyForwardRequest'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useBorrowing from '../api/query/useBorrowing'
 import useAddressInfo from '../hooks/useAddressInfo'
+import useMyNotification from '../api/query/useMyNotification'
+import {formatDate} from '../utils/format'
+import useSeenNotification from '../api/query/useSeenNotification'
+import {useSocket} from '../contexts/Socket'
+import {animated, useSpring, useTransition} from 'react-spring'
+import {useEffect} from 'react'
 
 const NavigationBarStyled = styled.nav`
   position: fixed;
@@ -90,7 +95,7 @@ const MenuDropdown = styled.ul`
   width: 220px;
   border-radius: ${SPACING.MD};
   box-shadow: 0 5px 20px ${COLORS.GRAY_LIGHT};
-  margin-top: 40px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
@@ -220,7 +225,7 @@ const CountNumber = styled.span`
   font-weight: 600;
 `
 
-const CirCleCount = styled.span`
+const CirCleCount = styled(animated.div)`
   width: 20px;
   flex-shrink: 0;
   color: ${COLORS.WHITE};
@@ -236,7 +241,7 @@ const CirCleCount = styled.span`
 const NavigationBar = () => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
-  const userName = useSelector((state) => state.user.user.username)
+  const user = useSelector((state) => state.user.user)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showNotificationMenu, setShowNotificationMenu] = useState(false)
@@ -245,6 +250,13 @@ const NavigationBar = () => {
   useOutsideAlerter(setShowProfileMenu, profileRef, 'mouseover')
   const notificationRef = useRef()
   const notificationIconRef = useRef()
+  const isAddressTel = useAddressInfo()
+  const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
+  const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
+  const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
+  const {data: myNotification} = useMyNotification(isAuth)
+  const {mutate: seenNotification} = useSeenNotification()
+  const {socket} = useSocket()
 
   const notificationHandler = (bool, event) => {
     if (!isAuth) {
@@ -257,6 +269,15 @@ const NavigationBar = () => {
     ) {
       return setShowNotificationMenu(false)
     }
+    if (bool) {
+      let unseenList = myNotification?.data?.data?.notificationList
+        ?.slice(0, 5)
+        ?.filter((item) => !item.seen)
+
+      if (unseenList.length > 0) {
+        seenNotification(unseenList)
+      }
+    }
 
     setShowNotificationMenu(bool)
   }
@@ -264,15 +285,17 @@ const NavigationBar = () => {
   useOutsideAlerter(notificationHandler, notificationRef)
 
   const logoutHandler = async () => {
+    if (router.pathname.includes('profile')) {
+      router.push('/')
+    }
+
     const getResult = async () => await userService.logout()
     setShowProfileMenu(false)
     return getResult()
       .then(() => {
+        socket.on('logout', () => {})
         dispatch(clearUser())
         toast.success('ออกจากระบบสำเร็จ')
-        if (router.pathname.includes('profile')) {
-          router.push('/')
-        }
       })
       .catch(() => {
         toast.success('ออกจากระบบสำเร็จ')
@@ -288,15 +311,43 @@ const NavigationBar = () => {
       link: '/profile/donatebook',
     },
     {icon: ICONS.faUser, text: 'ข้อมูลของฉัน', link: '/profile'},
+    {icon: ICONS.faBell, text: 'การแจ้งเตือน', link: '/profile/notification'},
     {icon: ICONS.faBook, text: 'หนังสือที่ยืมอยู่', link: '/profile/borrowing'},
+    {
+      icon: ICONS.faExclamationCircle,
+      text: 'การรายงาน',
+      link: '/profile/myreport',
+    },
     {icon: ICONS.faSignOut, text: 'ออกจากระบบ', function: logoutHandler},
   ]
 
-  const user = useSelector((state) => state.user.user)
-  const isAddressTel = useAddressInfo()
-  const {data: borrowing} = useBorrowing(isAddressTel && isAuth)
-  const {data: bookRequest} = useMyBorrowRequest(isAddressTel && isAuth)
-  const {data: bookForwarding} = useMyForwardRequest(isAddressTel && isAuth)
+  const mapNotificationType = (type, bookName) => {
+    switch (type) {
+      case 'addQueue':
+        return `ขณะนี้มีผู้ใช้ส่งคำขอยืมหนังสือ ${bookName} มาถึงคุณ`
+      case 'cancelBorrow':
+        return `ขณะนี้มีผู้ใช้ต้องการยกเลิกส่งคำขอยืมหนังสือ ${bookName}`
+      case 'confirmSendingSuccess':
+        return `ผู้ส่งได้ส่งหนังสือ ${bookName} แล้ว`
+      case 'acceptCancelBorrow':
+        return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${bookName} แล้ว`
+      case 'confirmReceiveBook':
+        return `ผู้ใช้รับหนังสือ ${bookName} จากคุณแล้ว`
+      case 'checkMailFromAdmin':
+        return `คุณถูกรายงานว่าไม่ส่งหนังสือ ${bookName} และผู้ดูแลระบบไม่สามารถติดต่อคุณได้`
+      default:
+        return
+    }
+  }
+
+  const boopingSpring = useSpring({
+    config: {tension: 1000, friction: 50},
+    from: {scaleX: 0, scaleY: 0},
+    to: [
+      {scaleX: 1.2, scaleY: 1.2},
+      {scaleX: 1, scaleY: 1},
+    ],
+  })
 
   return (
     <>
@@ -321,43 +372,55 @@ const NavigationBar = () => {
                 บริจาคหนังสือ
               </MenuIcon>
 
-              {/* <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
+              <MenuIcon
+                onClick={() => router.push('/profile/borrowing')}
+                isActive={router.pathname === '/profile/borrowing'}
+              >
+                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
+                <MenuContentWrapper>
+                  หนังสือที่ยืมอยู่{' '}
+                  {borrowing?.data?.data?.borrowBooks?.length > 0 && (
+                    <CirCleCount style={boopingSpring}>
+                      {borrowing?.data?.data?.borrowBooks?.length ?? 0}
+                    </CirCleCount>
+                  )}
+                </MenuContentWrapper>
+              </MenuIcon>
+
+              <MenuIcon ref={notificationRef} isActive={showNotificationMenu}>
                 <NotiIconControl ref={notificationIconRef}>
                   <Icon name={ICONS.faBell} size={ICON_SIZE.lg} />
-                  การแจ้งเตือน
+                  <MenuContentWrapper>
+                    การแจ้งเตือน
+                    {myNotification?.data?.data?.unseenCount > 0 && (
+                      <CirCleCount style={boopingSpring}>
+                        {myNotification?.data?.data?.unseenCount}
+                      </CirCleCount>
+                    )}
+                  </MenuContentWrapper>
                 </NotiIconControl>
                 {showNotificationMenu && (
                   <NotificationDropdown>
-                    <NotificationItem>
-                      <div>
-                        <Icon name={ICONS.faHandHoldingHand} />
-                        <span>
-                          มีคำขอยืมหนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100%
-                          ภายใน 5 วัน ที่คุณถืออยู่ จากคุณ thanasit
-                        </span>
-                      </div>
-                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
-                    </NotificationItem>
-                    <NotificationItem>
-                      <div>
-                        <Icon name={ICONS.faBook} />
-                        <span>
-                          หนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน
-                          ที่คุณได้ทำการยืมถูกจัดส่งแล้ว
-                        </span>
-                      </div>
-                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
-                    </NotificationItem>
-                    <NotificationItem>
-                      <div>
-                        <Icon name={ICONS.faBook} />
-                        <span>
-                          หนังสือ ติวเข้ม PAT1 พิชิตข้อสอบเต็ม 100% ภายใน 5 วัน
-                          ที่คุณได้ทำการยืมถูกจัดส่งแล้ว
-                        </span>
-                      </div>
-                      <ViewMoreNotification>ดูรายละเอียด</ViewMoreNotification>
-                    </NotificationItem>
+                    {myNotification?.data?.data?.notificationList
+                      ?.slice(0, 5)
+                      ?.map((item) => (
+                        <NotificationItem
+                          key={item?._id}
+                          onClick={() =>
+                            router.push(`/profile/notification/${item?._id}`)
+                          }
+                        >
+                          <div>
+                            <Icon name={ICONS.faHandHoldingHand} />
+                            <span>
+                              {mapNotificationType(item?.type, item?.bookName)}
+                            </span>
+                          </div>
+                          <ViewMoreNotification>
+                            {formatDate(item?.timestamp, true, true, true)}
+                          </ViewMoreNotification>
+                        </NotificationItem>
+                      ))}
 
                     <NotificationItem>
                       <Link href="/profile/notification" passHref>
@@ -369,21 +432,6 @@ const NavigationBar = () => {
                     </NotificationItem>
                   </NotificationDropdown>
                 )}
-              </MenuIcon> */}
-
-              <MenuIcon
-                onClick={() => router.push('/profile/borrowing')}
-                isActive={router.pathname === '/profile/borrowing'}
-              >
-                <Icon name={ICONS.faBook} size={ICON_SIZE.lg} />
-                <MenuContentWrapper>
-                  หนังสือที่ยืมอยู่{' '}
-                  {borrowing?.data?.data?.borrowBooks?.length > 0 && (
-                    <CirCleCount>
-                      {borrowing?.data?.data?.borrowBooks?.length ?? 0}
-                    </CirCleCount>
-                  )}
-                </MenuContentWrapper>
               </MenuIcon>
 
               <MenuIcon
@@ -391,7 +439,7 @@ const NavigationBar = () => {
                 ref={profileRef}
               >
                 <Icon name={ICONS.faUser} size={ICON_SIZE.lg} />
-                <UserName>{userName}</UserName>
+                <UserName>{user?.firstname ?? user?.email}</UserName>
                 {showProfileMenu && (
                   <MenuDropdown>
                     <MenuItem

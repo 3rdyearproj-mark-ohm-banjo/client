@@ -10,6 +10,8 @@ import Image from 'next/image'
 import {formatDate} from '../../utils/format'
 import {useSelector} from 'react-redux'
 import useMyForwardRequest from '../../api/query/useMyForwardRequest'
+import {useSocket} from '../../contexts/Socket'
+import {useRouter} from 'next/router'
 
 const CardLayout = styled.div`
   padding: ${SPACING.MD};
@@ -96,14 +98,13 @@ const AddressWrapper = styled.div`
 
 const ButtonWrapper = styled.div`
   width: 100%;
-  flex: 0 0 25%;
   display: flex;
   flex-direction: column;
   gap: ${SPACING.SM};
 
   @media (min-width: 768px) {
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: row;
+    justify-content: flex-end;
     align-items: flex-end;
   }
 `
@@ -124,17 +125,48 @@ const SendDate = styled.div`
   color: ${COLORS.GREEN_1};
 `
 
+const BookActionWrapper = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+`
+
+const CancelWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.MD};
+  background-color: ${COLORS.RED_2_LIGHT};
+  margin-top: ${SPACING.SM};
+  padding: ${SPACING.SM};
+  border-radius: ${SPACING.XS};
+
+  > button {
+    align-self: center;
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+`
+
+const CancelDescription = styled.span`
+  width: 100%;
+  color: ${COLORS.RED_2};
+
+  @media (min-width: 768px) {
+    width: 70%;
+  }
+`
+
 const BookForwardingCard = ({bookInfo}) => {
   const {refetch: getMyForward} = useMyForwardRequest(false)
-  const donationHistory = useSelector(
-    (state) => state?.user?.user?.donationHistory
-  )
-
-  const donationInfo = donationHistory?.find((history) => {
-    if (history.book._id === bookInfo?.book?._id) {
-      return history
-    }
-  })
+  const user = useSelector((state) => state?.user?.user)
+  const {socket} = useSocket()
+  const router = useRouter()
 
   const statusDictionary = {
     inProcess: 'รอการจัดส่ง',
@@ -142,13 +174,29 @@ const BookForwardingCard = ({bookInfo}) => {
   }
 
   const submitForwarding = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     toast.promise(userService.confirmForwarding(bookInfo.book._id), {
       loading: 'กำลังดำเนินการ...',
-      success: () => {
+      success: (res) => {
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        console.log(res?.data)
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'confirmSendingSuccess',
+            bookName: bookInfo?.book?.bookShelf?.bookName,
+          })
+        }
         getMyForward()
         return 'ยืนยันการส่งหนังสือสำเร็จ'
       },
-      error: () => {
+      error: (err) => {
+        console.log(err)
         getMyForward()
         return 'เกิดข้อผิดพลาด'
       },
@@ -162,6 +210,36 @@ const BookForwardingCard = ({bookInfo}) => {
     }
 
     return statusDictionary[status]
+  }
+
+  const confirmCancel = () => {
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
+    toast.promise(userService.confirmCancelBorrow(bookInfo._id), {
+      loading: 'กำลังดำเนินการ...',
+      success: (res) => {
+        console.log(res.data)
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'acceptCancelBorrow',
+            bookName: bookInfo?.book?.bookShelf?.bookName,
+          })
+        }
+        getMyForward()
+        return 'ยกเลิกการส่งต่อนี้สำเร็จ'
+      },
+      error: (err) => {
+        console.log(err)
+        getMyForward()
+        return 'เกิดข้อผิดพลาด'
+      },
+    })
   }
 
   return (
@@ -191,6 +269,18 @@ const BookForwardingCard = ({bookInfo}) => {
           </BorrowDate>
         </BookInfoWrapper>
       </BookContainer>
+
+      {bookInfo.borrowerNeedToCancel && (
+        <CancelWrapper>
+          <CancelDescription>
+            **ผู้รับได้ทำการส่งคำขอเพื่อยกเลิกการยืมหนังสือนี้จากคุณ
+            กรุณากดยอมการยกเลิกหากคุณยินยอมให้ยกเลิกการยืมหนังสือนี้
+          </CancelDescription>
+          <Button btnSize="sm" btnType="orangeGradient" onClick={confirmCancel}>
+            ยอมรับการยกเลิกยืม
+          </Button>
+        </CancelWrapper>
+      )}
       <Divider lineColor={COLORS.GRAY_LIGHT} lineMargin={`${SPACING.SM} 0`} />
       <AddressContainer>
         <AddressWrapper>
@@ -204,23 +294,25 @@ const BookForwardingCard = ({bookInfo}) => {
           </Receiver>
           <p>ที่อยู่ {bookInfo?.receiverInfo?.address}</p>
         </AddressWrapper>
-        <ButtonWrapper>
+
+        <BookActionWrapper>
           {bookInfo.sendingTime && (
             <SendDate>
               ส่งวันที่ {formatDate(bookInfo.sendingTime, true, true, true)}
             </SendDate>
           )}
-
-          {!bookInfo.sendingTime ? (
-            <Button btnSize="sm" onClick={submitForwarding}>
-              ยืนยันการส่งหนังสือ
-            </Button>
-          ) : (
-            <Button btnSize="sm" btnType="orangeGradient" isDisabled={true}>
-              คุณส่งหนังสือเล่มนี้แล้ว
-            </Button>
-          )}
-        </ButtonWrapper>
+          <ButtonWrapper>
+            {!bookInfo.sendingTime ? (
+              <Button btnSize="sm" onClick={submitForwarding}>
+                ยืนยันการส่งหนังสือ
+              </Button>
+            ) : (
+              <Button btnSize="sm" btnType="orangeGradient" isDisabled={true}>
+                คุณส่งหนังสือเล่มนี้แล้ว
+              </Button>
+            )}
+          </ButtonWrapper>
+        </BookActionWrapper>
       </AddressContainer>
     </CardLayout>
   )

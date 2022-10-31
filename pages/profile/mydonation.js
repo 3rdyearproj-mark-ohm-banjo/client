@@ -100,6 +100,10 @@ const Tbody = styled.tbody`
   }
 `
 
+const Td = styled.td`
+  word-break: break-all;
+`
+
 const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -231,11 +235,11 @@ const MyDonationPage = ({currentPage}) => {
       <Table>
         <Thead>
           <tr>
-            <td>ภาพหน้าปก</td>
-            <td>ISBN</td>
-            <td>ชื่อหนังสือ</td>
-            <td>วันที่บริจาค</td>
-            <td></td>
+            <Td>ภาพหน้าปก</Td>
+            <Td>ISBN</Td>
+            <Td>ชื่อหนังสือ</Td>
+            <Td>วันที่บริจาค</Td>
+            <Td></Td>
           </tr>
         </Thead>
 
@@ -248,7 +252,7 @@ const MyDonationPage = ({currentPage}) => {
               )
               ?.map((row, i) => (
                 <tr key={`row${i}`}>
-                  <td>
+                  <Td>
                     <Image
                       src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row.imageCover}`}
                       alt={row.bookName}
@@ -256,23 +260,23 @@ const MyDonationPage = ({currentPage}) => {
                       height={100}
                       objectFit="contain"
                     />
-                  </td>
-                  <td>
+                  </Td>
+                  <Td>
                     <span>ISBN</span>
                     <span>{row.ISBN}</span>
-                  </td>
-                  <td>
+                  </Td>
+                  <Td>
                     <span>ชื่อหนังสือ</span>
                     <span>{row.bookName}</span>
-                  </td>
-                  <td>
+                  </Td>
+                  <Td>
                     <span>วันที่บริจาค</span>
                     <span>
                       {formatDate(row.donationTime, true, true, true)}{' '}
                     </span>
-                  </td>
-                  <td>
-                    {row.bookHistorys.length < 2 &&
+                  </Td>
+                  <Td>
+                    {row?.bookHistorys?.length < 2 &&
                     row.currentHolder === userId ? (
                       <Button
                         btnSize="sm"
@@ -292,7 +296,7 @@ const MyDonationPage = ({currentPage}) => {
                         หนังสือมีคำขอยืมแล้ว
                       </Button>
                     )}
-                  </td>
+                  </Td>
                 </tr>
               ))}
           </Tbody>

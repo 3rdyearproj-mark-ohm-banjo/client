@@ -16,6 +16,7 @@ import {
 import toast from 'react-hot-toast'
 import {useDispatch} from 'react-redux'
 import {updateUser} from '../../redux/feature/UserSlice'
+import adminService from '../../api/request/adminService'
 
 const ButtonWrapper = styled.div`
   margin-top: ${SPACING.LG};
@@ -45,12 +46,19 @@ const ErrMessage = styled.div`
   font-weight: 600;
 `
 
-const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
-  const [userData, setUserData] = useState({
+const RegisterForm = ({
+  onShowRegister,
+  onShow,
+  onSuccess,
+  allRound,
+  adminForm,
+}) => {
+  const defaultUserData = {
     email: '',
     password: '',
-    username: '',
-  })
+    // username: '',
+  }
+  const [userData, setUserData] = useState(defaultUserData)
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [errors, setErrors] = useState([])
   const dispatch = useDispatch()
@@ -81,6 +89,24 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
     }
   }
 
+  const newAdminHandle = (e) => {
+    e.preventDefault()
+    toast.promise(adminService.addAdmin(userData), {
+      loading: 'กำลังเพิ่มข้อมูล...',
+      success: () => {
+        setUserData(defaultUserData)
+        setPasswordConfirm('')
+        return 'เพิ่ม admin ใหม่สำเร็จ'
+      },
+      error: (err) => () => {
+        getBorrowing()
+        getMyRequest()
+        setIsLoading(false)
+        return `${err.toString()}`
+      },
+    })
+  }
+
   const registerHandle = (e) => {
     e.preventDefault()
     if (validate()) {
@@ -103,7 +129,7 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
   }
 
   const onChange = (key, value) => {
-    setUserData({...userData, [key]: value})
+    setUserData({...userData, [key]: value.trim()})
     setErrors(errors.filter((err) => err !== key))
 
     if (key === 'email') {
@@ -112,18 +138,21 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
   }
 
   return (
-    <AuthFormWrapper>
-      <NavWrap>
-        <div onClick={() => onShowRegister(false)}>
-          <Icon name={ICONS.faChevronLeft}></Icon>
-          <span>เข้าสู่ระบบ</span>
-        </div>
-        <div onClick={() => onShow(false)}>
-          <span>ปิด</span>
-          <Icon name={ICONS.faXmark}></Icon>
-        </div>
-      </NavWrap>
-      <form onSubmit={registerHandle}>
+    <AuthFormWrapper allRound={allRound}>
+      {!adminForm && (
+        <NavWrap>
+          <div onClick={() => onShowRegister(false)}>
+            <Icon name={ICONS.faChevronLeft}></Icon>
+            <span>เข้าสู่ระบบ</span>
+          </div>
+          <div onClick={() => onShow(false)}>
+            <span>ปิด</span>
+            <Icon name={ICONS.faXmark}></Icon>
+          </div>
+        </NavWrap>
+      )}
+
+      <form onSubmit={adminForm ? newAdminHandle : registerHandle}>
         {errors.indexOf('existEmail') !== -1 && (
           <ErrMessage>อีเมลหรือชื่อผู้ใช้ถูกใช้ไปแล้ว</ErrMessage>
         )}
@@ -137,9 +166,10 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
           placeholder="กรอกอีเมล"
           error={errors.indexOf('email') !== -1}
           errorMessage="กรุณากรอกอีเมลให้ถูกต้อง"
+          value={userData.email}
         />
 
-        <InputWithIcon
+        {/* <InputWithIcon
           label="ชื่อผู้ใช้*"
           type="text"
           iconName={ICONS.faUser}
@@ -148,7 +178,8 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
           placeholder="กรอกชื่อผู้ใช้"
           error={errors.indexOf('username') !== -1}
           errorMessage="คุณยังไม่ได้กรอกชื่อผู้ใช้"
-        />
+          value={userData.username}
+        /> */}
 
         <InputWithIcon
           label="รหัสผ่าน*"
@@ -159,6 +190,7 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
           placeholder="กรอกรหัสผ่าน"
           error={errors.indexOf('password') !== -1}
           errorMessage="กรุณากรอกรหัสผ่านที่ประกอบด้วย ตัวพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และตัวอักษรพิเศษ ความยาว 10 - 30 ตัว"
+          value={userData.password}
         />
 
         <InputWithIcon
@@ -170,11 +202,12 @@ const RegisterForm = ({onShowRegister, onShow, onSuccess}) => {
           placeholder="กรอกรหัสผ่านอีกครั้ง"
           error={errors.indexOf('confirmPassword') !== -1}
           errorMessage="กรุณากรอกรหัสผ่านอีกครั้ง"
+          value={passwordConfirm}
         />
 
         <ButtonWrapper>
           <Button fullWidth btnSize="sm" bgColor={COLORS.RED_2} type="submit">
-            สมัครสมาชิก
+            {adminForm ? 'เพิ่ม admin' : 'สมัครสมาชิก'}
           </Button>
         </ButtonWrapper>
       </form>

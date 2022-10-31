@@ -19,6 +19,8 @@ import useBorrowing from '../api/query/useBorrowing'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useMyForwardRequest from '../api/query/useMyForwardRequest'
 import useAddressInfo from '../hooks/useAddressInfo'
+import useMyNotification from '../api/query/useMyNotification'
+import {animated, useTransition} from 'react-spring'
 
 const UserProfile = styled.div`
   width: 100%;
@@ -160,10 +162,10 @@ const ButtonWrapper = styled.div`
   margin-bottom: ${SPACING.MD};
 `
 
-const CountNumber = styled.span`
+const CountNumber = styled(animated.div)`
   padding: ${SPACING.XS} ${SPACING.SM};
   color: ${COLORS.WHITE};
-  background-color: ${COLORS.RED_2};
+  background-color: ${(props) => (props.noti ? COLORS.RED_2 : COLORS.PRIMARY)};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,15 +175,26 @@ const CountNumber = styled.span`
 
 const ProfileHead = () => {
   const user = useSelector((state) => state.user.user)
+  const isAuth = useSelector((state) => state.user.isAuth)
   const router = useRouter()
   const [isTriggerMenu, setIsTriggerMenu] = useState(false)
   const isAddressTel = useAddressInfo()
   const {data: borrowing} = useBorrowing(isAddressTel)
   const {data: bookRequest} = useMyBorrowRequest(isAddressTel)
   const {data: bookForwarding} = useMyForwardRequest(isAddressTel)
+  const {data: myNotification} = useMyNotification(isAuth)
 
   const MenuRef = useRef()
   useOutsideAlerter(setIsTriggerMenu, MenuRef)
+
+  const fadeUnseenSpring = useTransition(
+    myNotification?.data?.data?.unseenCount > 0,
+    {
+      from: {opacity: 0},
+      enter: {opacity: 1},
+      leave: {opacity: 0},
+    }
+  )
 
   return (
     <>
@@ -224,7 +237,7 @@ const ProfileHead = () => {
             </Circle>
             <UserNameContainer>
               <span>สวัสดี, คุณ</span>
-              <UserName>{user?.username}</UserName>
+              <UserName>{user?.firstname ?? user?.email}</UserName>
             </UserNameContainer>
           </UserProfile>
           <NavMenu>
@@ -236,6 +249,20 @@ const ProfileHead = () => {
                 ข้อมูลโดยรวม
               </NavItem>
             </Link>
+            <Link href="/profile/notification" passHref>
+              <NavItem
+                isActive={router.pathname === '/profile/notification'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
+                <span>การแจ้งเตือนทั้งหมด</span>
+                {myNotification?.data?.data?.unseenCount > 0 && (
+                  <CountNumber noti={true} style={fadeUnseenSpring}>
+                    {myNotification?.data?.data?.unseenCount}
+                  </CountNumber>
+                )}
+              </NavItem>
+            </Link>
+
             <Link href="/profile/bookrequest" passHref>
               <NavItem
                 isActive={router.pathname === '/profile/bookrequest'}
@@ -289,6 +316,16 @@ const ProfileHead = () => {
                 ประวัติการยืม
               </NavItem>
             </Link>
+
+            <Link href="/profile/myreport" passHref>
+              <NavItem
+                isActive={router.pathname === '/profile/myreport'}
+                onClick={() => setIsTriggerMenu(false)}
+              >
+                การรายงานของฉัน
+              </NavItem>
+            </Link>
+
             <Link href="/profile/edit" passHref>
               <NavItem
                 isActive={router.pathname === '/profile/edit'}

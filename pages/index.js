@@ -264,7 +264,7 @@ const Home = ({newBook, recommendBook}) => {
               </Fade>
             </RecommendWrapper>
 
-            <RecommendWrapper type="secondary">
+            <RecommendWrapper>
               <Title style={headerTransition}>
                 หนังสือมาใหม่ <Icon name={ICONS.faCalendarDays} />
               </Title>

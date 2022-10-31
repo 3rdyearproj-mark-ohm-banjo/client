@@ -17,6 +17,7 @@ import toast from 'react-hot-toast'
 import useBorrowing from '../../api/query/useBorrowing'
 import userService from '../../api/request/userService'
 import {formatDate} from '../../utils/format'
+import ReportModal from '../ReportModal'
 
 const CardContainer = styled.div`
   min-height: 400px;
@@ -64,6 +65,11 @@ const BookName = styled.div`
   padding-bottom: 2px;
   border: solid ${COLORS.GRAY_LIGHT};
   border-width: 0 0 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `
 const CircleProgress = styled.div`
   width: 220px;
@@ -94,9 +100,10 @@ const GetBookDate = styled.span`
   }
 `
 
-const ExpireMessage = styled.div`
+const EventMessage = styled.div`
   color: ${COLORS.WHITE};
   background-color: ${COLORS.RED_2};
+  opacity: 0.65;
   padding: 2px ${SPACING.SM};
   text-align: center;
   margin: 0 0 2px;
@@ -104,8 +111,15 @@ const ExpireMessage = styled.div`
   ${(props) => props.successRead && `background-color:${COLORS.GREEN_1};`}
 `
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.SM};
+`
+
 const BorrowingCardInfo = ({info}) => {
   const [showModal, setShowModal] = useState(false)
+  const [showReport, setShowReport] = useState(false)
   const {refetch: getBorrowing} = useBorrowing(false)
 
   const expireDay = Math.round(
@@ -133,8 +147,44 @@ const BorrowingCardInfo = ({info}) => {
     })
   }
 
+  const switchEventMessage = () => {
+    switch (info?.status) {
+      case 'holding':
+        if (isExpired) {
+          return <EventMessage>หมดเวลาการยืมหนังสือนี้แล้ว</EventMessage>
+        } else {
+          return
+        }
+      case 'waitHolderResponse':
+        return (
+          <EventMessage>
+            หนังสือไม่ถูกส่งต่อ โปรดติดต่อ{' '}
+            {process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+          </EventMessage>
+        )
+      default:
+        if (isExpired) {
+          return (
+            <EventMessage successRead={true}>
+              ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
+            </EventMessage>
+          )
+        } else {
+          return
+        }
+    }
+  }
+
   return (
     <>
+      <ReportModal
+        type="bookId"
+        bookName={info?.bookShelf?.bookName}
+        reportId={info?._id}
+        isShow={showReport}
+        setIsShow={setShowReport}
+      />
+
       <ConfirmModal
         onClose={setShowModal}
         onShow={showModal}
@@ -193,17 +243,7 @@ const BorrowingCardInfo = ({info}) => {
         <ContentWrapper>
           <Description>
             <BookName>{info.bookShelf.bookName}</BookName>
-            {isExpired && (
-              <>
-                {info.status === 'holding' ? (
-                  <ExpireMessage>หมดเวลาการยืมหนังสือนี้แล้ว</ExpireMessage>
-                ) : (
-                  <ExpireMessage successRead={true}>
-                    ถือหนังสือไว้เพื่อรอผู้ที่สนใจยืมต่อ
-                  </ExpireMessage>
-                )}
-              </>
-            )}
+            {switchEventMessage()}
             <BookDateInfo>
               <GetBookDate>
                 <span>
@@ -220,24 +260,46 @@ const BorrowingCardInfo = ({info}) => {
               </GetBookDate>
             </BookDateInfo>
           </Description>
-          {info.status === 'holding' ? (
-            <Button
-              btnSize="sm"
-              borderRadius="4px"
-              onClick={() => setShowModal(true)}
-            >
-              ยืนยันว่าคุณอ่านหนังสือจบแล้ว
-            </Button>
-          ) : (
-            <Button
-              btnSize="sm"
-              borderRadius="4px"
-              btnType="whiteBorder"
-              isDisabled={true}
-            >
-              คุณอ่านหนังสือเล่มนี้จบแล้ว
-            </Button>
-          )}
+          <ButtonWrapper>
+            {info.status === 'holding' ? (
+              <>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  onClick={() => setShowModal(true)}
+                >
+                  ยืนยันว่าคุณอ่านหนังสือจบแล้ว
+                </Button>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  btnType="orangeGradient"
+                  onClick={() => setShowReport(true)}
+                >
+                  แจ้งหนังสือเสียหาย
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  btnType="whiteBorder"
+                  isDisabled={true}
+                >
+                  คุณอ่านหนังสือเล่มนี้จบแล้ว
+                </Button>
+                <Button
+                  btnSize="sm"
+                  borderRadius="0"
+                  btnType="orangeGradient"
+                  isDisabled={true}
+                >
+                  แจ้งหนังสือเสียหาย
+                </Button>
+              </>
+            )}
+          </ButtonWrapper>
         </ContentWrapper>
       </CardContainer>
     </>

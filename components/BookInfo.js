@@ -20,6 +20,8 @@ import useBorrowing from '../api/query/useBorrowing'
 import {useEffect} from 'react'
 import useMyBorrowRequest from '../api/query/useMyBorrowRequest'
 import useAddressInfo from '../hooks/useAddressInfo'
+import ReportModal from './ReportModal'
+import {useSocket} from '../contexts/Socket'
 
 const BookContainer = styled.section`
   width: 100%;
@@ -158,14 +160,12 @@ const Unit = styled.span`
 `
 
 const SectionContent = styled.section`
-  ${(props) => props.margin && `margin: ${props.margin};`}
-  ${(props) => props.display && `display: ${props.display};`}
-  ${(props) => props.flexDirection && `flex-direction: ${props.flexDirection};`}
-  ${(props) => props.gap && `gap: ${props.gap};`}
-  ${(props) =>
-    props.justifyContent && `justify-content: ${props.justifyContent};`}
-  border: ${(props) => props.border ?? 'none'};
-  padding: ${(props) => props.padding ?? SPACING.MD};
+  display: flex;
+  gap: ${SPACING.SM};
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: ${SPACING.SM} 0;
   border-radius: ${SPACING.MD};
 `
 
@@ -204,6 +204,23 @@ const ConfirmReminder = styled.span`
   font-weight: 600;
 `
 
+const ReportBtn = styled.div`
+  width: max-content;
+  display: flex;
+  gap: ${SPACING.SM};
+  align-items: center;
+  color: ${COLORS.WHITE};
+  padding: ${SPACING.XS} ${SPACING.SM};
+  border-radius: ${SPACING.SM};
+  background-color: ${COLORS.RED_2};
+  font-size: 14px;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+`
+
 const BookInfo = ({bookInfo}) => {
   const router = useRouter()
   const isAuth = useSelector((state) => state.user.isAuth)
@@ -225,6 +242,8 @@ const BookInfo = ({bookInfo}) => {
   const [isQueue, setIsQueue] = useState(false)
   const [isMaximum, setIsMaximum] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showReport, setShowReport] = useState(false)
+  const {socket} = useSocket()
 
   useEffect(() => {
     if (isAuth && isAddressTel) {
@@ -271,6 +290,11 @@ const BookInfo = ({bookInfo}) => {
       return toast.error('คุณถือหนังสือเล่มนี้อยู่')
     }
 
+    if (!user.verifyEmail) {
+      router.push('/profile/')
+      return toast.error('กรุณายืนยันอีเมลก่อนใช้งาน')
+    }
+
     setShowBorrowModal(true)
   }
 
@@ -284,10 +308,19 @@ const BookInfo = ({bookInfo}) => {
 
     toast.promise(userService.sendBorrowRequest(bookInfo?._id), {
       loading: 'กำลังส่งคำขอยืม...',
-      success: () => {
+      success: (res) => {
         getBorrowing()
         getMyRequest()
         setIsLoading(false)
+        const receiverNotification = res?.data?.data?.senderEmail ?? null
+        if (receiverNotification) {
+          socket.emit('sendNotification', {
+            senderEmail: user.email,
+            receiverEmail: receiverNotification,
+            type: 'addQueue',
+            bookName: bookInfo?.bookName,
+          })
+        }
         return bookInfo.totalAvailable > 0
           ? 'ระบบได้ส่งคำขอยืมไปยังผู้ที่ถือหนังสือแล้ว'
           : 'เข้าคิวสำเร็จแล้ว'
@@ -303,8 +336,23 @@ const BookInfo = ({bookInfo}) => {
     setShowBorrowModal(false)
   }
 
+  const showReportModal = () => {
+    if (!isAuth) {
+      return toast.error('กรุณาเข้าสู่ระบบก่อน')
+    }
+
+    setShowReport(true)
+  }
+
   return (
     <>
+      <ReportModal
+        type="bookShelfId"
+        bookName={bookInfo?.bookName}
+        reportId={bookInfo?._id}
+        isShow={showReport}
+        setIsShow={setShowReport}
+      />
       <ConfirmModal
         onShow={showBorrowModal}
         icon={ICONS.faHandHoldingHand}
@@ -367,6 +415,10 @@ const BookInfo = ({bookInfo}) => {
             <HeadText>
               <Icon name={ICONS.faPenNib} /> ผู้แต่งหนังสือ: {bookInfo.author}
             </HeadText>
+            <ReportBtn onClick={showReportModal}>
+              <Icon name={ICONS.faFlag} />
+              <span>รายงานข้อมูลไม่ถูกต้อง</span>
+            </ReportBtn>
           </SectionContent>
 
           <NumberGroup>
