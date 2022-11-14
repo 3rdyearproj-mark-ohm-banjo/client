@@ -285,6 +285,10 @@ const NavigationBar = () => {
   useOutsideAlerter(notificationHandler, notificationRef)
 
   const logoutHandler = async () => {
+    if (router.pathname.includes('profile')) {
+      router.push('/')
+    }
+
     const getResult = async () => await userService.logout()
     setShowProfileMenu(false)
     return getResult()
@@ -292,9 +296,6 @@ const NavigationBar = () => {
         socket.on('logout', () => {})
         dispatch(clearUser())
         toast.success('ออกจากระบบสำเร็จ')
-        if (router.pathname.includes('profile')) {
-          router.push('/')
-        }
       })
       .catch(() => {
         toast.success('ออกจากระบบสำเร็จ')
@@ -332,6 +333,8 @@ const NavigationBar = () => {
         return `ผู้ส่งได้ยอมรับการยกเลิกยืมหนังสือ ${bookName} แล้ว`
       case 'confirmReceiveBook':
         return `ผู้ใช้รับหนังสือ ${bookName} จากคุณแล้ว`
+      case 'checkMailFromAdmin':
+        return `คุณถูกรายงานว่าไม่ส่งหนังสือ ${bookName} และผู้ดูแลระบบไม่สามารถติดต่อคุณได้`
       default:
         return
     }
@@ -401,7 +404,12 @@ const NavigationBar = () => {
                     {myNotification?.data?.data?.notificationList
                       ?.slice(0, 5)
                       ?.map((item) => (
-                        <NotificationItem key={item?._id}>
+                        <NotificationItem
+                          key={item?._id}
+                          onClick={() =>
+                            router.push(`/profile/notification/${item?._id}`)
+                          }
+                        >
                           <div>
                             <Icon name={ICONS.faHandHoldingHand} />
                             <span>

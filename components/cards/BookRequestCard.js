@@ -113,7 +113,6 @@ const BookRequestCard = ({book, cardType}) => {
   const user = useSelector((state) => state?.user?.user)
   const router = useRouter()
   const {socket} = useSocket()
-
   const mapStatus = {
     pending: 'รอการจัดส่ง',
     inProcess: 'รอการจัดส่ง',
@@ -132,7 +131,6 @@ const BookRequestCard = ({book, cardType}) => {
       loading: 'กำลังดำเนินการ...',
       success: (res) => {
         setConfirmModal(false)
-        refetchBorrow()
         const receiverNotification = res?.data?.data?.senderEmail ?? null
         if (receiverNotification) {
           socket.emit('sendNotification', {
@@ -142,7 +140,7 @@ const BookRequestCard = ({book, cardType}) => {
             bookName: book?.bookShelf?.bookName,
           })
         }
-
+        refetchBorrow()
         return 'ยืนยันการรับหนังสือสำเร็จแล้ว'
       },
       error: () => {
@@ -311,7 +309,10 @@ const BookRequestCard = ({book, cardType}) => {
 
           {cardType === 'queue' ? (
             <>
-              <BorrowDate>วันที่เข้าคิว : 15/12/2022 เวลา 13:20 น.</BorrowDate>
+              <BorrowDate>
+                วันที่เข้าคิว :{' '}
+                {formatDate(book?.requestTime, true, true, true)}
+              </BorrowDate>
               <LimitReceive>
                 ขณะนี้คุณอยู่ในคิวที่ <b>{book?.queuePosition + 1}</b>
               </LimitReceive>

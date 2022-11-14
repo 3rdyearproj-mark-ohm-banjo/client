@@ -114,6 +114,10 @@ const Tbody = styled.tbody`
   }
 `
 
+const Td = styled.td`
+  word-break: break-all;
+`
+
 const Select = styled.select`
   padding: ${SPACING.XS};
   font-family: ${FONTS.SARABUN};
@@ -223,11 +227,11 @@ const MyReportPage = () => {
       <Table>
         <Thead>
           <tr>
-            <td>หัวข้อ</td>
-            <td>รายละเอียด</td>
-            <td>วันที่รายงาน</td>
-            <td>สถานะ</td>
-            <td>การรับเรื่อง</td>
+            <Td>หัวข้อ</Td>
+            <Td>รายละเอียด</Td>
+            <Td>วันที่รายงาน</Td>
+            <Td>สถานะ</Td>
+            <Td>การรับเรื่อง</Td>
           </tr>
         </Thead>
         {filterList() &&
@@ -238,13 +242,13 @@ const MyReportPage = () => {
               .slice((currentPage - 1) * pageSize, currentPage * pageSize)
               ?.map((item) => (
                 <tr key={item?._id}>
-                  <td>{reportTypes[item?.idType]}</td>
-                  <td>{item?.message}</td>
-                  <td>{formatDate(item?.reportTime, true, true, true)}</td>
-                  <td>{item?.status}</td>
+                  <Td>{reportTypes[item?.idType]}</Td>
+                  <Td>{item?.message}</Td>
+                  <Td>{formatDate(item?.reportTime, true, true, true)}</Td>
+                  <Td>{item?.status}</Td>
 
-                  <td>
-                    {item?.adminWhoManage ? (
+                  <Td>
+                    {!item?.adminWhoManage ? (
                       <ReceiveReport unReceive={true}>
                         {' '}
                         <Icon name={ICONS.faCircleXmark} />
@@ -254,7 +258,7 @@ const MyReportPage = () => {
                         <Icon name={ICONS.faCircleCheck} />
                       </ReceiveReport>
                     )}
-                  </td>
+                  </Td>
                 </tr>
               ))}
           </Tbody>

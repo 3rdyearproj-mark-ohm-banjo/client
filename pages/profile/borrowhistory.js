@@ -128,6 +128,10 @@ const Tbody = styled.tbody`
   }
 `
 
+const Td = styled.td`
+  word-break: break-all;
+`
+
 const PaginationWrapper = styled.div`
   border-radius: 28px;
   margin: 0 auto;
@@ -219,11 +223,11 @@ const BorrowHistoryPage = () => {
         <Table>
           <Thead>
             <tr>
-              <td>ภาพหน้าปก</td>
-              <td>ISBN</td>
-              <td>ชื่อหนังสือ</td>
-              <td>วันที่ได้รับ</td>
-              <td>วันหมดอายุ</td>
+              <Td>ภาพหน้าปก</Td>
+              <Td>ISBN</Td>
+              <Td>ชื่อหนังสือ</Td>
+              <Td>วันที่ได้รับ</Td>
+              <Td>วันหมดอายุ</Td>
             </tr>
           </Thead>
 
@@ -237,7 +241,7 @@ const BorrowHistoryPage = () => {
                 .slice((currentPage - 1) * pageSize, currentPage * pageSize)
                 ?.map((row, i) => (
                   <tr key={`row${i}`}>
-                    <td>
+                    <Td>
                       <Image
                         src={`${process.env.NEXT_PUBLIC_API_URL}/bookShelf/bsImage/${row?.book?.bookShelf?.imageCover}`}
                         alt={row.bookName}
@@ -245,27 +249,27 @@ const BorrowHistoryPage = () => {
                         height={100}
                         objectFit="contain"
                       />
-                    </td>
-                    <td>
+                    </Td>
+                    <Td>
                       <span>ISBN</span>
                       <span>{row?.book?.bookShelf?.ISBN}</span>
-                    </td>
-                    <td>
+                    </Td>
+                    <Td>
                       <span>ชื่อหนังสือ</span>
                       <span>{row?.book?.bookShelf?.bookName}</span>
-                    </td>
-                    <td>
+                    </Td>
+                    <Td>
                       <span>วันที่ได้รับ</span>
                       <span>
                         {formatDate(row?.receiveTime, true, true, true)}{' '}
                       </span>
-                    </td>
-                    <td>
+                    </Td>
+                    <Td>
                       <span>วันหมดอายุ</span>
                       <span>
                         {formatDate(row?.expireTime, true, true, true)}{' '}
                       </span>
-                    </td>
+                    </Td>
                   </tr>
                 ))}
             </Tbody>

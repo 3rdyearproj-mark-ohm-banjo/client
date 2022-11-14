@@ -33,6 +33,13 @@ const SecondItemStyled = css`
   cursor: default;
 `
 
+const HeadItemStyled = css`
+  max-width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
 const SideBarItem = styled.div`
   color: ${COLORS.WHITE};
   padding: ${SPACING.MD};
@@ -40,6 +47,10 @@ const SideBarItem = styled.div`
   transition: 0.2s;
   ${(props) => props.isActive && ActiveItemStyled}
   ${(props) => props.isSecondary && SecondItemStyled}
+
+  > span {
+    ${(props) => props.isHead && HeadItemStyled}
+  }
 
   &:hover {
     ${ActiveItemStyled}
@@ -71,8 +82,8 @@ const SideBar = () => {
 
   return (
     <SideBarStyled>
-      <SideBarItem isSecondary>
-        <span>คุณ {user.username}</span>
+      <SideBarItem isSecondary isHead={true}>
+        <span>{user.email}</span>
         <Icon name={ICONS.faUserShield} />
       </SideBarItem>
 

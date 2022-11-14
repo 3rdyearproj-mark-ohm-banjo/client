@@ -1,7 +1,7 @@
 import axios, {axiosPrivate} from '../axios'
 
 const addAdmin = (adminData) => {
-  const res = axiosPrivate.post(`admin/register`, adminData)
+  const res = axiosPrivate.post(`admin/newadmin`, adminData)
   return res
 }
 
@@ -57,6 +57,11 @@ const confirmSystemReportBookNotReceive = (id) => {
   return res
 }
 
+const matchUserAfterContact = (id) => {
+  const res = axiosPrivate.put(`admin/holdercallback/${id}`)
+  return res
+}
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   addAdmin,
@@ -70,4 +75,5 @@ export default {
   acceptBookNotSendCantContact,
   confirmBookInfoEdit,
   confirmSystemReportBookNotReceive,
+  matchUserAfterContact,
 }
