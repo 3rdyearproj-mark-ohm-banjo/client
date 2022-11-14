@@ -32,7 +32,7 @@ const PageWrapper = styled.section`
 `
 
 const ReportId = styled.h1`
-  font-size: 24px;
+  font-size: 32px;
 `
 
 const TimeWrapper = styled.div`
@@ -76,7 +76,7 @@ const ReportCase = styled.div`
 
 const AdminHandler = styled.span`
   font-size: 22px;
-  color: ${(props) => (props.success ? COLORS.GREEN : COLORS.RED_2)};
+  color: ${(props) => (props.isSuccess ? COLORS.GREEN_3 : COLORS.RED_2)};
 `
 
 const Reporter = styled.div`
@@ -466,7 +466,7 @@ const ReportInfoPage = ({reportId}) => {
         </TimeBox>
       </TimeWrapper>
 
-      <AdminHandler>
+      <AdminHandler isSuccess={reportInfo?.status === 'success'}>
         {reportInfo?.adminWhoManage?._id ? (
           <>
             รับเรื่องโดย {reportInfo?.adminWhoManage?.email} สถานะการรายงาน{' '}

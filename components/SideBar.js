@@ -127,7 +127,7 @@ const SideBar = () => {
         onClick={() => router.push('/admin/edit')}
         isActive={router.pathname === '/admin/edit'}
       >
-        แก้ไขข้อมูล
+        แก้ไขข้อมูลส่วนตัว
       </SideBarItem>
       <SideBarItem onClick={logoutHandler}>ออกจากระบบ</SideBarItem>
     </SideBarStyled>

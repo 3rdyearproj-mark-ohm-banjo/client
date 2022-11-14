@@ -218,7 +218,7 @@ const ReportPage = ({isEmptyQuery}) => {
               <th>วันที่รายงาน</th>
               <th>รายละเอียด</th>
               <th>สถานะ</th>
-              <th>รหัสผู้รายงาน</th>
+              <th>ผู้ส่งรายงาน</th>
               <th></th>
             </tr>
           </Thead>
