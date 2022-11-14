@@ -69,7 +69,7 @@ const ReportCase = styled.div`
 `
 
 const AdminHandler = styled.span`
-  color: ${COLORS.RED_2};
+  color: ${(props) => (props.isSuccess ? COLORS.GREEN_3 : COLORS.RED_2)};
   font-size: 22px;
 `
 
@@ -314,7 +314,7 @@ const ReportInfoPage = ({reportId}) => {
         </TimeBox>
       </TimeWrapper>
 
-      <AdminHandler>
+      <AdminHandler isSuccess={reportInfo?.status === 'success'}>
         {reportInfo?.adminWhoManage?._id ? (
           <>
             รับเรื่องโดย {reportInfo?.adminWhoManage?.email} สถานะการรายงาน{' '}
