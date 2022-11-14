@@ -32,7 +32,7 @@ const PageWrapper = styled.section`
 `
 
 const ReportId = styled.h1`
-  font-size: 24px;
+  font-size: 32px;
 `
 
 const TimeWrapper = styled.div`
